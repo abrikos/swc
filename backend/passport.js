@@ -1,14 +1,14 @@
-const sequelize = require('./sequelize');
+const sequelize = require('sequelize');
 const md5 = require('md5')
 const moment = require('moment')
 const cookieName = 'jwtSecure'
 
 const methods = {
-    async getUser(req) {
+    async getUser(req, res) {
         if (!req.cookies[cookieName]) return;
         const name = req.cookies[cookieName];
-        const token = await sequelize.models.token.findOne({
-            include: [{model: sequelize.models.user, as: 'user'}],
+        const token = await res.locals.db.token.findOne({
+            include: [{model: res.locals.db.swusers, as: 'user'}],
             where: {name}
         })
         if (!token) return
@@ -56,7 +56,7 @@ const methods = {
 }
 
 async function isLogged(req, res, next) {
-    const found = await methods.getUser(req);
+    const found = await methods.getUser(req, res);
     if (!found) return res.status(401).send({status: 401, message: 'Must be logged user'})
     res.locals.user = found;
     return next()

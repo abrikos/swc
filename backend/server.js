@@ -4,7 +4,7 @@ const bodyParser = require("body-parser");
 const cookieParser = require('cookie-parser');
 const fileUpload = require('express-fileupload');
 const router = require('./router')
-const db = require('./models')
+const db = require('./database/models')
 
 const portWeb = process.env.API_PORT || 4000;
 const app = express();
@@ -17,11 +17,16 @@ app.use(fileUpload({
   tempFileDir: '/tmp/'
 }));
 
+app.use(function(req,res, next) {
+  res.locals.db = db;
+  next();
+});
+app.locals.db = db;
 router(app);
 
 
 async function init() {
-  console.log(await db.swusers.findByPk(14))
+  //console.log(await db.swusers.findByPk(14))
   app.listen(portWeb, () => {
     console.log(`server started at http://localhost:${portWeb}`);
   });
