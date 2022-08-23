@@ -16,8 +16,8 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.INTEGER,
       allowNull: true,
       references: {
-        model: 'users',
-        key: 'id'
+        model: 'swuseremails',
+        key: 'useremailid'
       }
     }
   }, {

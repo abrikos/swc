@@ -1,19 +1,19 @@
 <template>
-  <v-app dark>
+  <div>
     <v-navigation-drawer
-      v-model="drawer"
-      :mini-variant="miniVariant"
-      :clipped="clipped"
-      fixed
-      app
+        v-model="drawer"
+        :mini-variant="miniVariant"
+        :clipped="clipped"
+        fixed
+        app
     >
       <v-list>
         <v-list-item
-          v-for="(item, i) in items"
-          :key="i"
-          :to="item.to"
-          router
-          exact
+            v-for="(item, i) in items"
+            :key="i"
+            :to="item.to"
+            router
+            exact
         >
           <v-list-item-action>
             <v-icon>{{ item.icon }}</v-icon>
@@ -25,26 +25,25 @@
       </v-list>
     </v-navigation-drawer>
     <v-app-bar
-      :clipped-left="clipped"
-      fixed
-      app
+        :clipped-left="clipped"
+        fixed
+        app
     >
       <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
       <v-btn
-        icon
-        @click.stop="miniVariant = !miniVariant"
+          icon
+          @click.stop="miniVariant = !miniVariant"
       >
         <v-icon>mdi-{{ `chevron-${miniVariant ? 'right' : 'left'}` }}</v-icon>
       </v-btn>
       <v-spacer />
-      <v-tabs v-model="tab">
+      <v-tabs :hide-slider="true">
         <v-tab to="/">
           {{$t('Home')}}
         </v-tab>
         <v-spacer></v-spacer>
         <v-tab to="/user/cabinet" v-if="user">
           {{$t('Cabinet')}}
-          <Avatar :user="user"/>
         </v-tab>
         <v-tab @click="logout" v-if="user">
           {{$t('Logout')}}
@@ -55,7 +54,6 @@
         <v-tab to="/user/signup" v-if="!user">
           {{$t('Sign up')}}
         </v-tab>
-        <v-tabs-slider color="pink"></v-tabs-slider>
       </v-tabs>
       <v-menu offset-y>
         <template v-slot:activator="{ on, attrs }">
@@ -80,30 +78,24 @@
         </v-list>
       </v-menu>
     </v-app-bar>
-    <v-main>
-      <v-container>
-        <Nuxt />
-      </v-container>
-    </v-main>
-
-    <v-footer
-      :absolute="!fixed"
-      app
-    >
-      <span>&copy; {{ new Date().getFullYear() }}</span>
-    </v-footer>
-  </v-app>
+  </div>
 </template>
 
 <script>
+
 export default {
-  name: 'DefaultLayout',
-  data () {
+  name: "AppBar",
+  data() {
     return {
       tab: 0,
       clipped: false,
-      drawer: false,
       fixed: false,
+      drawer: false,
+      group: {},
+      buildDate:'',
+      miniVariant: false,
+      right: true,
+      rightDrawer: false,
       items: [
         {
           icon: 'mdi-apps',
@@ -116,10 +108,6 @@ export default {
           to: '/inspire'
         }
       ],
-      miniVariant: false,
-      right: true,
-      rightDrawer: false,
-      title: 'Vuetify.js'
     }
   },
   computed: {
@@ -134,6 +122,14 @@ export default {
       return this.$store.getters.getLoggedUser
     }
   },
+  created() {
+    this.$axios.$get('/build-date')
+      .then(res=>this.buildDate = res.ctime)
+    this.$nuxt.$on('userReloaded', (data) => {
+      this.user = data;
+    });
+    this.$store.dispatch('auth/getUser')
+  },
   methods: {
     switchLocale(code) {
       this.$i18n.setLocale(code)
@@ -145,5 +141,12 @@ export default {
     },
 
   }
+
 }
 </script>
+
+<style scoped lang="sass">
+small#build-date
+  color: red
+  font-size: .6em !important
+</style>

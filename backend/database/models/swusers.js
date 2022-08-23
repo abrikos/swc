@@ -1,6 +1,7 @@
 const Sequelize = require('sequelize');
+const md5 = require("md5");
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('swusers', {
+  const Model =  sequelize.define('swusers', {
     userid: {
       autoIncrement: true,
       type: DataTypes.INTEGER,
@@ -260,4 +261,11 @@ module.exports = function(sequelize, DataTypes) {
       },
     ]
   });
+  Model.prototype.checkPassword = function (password) {
+    return this.userpassword === md5(password)
+  };
+  Model.beforeSave(async (user, options) => {
+    user.userpassword = md5(user.userpassword);
+  });
+  return Model
 };
