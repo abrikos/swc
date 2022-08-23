@@ -3,11 +3,11 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const cookieParser = require('cookie-parser');
 const fileUpload = require('express-fileupload');
-const router = require('./router')
 const db = require('./database/models')
 
 const portWeb = process.env.API_PORT || 4000;
 const app = express();
+const controllers = require('./controllers')
 app.use(express.static('upload'));
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({extended: true}));
@@ -22,7 +22,7 @@ app.use(function(req,res, next) {
   next();
 });
 app.locals.db = db;
-router(app);
+controllers(app);
 
 
 async function init() {

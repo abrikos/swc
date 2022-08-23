@@ -3,6 +3,7 @@
 const fs = require('fs');
 const path = require('path');
 const Sequelize = require('sequelize');
+const relations  =require('../relations')
 const basename = path.basename(__filename);
 //const env = process.env.NODE_ENV || 'development';
 //const config = require(__dirname + '/../config/config.json')[env];
@@ -32,6 +33,10 @@ Object.keys(db).forEach(modelName => {
   }
 });
 
+sequelize.sync()
+
+
+relations(db)
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 

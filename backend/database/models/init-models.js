@@ -1,6 +1,4 @@
 var DataTypes = require("sequelize").DataTypes;
-var _images = require("./images");
-var _messages = require("./messages");
 var _swapplogdata = require("./swapplogdata");
 var _swapplogs = require("./swapplogs");
 var _swattachmentchunks = require("./swattachmentchunks");
@@ -229,11 +227,8 @@ var _swvisitorrulecriteria = require("./swvisitorrulecriteria");
 var _swvisitorrules = require("./swvisitorrules");
 var _swwidgets = require("./swwidgets");
 var _tokens = require("./tokens");
-var _users = require("./users");
 
 function initModels(sequelize) {
-  var images = _images(sequelize, DataTypes);
-  var messages = _messages(sequelize, DataTypes);
   var swapplogdata = _swapplogdata(sequelize, DataTypes);
   var swapplogs = _swapplogs(sequelize, DataTypes);
   var swattachmentchunks = _swattachmentchunks(sequelize, DataTypes);
@@ -462,18 +457,10 @@ function initModels(sequelize) {
   var swvisitorrules = _swvisitorrules(sequelize, DataTypes);
   var swwidgets = _swwidgets(sequelize, DataTypes);
   var tokens = _tokens(sequelize, DataTypes);
-  var users = _users(sequelize, DataTypes);
 
-  images.belongsTo(messages, { as: "message", foreignKey: "messageId"});
-  messages.hasMany(images, { as: "images", foreignKey: "messageId"});
-  messages.belongsTo(users, { as: "user", foreignKey: "userId"});
-  users.hasMany(messages, { as: "messages", foreignKey: "userId"});
-  tokens.belongsTo(users, { as: "user", foreignKey: "userId"});
-  users.hasMany(tokens, { as: "tokens", foreignKey: "userId"});
+  tokens.belongsTo(swusers, { as: "user", foreignKey: "userId"});
 
   return {
-    images,
-    messages,
     swapplogdata,
     swapplogs,
     swattachmentchunks,
@@ -702,7 +689,6 @@ function initModels(sequelize) {
     swvisitorrules,
     swwidgets,
     tokens,
-    users,
   };
 }
 module.exports = initModels;
