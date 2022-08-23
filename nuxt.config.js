@@ -19,12 +19,16 @@ export default {
     ]
   },
 
+  ssr: false,
+  target: 'static',
+
   // Global CSS: https://go.nuxtjs.dev/config-css
   css: [
   ],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
+    "~/plugins/axios.client.js"
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
@@ -38,8 +42,57 @@ export default {
 
   // Modules: https://go.nuxtjs.dev/config-modules
   modules: [
+    '@nuxtjs/axios',
+    '@nuxtjs/i18n',
+    '@nuxtjs/auth-next'
   ],
 
+  router: {
+    middleware: ['auth']
+  },
+  i18n: {
+    locales: [
+      {
+        code: 'en',
+        file: 'en.js',
+        name: 'English'
+      },
+      {
+        code: 'ru',
+        name: 'Русский',
+        file: 'ru.js',
+      }
+    ],
+    strategy: 'no_prefix',
+    defaultLocale: 'en',
+    lazy: true,
+    langDir: 'lang/',
+  },
+  auth: {
+    redirect: {
+      login: '/user/login',
+      logout: '/user/login',
+      callback: '/user/login',
+      home: '/'
+    },
+    strategies: {
+      local: {
+        endpoints: {
+          login: {
+            url: "/api/auth/login",
+            method: "post",
+            propertyName: "token"
+          },
+          user: {
+            url: "/api/auth/user",
+            method: "get",
+            propertyName: "token"
+          },
+          logout: true
+        }
+      }
+    }
+  },
   // Vuetify module configuration: https://go.nuxtjs.dev/config-vuetify
   vuetify: {
     customVariables: ['~/assets/variables.scss'],

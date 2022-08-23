@@ -2,65 +2,76 @@ const sequelize = require('sequelize');
 const md5 = require('md5')
 const moment = require('moment')
 const cookieName = 'jwtSecure'
+const salt = 'asdeee'
+module.exports = {
 
-const methods = {
-    async getUser(req, res) {
-        if (!req.cookies[cookieName]) return;
-        const name = req.cookies[cookieName];
-        const token = await res.locals.db.token.findOne({
-            include: [{model: res.locals.db.swusers, as: 'user'}],
-            where: {name}
-        })
-        if (!token) return
-        return token.user;
-    },
+  hashPassword(plainPassword){
+    return md5(plainPassword + salt)
+  },
 
-    async authenticate(req, res) {
-        let user;
-        const {strategy, username, password} = req.body;
-        if (strategy === 'google') {
-            user = await this.googleStrategy(req);
-        } else {
-            user = await this.passwordStrategy(username, password);
-        }
-        if (!user) return;
-        const token = await sequelize.models.token.create({userId: user.id, name: md5(moment().unix())});
-        res.cookie(cookieName, token.name, {
-            secure: true,
-            //secure: process.env.NODE_ENV !== "development",
-            httpOnly: true,
-            expires: new Date(moment().add(30, 'days').toISOString()),
-        });
-        return user;
-    },
+  checkPassword(plainPassword, hash){
+    return this.hashPassword(plainPassword) === hash
+  },
 
-    async logout(req, res) {
-        const token = await sequelize.models.token.findOne({where: {name: req.cookies[cookieName]}});
-        if (!token) return;
-        token.destroy();
-        res.clearCookie(cookieName);
-        res.end();
-    },
+  async getUser(req, res) {
+    if (!req.cookies[cookieName]) return;
+    const name = req.cookies[cookieName];
+    const token = await res.locals.db.token.findOne({
+      include: [{model: res.locals.db.swusers, as: 'user'}],
+      where: {name}
+    })
+    if (!token) return
+    return token.user;
+  },
 
-    googleStrategy() {
-        console.log(this)
-    },
-
-    async passwordStrategy(username, password) {
-        const user = await sequelize.models.user.findOne({where: {username}});
-        if(!user) return
-        if (user.checkPassword(password)) {
-            return user
-        }
+  async authenticate(req, res) {
+    let user;
+    const {strategy, username, password} = req.body;
+    if (strategy === 'google') {
+      user = await this.googleStrategy(req);
+    } else {
+      user = await this.passwordStrategy(username, password);
     }
-}
+    if (!user) return;
+    const token = await sequelize.models.token.create({userId: user.id, name: md5(moment().unix())});
+    res.cookie(cookieName, token.name, {
+      secure: true,
+      //secure: process.env.NODE_ENV !== "development",
+      httpOnly: true,
+      expires: new Date(moment().add(30, 'days').toISOString()),
+    });
+    return user;
+  },
 
-async function isLogged(req, res, next) {
+  async logout(req, res) {
+    const token = await sequelize.models.token.findOne({where: {name: req.cookies[cookieName]}});
+    if (!token) return;
+    token.destroy();
+    res.clearCookie(cookieName);
+    res.end();
+  },
+
+  googleStrategy() {
+    console.log(this)
+  },
+
+  async passwordStrategy(username, password) {
+    const user = await sequelize.models.user.findOne({where: {username}});
+    if (!user) return
+    if (user.checkPassword(password)) {
+      return user
+    }
+  },
+
+  async isLogged(req, res, next) {
     const found = await methods.getUser(req, res);
     if (!found) return res.status(401).send({status: 401, message: 'Must be logged user'})
     res.locals.user = found;
     return next()
+  }
+
 }
 
 
-module.exports = {methods, isLogged}
+
+

@@ -12,6 +12,9 @@
     "generate": "nuxt generate"
   },
   "dependencies": {
+    "@nuxtjs/auth-next": "5.0.0-1648802546.c9880dc",
+    "@nuxtjs/axios": "^5.13.6",
+    "@nuxtjs/i18n": "^7.2.3",
     "body-parser": "^1.20.0",
     "cli-color": "^2.0.3",
     "cookie-parser": "^1.4.6",
