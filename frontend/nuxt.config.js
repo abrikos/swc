@@ -16,7 +16,7 @@ export default {
 
   },
   head: {
-    title: 'poker',
+    title: 'Kayako',
     htmlAttrs: {
       lang: 'en'
     },

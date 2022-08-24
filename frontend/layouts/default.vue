@@ -1,9 +1,11 @@
 <template>
-  <v-app>
+  <v-app dark>
     <AppBar/>
+    <v-main>
     <v-container>
       <nuxt/>
     </v-container>
+    </v-main>
     <SnackBar/>
   </v-app>
 </template>
@@ -14,6 +16,9 @@ import AppBar from '@/components/app-bar/AppBar';
 
 export default {
   components: { AppBar, SnackBar},
+  created() {
+    this.$vuetify.theme.isDark = true
+  }
 }
 </script>
 

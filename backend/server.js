@@ -30,7 +30,7 @@ function logger(e, res){
     const out = err.stack.split('\n')
     out.shift()
     out.shift()
-    console.log(clc.red(e.message));
+    console.log('ERROR:',clc.red(e.message));
     for(const log of out) console.log(log)
   }
   res.status(e.status || 500).send(e.status ? e : {message: e.message})

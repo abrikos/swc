@@ -17,7 +17,7 @@ export const mutations = {
   setUser(state, user) {
     state.user = user;
   },
-  logout(state) {
+  logoutMutation(state) {
     state.accessToken = null;
     state.refreshToken = null;
     state.user = null;
@@ -25,6 +25,10 @@ export const mutations = {
 };
 
 export const actions = {
+  async logout({commit, dispatch}, data) {
+    await this.$axios.$post('/auth/logout');
+    commit('logoutMutation');
+  },
   async login({commit, dispatch}, data) {
     const res = await this.$axios.$post('/auth/login', data);
     commit('setTokens', res);
@@ -32,7 +36,6 @@ export const actions = {
   },
   async signup({commit, dispatch}, data) {
     const res = await this.$axios.$post('/auth/signup', data);
-    console.log(res)
     commit('setTokens', res);
     await dispatch('getUser');
   },

@@ -7,6 +7,7 @@
     "backend": "node backend/server.js",
     "backend:dev": "nodemon backend/server.js",
     "mysql:init": "node backend/database/sync.js",
+    "mysql:migrate": "npx sequelize-cli db:migrate",
     "generate": "nuxt generate frontend"
   },
   "dependencies": {
@@ -24,6 +25,7 @@
     "md5": "^2.3.0",
     "moment": "^2.29.4",
     "mysql2": "^2.3.3",
+    "nodemailer": "^6.7.8",
     "nuxt": "^2.15.8",
     "sequelize": "^6.21.4",
     "vue": "^2.6.14",

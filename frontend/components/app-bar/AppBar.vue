@@ -125,17 +125,18 @@ export default {
   created() {
     this.$axios.$get('/build-date')
       .then(res=>this.buildDate = res.ctime)
-    this.$nuxt.$on('userReloaded', (data) => {
-      this.user = data;
-    });
     this.$store.dispatch('auth/getUser')
+    /*this.$nuxt.$on('userReloaded', (data) => {
+      this.user = data;
+    });*/
+
   },
   methods: {
     switchLocale(code) {
       this.$i18n.setLocale(code)
     },
     async logout() {
-      this.$store.commit('auth/logout')
+      this.$store.dispatch('auth/logout', this.login)
       this.$saveDefaultRedirect()
       await this.$router.push('/user/login');
     },

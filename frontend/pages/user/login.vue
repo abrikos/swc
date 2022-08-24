@@ -18,6 +18,8 @@
       </v-card-text>
       <v-card-actions>
         <v-btn @click="submit" class="my-4">{{ $t('Send') }}</v-btn>
+        <v-spacer />
+        <v-btn @click="resetPassword" class="my-4">{{ $t('Reset password') }}</v-btn>
       </v-card-actions>
     </v-card>
   </div>
@@ -36,12 +38,23 @@ export default {
         //value => (value && value.length >= 3) || 'Min 3 characters',
       ],
       login: {
-        email: '',
-        password: '',
+        email: 'abrikoz@gmail.com',
+        password: '1',
       }
     }
   },
+  computed:{
+    user(){
+      return this.$store.getters.getLoggedUser
+    }
+  },
+  created() {
+    if(this.user) this.$router.push('/user/cabinet')
+  },
   methods: {
+    async resetPassword(){
+      this.$router.push('/user/reset-password')
+    },
     async submit() {
       try {
         this.$store.dispatch('auth/login', this.login)

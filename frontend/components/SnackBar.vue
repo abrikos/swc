@@ -3,7 +3,7 @@
     :value="!!snackbar"
     :color="color"
   >
-    {{ snackbar && snackbar.message }}
+    {{ snackbar && $t(snackbar.message) }}
 
     <template v-slot:action="{ attrs }">
       <v-btn

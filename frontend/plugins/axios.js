@@ -10,6 +10,7 @@ export default function ({app, $axios, store}) {
     if (error.response) {
       console.warn(error.response.data)
       if(error.response.status !== 401) {
+        console.log(error.response)
         error.response.data.status = error.response.status;
         store.commit('setSnackBar', error.response.data)
       }
