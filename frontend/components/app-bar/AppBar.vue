@@ -1,45 +1,13 @@
 <template>
   <div>
-    <v-navigation-drawer
-        v-model="drawer"
-        :mini-variant="miniVariant"
-        :clipped="clipped"
-        fixed
-        app
-    >
-      <v-list>
-        <v-list-item
-            v-for="(item, i) in items"
-            :key="i"
-            :to="item.to"
-            router
-            exact
-        >
-          <v-list-item-action>
-            <v-icon>{{ item.icon }}</v-icon>
-          </v-list-item-action>
-          <v-list-item-content>
-            <v-list-item-title v-text="item.title" />
-          </v-list-item-content>
-        </v-list-item>
-      </v-list>
-    </v-navigation-drawer>
     <v-app-bar
-        :clipped-left="clipped"
         fixed
         app
     >
-      <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
-      <v-btn
-          icon
-          @click.stop="miniVariant = !miniVariant"
-      >
-        <v-icon>mdi-{{ `chevron-${miniVariant ? 'right' : 'left'}` }}</v-icon>
-      </v-btn>
-      <v-spacer />
       <v-tabs :hide-slider="true">
+
         <v-tab to="/">
-          {{$t('Home')}}
+          {{$t('Kayako')}}
         </v-tab>
         <v-spacer></v-spacer>
         <v-tab to="/user/cabinet" v-if="user">
@@ -88,26 +56,7 @@ export default {
   data() {
     return {
       tab: 0,
-      clipped: false,
-      fixed: false,
-      drawer: false,
-      group: {},
       buildDate:'',
-      miniVariant: false,
-      right: true,
-      rightDrawer: false,
-      items: [
-        {
-          icon: 'mdi-apps',
-          title: 'Welcome',
-          to: '/'
-        },
-        {
-          icon: 'mdi-chart-bubble',
-          title: 'Inspire',
-          to: '/inspire'
-        }
-      ],
     }
   },
   computed: {
@@ -122,15 +71,7 @@ export default {
       return this.$store.getters.getLoggedUser
     }
   },
-  created() {
-    this.$axios.$get('/build-date')
-      .then(res=>this.buildDate = res.ctime)
-    this.$store.dispatch('auth/getUser')
-    /*this.$nuxt.$on('userReloaded', (data) => {
-      this.user = data;
-    });*/
 
-  },
   methods: {
     switchLocale(code) {
       this.$i18n.setLocale(code)

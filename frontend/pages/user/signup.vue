@@ -4,8 +4,9 @@
       v-model="valid"
       lazy-validation
   >
-    <h1>{{ $t('Sign up') }}</h1>
+
     <v-card>
+      <v-card-title>{{ $t('Sign up') }}</v-card-title>
       <v-card-text>
         <v-text-field v-model="form.email" :label="$t('Email')" outlined :rules="emailRules"/>
         <v-text-field v-model="form.password" type="password" :label="$t('Password')" outlined :rules="passwordRules"/>

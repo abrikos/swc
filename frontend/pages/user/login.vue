@@ -1,7 +1,6 @@
 <template>
-  <div>
-    <h1>{{ $t('Login') }}</h1>
     <v-card>
+      <v-card-title>{{ $t('Login') }}</v-card-title>
       <v-card-text>
         <v-text-field
             outlined
@@ -22,7 +21,6 @@
         <v-btn @click="resetPassword" class="my-4">{{ $t('Reset password') }}</v-btn>
       </v-card-actions>
     </v-card>
-  </div>
 </template>
 
 <script>
@@ -38,7 +36,7 @@ export default {
         //value => (value && value.length >= 3) || 'Min 3 characters',
       ],
       login: {
-        email: 'abrikoz@gmail.com',
+        email: 'antonov@hikom.ru',
         password: '1',
       }
     }

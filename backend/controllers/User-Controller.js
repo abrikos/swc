@@ -1,5 +1,4 @@
 const passport = require('../passport');
-const sequelize = require("sequelize");
 const md5 = require("md5");
 const moment = require("moment/moment");
 const mailer = require('../mailer');
