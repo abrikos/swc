@@ -29,7 +29,7 @@ module.exports = function (app) {
 
     app.post('/api/auth/user', passport.isLogged, async (req, res) => {
         const {user} = res.locals;
-        res.send({email:user.email, username: user.swuser.fullname})
+        res.send(passport.adaptUser(user))
     })
 
     app.get('/api/user/confirm-reset/:code', async (req, res) => {
@@ -79,11 +79,14 @@ module.exports = function (app) {
 
     app.post('/api/user/update', passport.isLogged, async (req, res) => {
         const {user} = res.locals;
-        console.log(user.swuser)
-        const {email, username} = req.body;
+        console.log(req.body)
+        const {email, username, password, passwordConfirm} = req.body;
         user.email = email;
         await user.save()
         user.swuser.fullname =  username;
+        if (password && passwordConfirm === password){
+            user.swuser.userpassword = password
+        }
         await user.swuser.save()
         res.sendStatus(200);
     })

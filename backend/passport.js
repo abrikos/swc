@@ -17,6 +17,10 @@ const methods = {
         return token.swuseremail;
     },
 
+    adaptUser(user){
+        return {email:user.email, username: user.swuser.fullname}
+    },
+
     async authenticate(req, res) {
         try {
             const {email, password} = req.body

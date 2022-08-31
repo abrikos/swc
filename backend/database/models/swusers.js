@@ -46,7 +46,10 @@ module.exports = function(sequelize, DataTypes) {
     userpassword: {
       type: DataTypes.STRING(50),
       allowNull: false,
-      defaultValue: ""
+      defaultValue: "",
+      set(value) {
+        this.setDataValue('userpassword', md5(value));
+      }
     },
     islegacypassword: {
       type: DataTypes.SMALLINT,
@@ -264,8 +267,5 @@ module.exports = function(sequelize, DataTypes) {
   Model.prototype.checkPassword = function (password) {
     return this.userpassword === md5(password)
   };
-  Model.beforeSave(async (user, options) => {
-    user.userpassword = md5(user.userpassword);
-  });
   return Model
 };
