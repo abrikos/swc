@@ -14,7 +14,7 @@ const methods = {
         })
         //console.log('token', token.swuseremail.swuser)
         if (!token) return
-        return token.swuseremail.swuser;
+        return token.swuseremail;
     },
 
     async authenticate(req, res) {

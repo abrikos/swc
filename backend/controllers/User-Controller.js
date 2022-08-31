@@ -29,7 +29,7 @@ module.exports = function (app) {
 
     app.post('/api/auth/user', passport.isLogged, async (req, res) => {
         const {user} = res.locals;
-        res.send(user)
+        res.send({email:user.email, username: user.swuser.fullname})
     })
 
     app.get('/api/user/confirm-reset/:code', async (req, res) => {
@@ -42,6 +42,8 @@ module.exports = function (app) {
             if (!found) throw {message: 'Wrong reset code'}
             const passwd = found.swuser.userpassword = md5(moment().unix()).substr(0, 5)
             found.swuser.save()
+            found.resetpassword = '';
+            found.save();
             mailer.sendMail({
                 from: process.env.MAIL_USER,
                 to: found.email,
@@ -75,10 +77,15 @@ module.exports = function (app) {
         }
     })
 
-    app.get('/test', passport.isLogged, async (req, res) => {
+    app.post('/api/user/update', passport.isLogged, async (req, res) => {
         const {user} = res.locals;
-        const post = await db.swusers.findByPk(14)
-        res.send({z: 1});
+        console.log(user.swuser)
+        const {email, username} = req.body;
+        user.email = email;
+        await user.save()
+        user.swuser.fullname =  username;
+        await user.swuser.save()
+        res.sendStatus(200);
     })
 
 }
