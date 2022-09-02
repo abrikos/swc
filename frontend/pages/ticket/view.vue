@@ -1,18 +1,19 @@
 <template>
   <v-card>
-    <v-card-title>{{ticket.subject}}</v-card-title>
+    <v-card-title>{{ ticket.subject }}</v-card-title>
     <v-card-text>
       <v-row>
         <v-col md="8">
           <div v-for="post of ticket.swticketposts" :key="post.ticketpostid" class="post">
             <strong>
-              {{post.subject}}
+              {{ post.subject }}
             </strong>
             <br/>
-            {{post.fullname}}
-            {{post.email}}
+            {{ fromUnix(post.dateline) }}
+            <strong>{{ post.fullname }}</strong>
+            <a :href="`mailto:${post.email}`">{{ post.email }}</a>
             <hr/>
-            <span v-html="post.contents.replace('\n', '<br/>')"></span>
+            <span v-html="post.contents.replaceAll('\n', '<br/>')"></span>
           </div>
         </v-col>
         <v-col>
@@ -22,10 +23,9 @@
               <br/>
             </span>
             <span v-else>
-            {{fromUnix(file.dateline)}}
-            <a :href="`/attachments/${file.storefilename}`" :download="file.filename">{{file.filename}}</a>
-            {{file.filetype}}
-              </span>
+              {{ fromUnix(file.dateline) }}
+              <span class="link" @click="saveFile(`/files/${file.storefilename}`, file.filename)" >{{ file.filename }}</span>
+            </span>
           </div>
         </v-col>
       </v-row>
@@ -37,12 +37,13 @@
 
 <script>
 import moment from "moment"
+
 export default {
   name: "view",
-  data(){
+  data() {
     return {
       ticket: {
-        swticketposts:[]
+        swticketposts: []
       }
     }
   },
@@ -53,13 +54,55 @@ export default {
           this.ticket = data;
         })
   },
-  computed:{
+  computed: {
     id() {
       return this.$route.params.pathMatch;
     }
   },
-  methods:{
-    fromUnix(timestamp){
+  methods: {
+    saveFile(url, filename){
+      const xhr = new XMLHttpRequest();
+      xhr.open("GET", url);
+      xhr.responseType = "blob";
+      xhr.overrideMimeType("octet/stream");
+      xhr.onload = function() {
+        if (xhr.status === 200) {
+          const blob = xhr.response
+          const url = URL.createObjectURL(blob);
+
+          // Create a new anchor element
+          const a = document.createElement('a');
+
+          // Set the href and download attributes for the anchor element
+          // You can optionally set other attributes like `title`, etc
+          // Especially, if the anchor element will be attached to the DOM
+          a.href = url;
+          a.download = filename || 'download';
+
+          // Click handler that releases the object URL after the element has been clicked
+          // This is required for one-off downloads of the blob content
+          const clickHandler = () => {
+            setTimeout(() => {
+              URL.revokeObjectURL(url);
+              this.removeEventListener('click', clickHandler);
+            }, 150);
+          };
+
+          // Add the click event listener on the anchor element
+          // Comment out this line if you don't want a one-off download of the blob content
+          a.addEventListener('click', clickHandler, false);
+
+          // Programmatically trigger a click on the anchor element
+          // Useful if you want the download to happen automatically
+          // Without attaching the anchor element to the DOM
+          // Comment out this line if you don't want an automatic download of the blob content
+          a.click();
+          //window.location = (URL || webkitURL).createObjectURL(xhr.response);
+        }
+      };
+      xhr.send();
+    },
+    fromUnix(timestamp) {
       return moment.unix(timestamp).format('YYYY-MM-DD HH:mm')
     },
   }
@@ -67,6 +110,10 @@ export default {
 </script>
 
 <style scoped lang="sass">
+.link
+  text-decoration: underline
+  cursor: pointer
+  color: #1976d2
 .post
   margin-bottom: 10px
   padding: 5px
