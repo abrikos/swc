@@ -31,11 +31,16 @@ module.exports = function (app) {
         res.send(passport.adaptUser(user))
     })
 
+    app.get('/api/user/list', async (req, res) => {
+        const list = await db.swusers.findAll({include:[{model: db.swuseremails}]})
+        res.send(list)
+    })
+
     app.get('/api/user/confirm-reset/:code', async (req, res) => {
         try {
             const found = await db.swuseremails.findOne({
                 where: {resetpassword: req.params.code},
-                include: [{model: res.locals.db.swusers}],
+                include: [{model: db.swusers}],
                 //logging: console.log
             })
             if (!found) throw {message: 'Wrong reset code'}

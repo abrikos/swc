@@ -13,7 +13,15 @@ export default {
   target: 'static',
   // Global page headers: https://go.nuxtjs.dev/config-head
   router: {
-
+    extendRoutes(routes, resolve) {
+      routes.push(
+          {
+            name: 'ticketView',
+            path: '/ticket/view/*',
+            component: resolve(__dirname, 'pages/ticket/view.vue'),
+          }
+      )
+    }
   },
   head: {
     title: 'Kayako',

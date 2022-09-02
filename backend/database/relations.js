@@ -1,8 +1,11 @@
 module.exports = (db) => {
-  db.swusers.hasMany(db.swuseremails, {foreignKey: 'linktypeid', as: 'emails'})
+  db.swusers.hasMany(db.swuseremails, {foreignKey: 'linktypeid'})
   db.swuseremails.hasMany(db.tokens, {foreignKey: 'userId'})
   db.swuseremails.belongsTo(db.swusers, {foreignKey: 'linktypeid'})
   db.tokens.belongsTo(db.swuseremails, {foreignKey: 'userId'})
+
+  db.swtickets.hasMany(db.swticketposts, {foreignKey: 'ticketid'})
+  db.swtickets.hasMany(db.swattachments, {foreignKey: 'ticketid'})
   /*db.swuseremails.findOne({
     where: {email: 'techsup@hikom.ru'},
     include: [{model: db.swusers}],
