@@ -1,64 +1,17 @@
 <template>
-  <v-app dark>
-    <AppBar/>
+  <v-app>
+    <v-app-bar
+        fixed
+        app
+    >
+      <v-spacer></v-spacer>
+      <v-btn icon @click="switchTheme">
+        <v-icon>mdi-theme-light-dark</v-icon>
+      </v-btn>
+    </v-app-bar>
     <v-main>
-      <v-navigation-drawer
-          app
-          v-if="user"
-      >
-        <v-list>
-<!--          <v-list-item class="px-2">
-            <v-list-item-avatar>
-              <v-img src="https://randomuser.me/api/portraits/women/85.jpg"></v-img>
-            </v-list-item-avatar>
-          </v-list-item>-->
-
-          <v-list-item link>
-            <v-list-item-content>
-              <v-list-item-title class="text-h6">
-                {{user.username}}
-              </v-list-item-title>
-              <v-list-item-subtitle>{{user.email}}</v-list-item-subtitle>
-            </v-list-item-content>
-          </v-list-item>
-        </v-list>
-
-        <v-divider></v-divider>
-
-        <v-list
-            nav
-            dense
-        >
-          <v-list-item link to="/user/cabinet">
-            <v-list-item-icon>
-              <v-icon>mdi-account</v-icon>
-            </v-list-item-icon>
-            <v-list-item-title>{{$t('Cabinet')}}</v-list-item-title>
-          </v-list-item>
-
-          <v-list-item link to="/ticket/list">
-            <v-list-item-icon>
-              <v-icon>mdi-folder</v-icon>
-            </v-list-item-icon>
-            <v-list-item-title>{{$t('My tickets')}}</v-list-item-title>
-          </v-list-item>
-
-          <v-list-item link>
-            <v-list-item-icon>
-              <v-icon>mdi-account-multiple</v-icon>
-            </v-list-item-icon>
-            <v-list-item-title>Shared with me</v-list-item-title>
-          </v-list-item>
-          <v-list-item link>
-            <v-list-item-icon>
-              <v-icon>mdi-star</v-icon>
-            </v-list-item-icon>
-            <v-list-item-title>Starred</v-list-item-title>
-          </v-list-item>
-        </v-list>
-      </v-navigation-drawer>
       <v-container>
-        <nuxt/>
+      <nuxt/>
       </v-container>
     </v-main>
     <SnackBar/>
@@ -66,22 +19,23 @@
 </template>
 
 <script>
-import SnackBar from '@/components/SnackBar';
-import AppBar from '@/components/app-bar/AppBar';
 
 export default {
-  components: {AppBar, SnackBar},
-  computed:{
-    user(){
+  computed: {
+    user() {
       return this.$store.getters.getLoggedUser
     }
   },
+  methods:{
+    switchTheme(){
+      this.$vuetify.theme.isDark = !this.$vuetify.theme.isDark;
+      localStorage.setItem('themeDark', this.$vuetify.theme.isDark)
+    }
+  },
   created() {
-    this.$vuetify.theme.isDark = true
-
-    this.$axios.$get('/build-date')
-        .then(res => this.buildDate = res.ctime)
-    this.$store.dispatch('auth/getUser')
+    this.$vuetify.theme.isDark = JSON.parse(localStorage.getItem('themeDark'))
+    //this.$axios.$get('/build-date')        .then(res => this.buildDate = res.ctime)
+    //this.$store.dispatch('auth/getUser')
   }
 }
 </script>

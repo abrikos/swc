@@ -1,6 +1,11 @@
 <template>
-  <v-card>
-    <v-card-title>{{ ticket.subject }}</v-card-title>
+  <v-card v-if="ticket">
+    <v-card-title>
+      {{ ticket.ticketid }}: {{ ticket.subject }}
+      <v-spacer></v-spacer>
+      <a @click="$router.go(-1)">Назад</a>
+    </v-card-title>
+    <v-card-subtitle>{{ ticket.swdepartment.title }}</v-card-subtitle>
     <v-card-text>
       <v-row>
         <v-col md="8">
@@ -9,7 +14,7 @@
               {{ post.subject }}
             </strong>
             <br/>
-            {{ fromUnix(post.dateline) }}
+             {{$fromUnixTimestamp(post.dateline) }}
             <strong>{{ post.fullname }}</strong>
             <a :href="`mailto:${post.email}`">{{ post.email }}</a>
             <hr/>
@@ -19,11 +24,11 @@
         <v-col>
           <div v-for="file of ticket.swattachments" :key="file.attachmentid" class="attach">
             <span v-if="file.filetype.match('image')">
-              <a :href="`/files/${file.storefilename}`"><v-img :src="`/files/${file.storefilename}`" width="300"/></a>
+                <v-img :src="`/files/${file.storefilename}`" width="300"/>
               <br/>
             </span>
             <span v-else>
-              {{ fromUnix(file.dateline) }}
+              {{ $fromUnixTimestamp(file.dateline) }}
               <span class="link" @click="saveFile(`/files/${file.storefilename}`, file.filename)" >{{ file.filename }}</span>
             </span>
           </div>
@@ -42,15 +47,12 @@ export default {
   name: "view",
   data() {
     return {
-      ticket: {
-        swticketposts: []
-      }
+      ticket: null
     }
   },
   created() {
     this.$axios.$get('/ticket/view/' + this.id)
         .then(data => {
-          console.log(data.swticketposts)
           this.ticket = data;
         })
   },
@@ -101,10 +103,7 @@ export default {
         }
       };
       xhr.send();
-    },
-    fromUnix(timestamp) {
-      return moment.unix(timestamp).format('YYYY-MM-DD HH:mm')
-    },
+    }
   }
 }
 </script>

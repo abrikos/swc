@@ -4,10 +4,17 @@
         @click:row="handleClick"
         :headers="headers"
         :items="list"
-        :items-per-page="5"
+        :items-per-page="25"
         class= "row-pointer"
         style="cursor: pointer"
-    ></v-data-table>
+    >
+      <template v-slot:item.swticketposts="{ item }">
+        {{item.swticketposts.length}}
+      </template>
+      <template v-slot:item.dateline="{ item }">
+        {{$fromUnixTimestamp(item.dateline)}}
+      </template>
+    </v-data-table>
   </div>
 </template>
 
@@ -19,8 +26,10 @@ export default {
       list: [],
       headers: [
         {text: 'ID', value: 'ticketid'},
-        {text: this.$t('Department'), value: 'departmenttitle'},
+        {text: this.$t('Date'), value: 'dateline'},
+        {text: this.$t('Department'), value: 'swdepartment.title'},
         {text: this.$t('Subject'), value: 'subject'},
+        {text: this.$t('Posts'), value: 'swticketposts'},
       ]
     }
   },

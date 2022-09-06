@@ -19,7 +19,12 @@ export default {
             name: 'ticketView',
             path: '/ticket/view/*',
             component: resolve(__dirname, 'pages/ticket/view.vue'),
-          }
+          },
+          {
+            name: 'search',
+            path: '/search/*',
+            component: resolve(__dirname, 'pages/index.vue'),
+          },
       )
     }
   },
@@ -44,8 +49,9 @@ export default {
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
+    '~/plugins/common',
     '~/plugins/axios',
-    '~/plugins/websocket',
+    //'~/plugins/websocket',
     '~/plugins/redirection',
     '~/plugins/vuex-persistedstate',
   ],
