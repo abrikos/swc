@@ -33,10 +33,17 @@ module.exports = function (app) {
         const {user} = res.locals;
         const ticket = await db.swtickets.findByPk(req.params.id, {
             include: [
-                {model: db.swticketposts},
+                {model: db.swticketposts, include:[{model:db.swusers}]},
                 {model: db.swdepartments},
-                {model: db.swattachments}
+                {model: db.swattachments},
+                {model: db.swtickettypes},
+                {model: db.swticketstatus},
+                {model: db.swticketpriorities},
+                {model: db.swusers}
             ],
+            order: [
+                [db.swticketposts, 'dateline', 'ASC']
+            ]
         })
         res.send(ticket)
     })

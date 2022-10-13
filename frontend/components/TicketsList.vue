@@ -49,7 +49,6 @@ export default {
     }
   },
   created() {
-    console.log('Crrrrrrrrrrrrr')
     if (!this.isSearch) return
     this.goToSearch()
   },
