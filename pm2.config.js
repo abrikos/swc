@@ -18,7 +18,7 @@ try {
  */
 module.exports = {
     apps: [{
-        name: `${pkginfo.name}-server`,
+        name: `${pkginfo.name}-backend`,
         script: 'npm run backend',
         //node_args: '--preserve-symlinks -r esm',
         env: {
@@ -27,8 +27,25 @@ module.exports = {
             NODE_PATH: '.',
             //DEBUG: '*',
         },
-        output: 'logs/server.log',
-        error: 'logs/server-error.log',
+        output: 'logs/backend.log',
+        error: 'logs/backend-error.log',
+        //log_date_format,
+        //combine_logs,
+        //error_file: `${__dirname}/logs/server.err.log`,
+        //out_file:   `${__dirname}/logs/server.out.log`,
+        //pid_file:   `${__dirname}/logs/server.pid`,
+    },{
+        name: `${pkginfo.name}-frontend`,
+        script: 'npm run front',
+        //node_args: '--preserve-symlinks -r esm',
+        env: {
+            NODE_ENV: 'production',
+            SOURCE_MAP: 'source-map',
+            NODE_PATH: '.',
+            //DEBUG: '*',
+        },
+        output: 'logs/frontend.log',
+        error: 'logs/frontend-error.log',
         //log_date_format,
         //combine_logs,
         //error_file: `${__dirname}/logs/server.err.log`,
