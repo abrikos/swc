@@ -17,7 +17,7 @@ module.exports = function (app) {
         res.send(ticket)
     })
 
-    app.get('/api/ticket/list', passport.isLogged, async (req, res)=>{
+    app.get('/api/ticket/list', async (req, res)=>{
         const {user} = res.locals;
         const list = await db.swtickets.findAll({
             where:{userid: user.linktypeid},
@@ -29,7 +29,7 @@ module.exports = function (app) {
         res.send(list)
     })
 
-    app.get('/api/ticket/view/:id', passport.isLogged, async (req, res)=>{
+    app.get('/api/ticket/view/:id', async (req, res)=>{
         const {user} = res.locals;
         const ticket = await db.swtickets.findByPk(req.params.id, {
             include: [
