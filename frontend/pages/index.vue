@@ -25,7 +25,7 @@
                 outlined
             />
           </v-col>
-          <v-col>
+<!--          <v-col>
             <v-text-field
                 v-model="form.model"
                 @keydown.enter="goToSearch"
@@ -33,7 +33,7 @@
                 label="Устройство (в разработке)"
                 outlined
             />
-          </v-col>
+          </v-col>-->
         </v-row>
       </v-card-text>
       <v-card-actions>
