@@ -32,7 +32,7 @@ module.exports = function (app) {
         const rules1 = []
         const include = []
         if (model) {
-            include.push({model: db.swcustomfieldvalues, attributes: ['fieldvalue'], where:{customfieldid: 12, fieldvalue: model}})
+            include.push({model: db.swcustomfieldvalues, attributes: ['fieldvalue'], where:{customfieldid: 12, fieldvalue: {[Op.like]:`%${model}%`}}})
         }
         if (ticketid) rules1.push({ticketid})
         if (text) rules1.push({subject: {[Op.like]: `%${text}%`}})
