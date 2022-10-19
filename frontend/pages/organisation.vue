@@ -3,7 +3,6 @@
     <v-row>
       <v-col cols="3">
         <v-list dense>
-          <v-subheader>Организации</v-subheader>
           <v-text-field label="Поиск организации" v-model="search"/>
           <v-list-item-group
               v-model="selectedItem"
@@ -16,7 +15,7 @@
                 :key="i"
             >
               <v-list-item-content>
-                <v-list-item-title v-text="item.organizationname"></v-list-item-title>
+                <v-list-item-title class="text-wrap" v-text="item.organizationname"></v-list-item-title>
               </v-list-item-content>
               <v-list-item-action>
                 {{item.swusers.length}}
@@ -25,9 +24,8 @@
           </v-list-item-group>
         </v-list>
       </v-col>
-      <v-col v-if="users.length" cols="3">
+      <v-col cols="3">
         <v-list dense>
-          <v-subheader>Пользователи</v-subheader>
           <v-text-field label="Поиск пользователя" v-model="search"/>
           <v-list-item-group
               color="primary"
@@ -81,6 +79,7 @@ export default {
         {text: '#', value: 'ticketid'},
         {text: 'Дата', value: 'dateline', width: "110px"},
         {text: "Тема", value: 'subject'},
+        {text: 'Имя', value: 'fullname'},
         //{text: "Посты", value: 'swticketposts', width: 90},
       ]
     }
@@ -97,11 +96,10 @@ export default {
     },
     loadUsers(e) {
       this.users = e.swusers
-      /*this.$axios.$get('/organisation/users/' + e.userorganizationid)
+      this.$axios.$get('/ticket/organisation/' + e.userorganizationid)
           .then(data => {
-            this.users = data;
-          })*/
-
+            this.tickets = data;
+          })
     },
     loadTickets(e) {
       this.$axios.$get('/ticket/users/' + e.userid)

@@ -21,7 +21,7 @@ module.exports = function (app) {
         db.swuserorganizations.findAll({
             attributes: ['userorganizationid', 'organizationname'],
             order: [['organizationname', 'ASC']],
-            include:[{model: db.swusers, attributes: ['userid', 'fullname'],}]
+            include: [{model: db.swusers, attributes: ['userid', 'fullname'],}]
         })
             .then(list => {
                 res.send(list)
@@ -36,6 +36,16 @@ module.exports = function (app) {
             .then(list => {
                 res.send(list)
             })
+    })
+
+    app.get('/api/ticket/organisation/:id', async (req, res) => {
+        const users = await db.swusers.findAll({attributes: ['userid'], where: {userorganizationid: req.params.id}})
+        const list = await db.swtickets.findAll({
+            attributes: ['ticketid', 'departmenttitle', 'email', 'subject', 'fullname', 'dateline', 'ownerstaffname'],
+            where: {userid: {[Op.in]: users.map(d=>d.userid)}},
+        })
+        res.send(list)
+
     })
 
     app.post('/api/search', async (req, res) => {
