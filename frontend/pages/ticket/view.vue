@@ -6,7 +6,7 @@
         :show-layout="false"
         :float-layout="true"
         :enable-download="true"
-        :preview-modal="true"
+        :preview-modal="false"
         :paginate-elements-by-height="100400"
         :filename="`ticket-${$route.params.pathMatch}`"
         :pdf-quality="2"
