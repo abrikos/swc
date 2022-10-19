@@ -25,8 +25,9 @@
         </v-list>
       </v-col>
       <v-col cols="3">
+        {{searchUser}}
         <v-list dense>
-          <v-text-field label="Поиск пользователя" v-model="searchUser"/>
+          <v-text-field label="Поиск юзера в организации" v-model="searchUser" v-if="users.length"/>
           <v-list-item-group
               color="primary"
           >
