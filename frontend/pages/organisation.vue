@@ -46,7 +46,7 @@
       </v-col>
       <v-col>
         <v-data-table
-            v-if="userListItem"
+            v-if="typeof userListItem !== 'undefined'"
             @click:row="handleClick"
             :headers="headers"
             :items="tickets"
