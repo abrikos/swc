@@ -92,7 +92,8 @@ export default {
   },
   methods: {
     handleClick(item){
-      this.$router.push('/ticket/view/' + item.ticketid)
+      //this.$router.push('/ticket/view/' + item.ticketid)
+      window.open('/ticket/view/' + item.ticketid, '_blank');
     },
     loadUsers(e) {
       this.users = e.swusers

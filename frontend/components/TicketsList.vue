@@ -61,7 +61,9 @@ export default {
       this.isSearching = false
     },
     handleClick(item) {
-      this.$router.push('/ticket/view/' + item.ticketid)
+      //this.$router.push('/ticket/view/' + item.ticketid)
+      //let routeData = this.$router.resolve({name: 'routeName', query: {data: "someData"}});
+      window.open('/ticket/view/' + item.ticketid, '_blank');
     },
   },
   computed: {

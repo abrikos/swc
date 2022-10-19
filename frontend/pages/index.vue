@@ -3,25 +3,32 @@
     <v-form @submit="goToSearch" v-on:submit.prevent>
       <v-card-text>
         <v-row>
-            <v-col
-                cols="6"
-                md="4"
-            >
-              <v-text-field
-                  v-model="form.ticketid"
-                  @keydown.enter="goToSearch"
-                  label="Номер тикета"
-                  outlined
-              />
-            </v-col
-            >
-          <v-col cols="12"
-                 sm="6"
-                 md="8">
+          <v-col
+              md="4"
+          >
+            <v-text-field
+                v-model="form.ticketid"
+                @keydown.enter="goToSearch"
+                label="Номер тикета"
+                outlined
+            />
+          </v-col
+          >
+          <v-col
+                 md="4">
             <v-text-field
                 v-model="form.text"
                 @keydown.enter="goToSearch"
-                label="Заголовок тикета"
+                label="Текст"
+                outlined
+            />
+          </v-col>
+          <v-col
+                 md="4">
+            <v-text-field
+                v-model="form.textAttach"
+                @keydown.enter="goToSearch"
+                label="Название вложения"
                 outlined
             />
           </v-col>
@@ -44,14 +51,14 @@
                 outlined
             />
           </v-col>
-                    <v-col>
-                      <v-text-field
-                          v-model="form.model"
-                          @keydown.enter="goToSearch"
-                          label="Устройство"
-                          outlined
-                      />
-                    </v-col>
+          <v-col>
+            <v-text-field
+                v-model="form.model"
+                @keydown.enter="goToSearch"
+                label="Устройство"
+                outlined
+            />
+          </v-col>
         </v-row>
       </v-card-text>
       <v-card-actions>
@@ -93,7 +100,7 @@ export default {
   },
   created() {
     this.$axios.$get('/departments/list')
-        .then(res=>{
+        .then(res => {
           this.departments = [''].concat(res);
         });
     if (!this.$route.params.pathMatch) return;

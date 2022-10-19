@@ -42,7 +42,7 @@ module.exports = function (app) {
         const users = await db.swusers.findAll({attributes: ['userid'], where: {userorganizationid: req.params.id}})
         const list = await db.swtickets.findAll({
             attributes: ['ticketid', 'departmenttitle', 'email', 'subject', 'fullname', 'dateline', 'ownerstaffname'],
-            where: {userid: {[Op.in]: users.map(d=>d.userid)}},
+            where: {userid: {[Op.in]: users.map(d => d.userid)}},
         })
         res.send(list)
 
@@ -59,7 +59,7 @@ module.exports = function (app) {
             console.log(list.length)
         })*/
 
-    async function search2({model, ticketid, text, email, department}) {
+    async function search2({model, ticketid, text, email, department, textAttach}) {
         const rules1 = []
         const include = []
         if (model) {
@@ -70,7 +70,20 @@ module.exports = function (app) {
             })
         }
         if (ticketid) rules1.push({ticketid})
-        if (text) rules1.push({subject: {[Op.like]: `%${text}%`}})
+        if (textAttach) {
+            const attach = await db.swattachments.findAll({
+                attributes: ['ticketid'],
+                where: {filename: {[Op.like]: `%${textAttach}%`}}
+            })
+            rules1.push({ticketid: {[Op.in]: attach.map(d => d.ticketid)}})
+        }
+        if (text) {
+            const posts = await db.swticketposts.findAll({
+                attributes: ['ticketid'],
+                where: {contents: {[Op.like]: `%${text}%`}}
+            })
+            rules1.push({[Op.or]: [{subject: {[Op.like]: `%${text}%`}}, {ticketid: {[Op.in]: posts.map(d => d.ticketid)}}]})
+        }
         if (email) rules1.push({email: {[Op.like]: `%${email}%`}})
         if (department) rules1.push({departmenttitle: {[Op.like]: `%${department}%`}})
         return db.swtickets.findAll({
