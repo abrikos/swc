@@ -40,10 +40,11 @@ export default {
       headers: [
         {text: '#', value: 'ticketid'},
         {text: 'Дата', value: 'dateline', width: "110px"},
-        {text: 'email', value: 'email'},
-        {text: 'Имя', value: 'fullname'},
-        {text: "Департ.", value: 'departmenttitle'},
         {text: "Тема", value: 'subject'},
+        {text: "Департ.", value: 'departmenttitle'},
+        {text: 'Ответственный', value: 'ownerstaffname'},
+        {text: 'Имя', value: 'fullname'},
+        {text: 'email', value: 'email'},
         //{text: "Посты", value: 'swticketposts', width: 90},
       ]
     }

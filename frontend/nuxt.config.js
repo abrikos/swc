@@ -30,6 +30,11 @@ export default {
             path: '/search/*',
             component: resolve(__dirname, 'pages/index.vue'),
           },
+          {
+            name: 'search',
+            path: '/search',
+            component: resolve(__dirname, 'pages/index.vue'),
+          },
       )
     }
   },

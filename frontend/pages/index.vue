@@ -2,12 +2,30 @@
   <v-card>
     <v-form @submit="goToSearch" v-on:submit.prevent>
       <v-card-text>
-        <v-text-field
-            v-model="form.text"
-            @keydown.enter="goToSearch"
-            label="Заголовок тикета"
-            outlined
-        />
+        <v-row>
+            <v-col
+                cols="6"
+                md="4"
+            >
+              <v-text-field
+                  v-model="form.ticketid"
+                  @keydown.enter="goToSearch"
+                  label="Номер тикета"
+                  outlined
+              />
+            </v-col
+            >
+          <v-col cols="12"
+                 sm="6"
+                 md="8">
+            <v-text-field
+                v-model="form.text"
+                @keydown.enter="goToSearch"
+                label="Заголовок тикета"
+                outlined
+            />
+          </v-col>
+        </v-row>
         <v-row>
           <v-col>
             <v-text-field
@@ -18,22 +36,23 @@
             />
           </v-col>
           <v-col>
-            <v-text-field
+            <v-select
                 v-model="form.department"
+                :items="departments"
                 @keydown.enter="goToSearch"
                 label="Департамент"
                 outlined
             />
           </v-col>
-<!--          <v-col>
-            <v-text-field
-                v-model="form.model"
-                @keydown.enter="goToSearch"
-                disabled
-                label="Устройство (в разработке)"
-                outlined
-            />
-          </v-col>-->
+          <!--          <v-col>
+                      <v-text-field
+                          v-model="form.model"
+                          @keydown.enter="goToSearch"
+                          disabled
+                          label="Устройство (в разработке)"
+                          outlined
+                      />
+                    </v-col>-->
         </v-row>
       </v-card-text>
       <v-card-actions>
@@ -57,11 +76,13 @@ export default {
   data() {
     return {
       form: {},
-      list: []
+      list: [],
+      departments: []
     }
   },
+
   methods: {
-    clear(){
+    clear() {
       this.form = {}
       this.$router.push('/')
     },
@@ -72,6 +93,10 @@ export default {
     }
   },
   created() {
+    this.$axios.$get('/departments/list')
+        .then(res=>{
+          this.departments = res;
+        });
     if (!this.$route.params.pathMatch) return;
     const path = this.$route.params.pathMatch.split('/');
     for (let i = 0; i < path.length; i += 2) {
