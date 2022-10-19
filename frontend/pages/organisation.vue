@@ -3,7 +3,7 @@
     <v-row>
       <v-col cols="3">
         <v-list dense>
-          <v-text-field label="Поиск организации" v-model="search"/>
+          <v-text-field label="Фильтр организаций" v-model="search"/>
           <v-list-item-group
               v-model="selectedItem"
               color="primary"
@@ -26,7 +26,7 @@
       </v-col>
       <v-col cols="3">
         <v-list dense>
-          <v-text-field label="Поиск юзера в организации" v-model="searchUser" v-if="users.length"/>
+          <v-text-field label="Фильтр юзеров" v-model="searchUser" v-if="users.length"/>
           <v-list-item-group
               v-model="userListItem"
               color="primary"
