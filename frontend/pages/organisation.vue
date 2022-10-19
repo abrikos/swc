@@ -25,10 +25,10 @@
         </v-list>
       </v-col>
       <v-col cols="3">
-        {{searchUser}}
         <v-list dense>
           <v-text-field label="Поиск юзера в организации" v-model="searchUser" v-if="users.length"/>
           <v-list-item-group
+              v-model="userListItem"
               color="primary"
           >
             <v-list-item
@@ -46,6 +46,7 @@
       </v-col>
       <v-col>
         <v-data-table
+            v-if="userListItem"
             @click:row="handleClick"
             :headers="headers"
             :items="tickets"
@@ -76,6 +77,7 @@ export default {
       orgs: [],
       tickets: [],
       users: [],
+      userListItem: null,
       headers: [
         {text: '#', value: 'ticketid'},
         {text: 'Дата', value: 'dateline', width: "110px"},
