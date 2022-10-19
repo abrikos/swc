@@ -4,6 +4,15 @@
         fixed
         app
     >
+      <v-tabs v-model="tab">
+        <v-tab to="/">
+          Поиск
+        </v-tab>
+        <v-tab to="/organisation">
+          Организации
+        </v-tab>
+        <v-tabs-slider color="pink"></v-tabs-slider>
+      </v-tabs>
       <v-spacer></v-spacer>
       <v-btn icon @click="switchTheme">
         <v-icon>mdi-theme-light-dark</v-icon>

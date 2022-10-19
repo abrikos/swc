@@ -11,9 +11,30 @@ module.exports = function (app) {
     })
 
     app.get('/api/departments/list', (req, res) => {
-        db.swdepartments.findAll({where:{departmenttype:'public'}})
+        db.swdepartments.findAll({where: {departmenttype: 'public'}})
             .then(list => {
-                res.send(list.map(d=>d.title))
+                res.send(list.map(d => d.title))
+            })
+    })
+
+    app.get('/api/organisation/list', (req, res) => {
+        db.swuserorganizations.findAll({
+            attributes: ['userorganizationid', 'organizationname'],
+            order: [['organizationname', 'ASC']],
+            include:[{model: db.swusers, attributes: ['userid', 'fullname'],}]
+        })
+            .then(list => {
+                res.send(list)
+            })
+    })
+
+    app.get('/api/ticket/users/:id', (req, res) => {
+        db.swtickets.findAll({
+            attributes: ['ticketid', 'departmenttitle', 'email', 'subject', 'fullname', 'dateline', 'ownerstaffname'],
+            where: {userid: req.params.id},
+        })
+            .then(list => {
+                res.send(list)
             })
     })
 
@@ -32,7 +53,11 @@ module.exports = function (app) {
         const rules1 = []
         const include = []
         if (model) {
-            include.push({model: db.swcustomfieldvalues, attributes: ['fieldvalue'], where:{customfieldid: 12, fieldvalue: {[Op.like]:`%${model}%`}}})
+            include.push({
+                model: db.swcustomfieldvalues,
+                attributes: ['fieldvalue'],
+                where: {customfieldid: 12, fieldvalue: {[Op.like]: `%${model}%`}}
+            })
         }
         if (ticketid) rules1.push({ticketid})
         if (text) rules1.push({subject: {[Op.like]: `%${text}%`}})
@@ -48,15 +73,20 @@ module.exports = function (app) {
         })
     }
 
-    app.get('/api/ticket/view/:id', async (req, res)=>{
+    app.get('/api/ticket/view/:id', async (req, res) => {
         const {user} = res.locals;
         const ticket = await db.swtickets.findByPk(req.params.id, {
             include: [
-                {model: db.swticketposts, include:[{model:db.swusers}]},
+                {model: db.swticketposts, include: [{model: db.swusers}]},
                 {model: db.swdepartments},
                 {model: db.swattachments},
                 {model: db.swtickettypes},
-                {model: db.swcustomfieldvalues, attributes: ['fieldvalue'], where:{customfieldid: 12}, required:false},
+                {
+                    model: db.swcustomfieldvalues,
+                    attributes: ['fieldvalue'],
+                    where: {customfieldid: 12},
+                    required: false
+                },
                 {model: db.swticketstatus},
                 {model: db.swticketpriorities},
                 {model: db.swusers}

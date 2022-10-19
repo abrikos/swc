@@ -5,6 +5,7 @@ module.exports = (db) => {
   db.tokens.belongsTo(db.swuseremails, {foreignKey: 'userId'})
 
   db.swtickets.hasMany(db.swticketposts, {foreignKey: 'ticketid'})
+  db.swuserorganizations.hasMany(db.swusers, {foreignKey: 'userorganizationid'})
   db.swtickets.hasMany(db.swattachments, {foreignKey: 'ticketid'})
   db.swtickets.belongsTo(db.swdepartments, {foreignKey: 'departmentid'})
   db.swtickets.belongsTo(db.swusers, {foreignKey: 'userid'})
