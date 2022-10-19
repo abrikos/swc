@@ -30,15 +30,17 @@ module.exports = function (app) {
 
     async function search2({model, ticketid, text, email, department}) {
         const rules1 = []
-        const rulesModel = {customfieldid: 12}
-        if (model) rulesModel.fieldvalue = model
+        const include = []
+        if (model) {
+            include.push({model: db.swcustomfieldvalues, attributes: ['fieldvalue'], where:{customfieldid: 12, fieldvalue: model}})
+        }
         if (ticketid) rules1.push({ticketid})
         if (text) rules1.push({subject: {[Op.like]: `%${text}%`}})
         if (email) rules1.push({email: {[Op.like]: `%${email}%`}})
         if (department) rules1.push({departmenttitle: {[Op.like]: `%${department}%`}})
         return db.swtickets.findAll({
             attributes: ['ticketid', 'departmenttitle', 'email', 'subject', 'fullname', 'dateline', 'ownerstaffname'],
-            include: [{model: db.swcustomfieldvalues, attributes: ['fieldvalue'], where:rulesModel, required:false}],
+            include,
             where: {
                 [Op.and]: rules1
             },
