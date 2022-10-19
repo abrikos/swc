@@ -5,6 +5,7 @@
     </v-card-title>
     <v-card-subtitle>
       <strong>Department:</strong> {{ ticket.swdepartment.title }} <br/>
+      <strong>Device:</strong> {{ ticket.swcustomfieldvalue.fieldvalue }} <br/>
       <strong>Owner:</strong> {{ ticket.ownerstaffname }} <br/>
       <strong>Type:</strong> {{ ticket.swtickettype.title }} <br/>
       <strong>Status:</strong> {{ ticket.swticketstatus.title }} <br/>
@@ -14,28 +15,31 @@
     <hr/>
     <v-card-text>
       <h4>Сообщения</h4>
-      <div v-for="post of ticket.swticketposts" :key="post.ticketpostid" class="post">
-        {{ $fromUnixTimestamp(post.dateline) }}
-        <strong>{{ post.fullname }}</strong>
-        <a :href="`mailto:${post.email}`">{{ post.email }}</a>
-        <br/>
-        <div v-if="post.subject">
-          Subject:
-          <strong>
-            {{ post.subject }}
-          </strong>
-        </div>
-        <span v-html="post.contents.replaceAll('\n', '<br/>')"></span>
-      </div>
-
-      <div>
-        <h4>Файлы</h4>
-        <img v-for="file of ticket.swattachments" :key="file.attachmentid" v-if="file.filetype.match('image')"
-             :src="`/files/${file.storefilename}.png`" width="300"/>
-        <div v-for="file of ticket.swattachments" :key="file.attachmentid" v-if="!file.filetype.match('image')"
-             class="link" @click="saveFile(`/files/${file.storefilename}`, file.filename)">{{ file.filename }}
-        </div>
-      </div>
+      <v-row v-for="post of ticket.swticketposts" :key="post.ticketpostid" class="post">
+        <v-col>
+          <strong>{{ post.ticketpostid }}</strong>
+          {{ $fromUnixTimestamp(post.dateline) }}
+          <strong>{{ post.fullname }}</strong>
+          <a :href="`mailto:${post.email}`">{{ post.email }}</a>
+          <br/>
+          <div v-if="post.subject">
+            Subject:
+            <strong>
+              {{ post.subject }}
+            </strong>
+          </div>
+          <span v-html="post.contents.replaceAll('\n', '<br/>')"></span>
+        </v-col>
+        <v-col>
+          <img v-for="file of ticket.swattachments.filter(a=>a.linktypeid===post.ticketpostid)" :key="file.attachmentid"
+               v-if="file.filetype.match('image')"
+               :src="`/files/${file.storefilename}.png`" width="300"/>
+          <div v-for="file of ticket.swattachments.filter(a=>a.linktypeid===post.ticketpostid)" :key="file.attachmentid"
+               v-if="!file.filetype.match('image')"
+               class="link" @click="saveFile(`/files/${file.storefilename}`, file.filename)">{{ file.filename }}
+          </div>
+        </v-col>
+      </v-row>
 
 
     </v-card-text>

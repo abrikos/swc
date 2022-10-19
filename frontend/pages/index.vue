@@ -44,15 +44,14 @@
                 outlined
             />
           </v-col>
-          <!--          <v-col>
+                    <v-col>
                       <v-text-field
                           v-model="form.model"
                           @keydown.enter="goToSearch"
-                          disabled
-                          label="Устройство (в разработке)"
+                          label="Устройство"
                           outlined
                       />
-                    </v-col>-->
+                    </v-col>
         </v-row>
       </v-card-text>
       <v-card-actions>
@@ -95,7 +94,7 @@ export default {
   created() {
     this.$axios.$get('/departments/list')
         .then(res=>{
-          this.departments = res;
+          this.departments = [''].concat(res);
         });
     if (!this.$route.params.pathMatch) return;
     const path = this.$route.params.pathMatch.split('/');

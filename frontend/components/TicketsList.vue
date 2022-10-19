@@ -40,6 +40,7 @@ export default {
       headers: [
         {text: '#', value: 'ticketid'},
         {text: 'Дата', value: 'dateline', width: "110px"},
+        {text: 'Устройство', value: 'swcustomfieldvalue.fieldvalue'},
         {text: "Тема", value: 'subject'},
         {text: "Департ.", value: 'departmenttitle'},
         {text: 'Ответственный', value: 'ownerstaffname'},

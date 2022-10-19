@@ -11,6 +11,7 @@ module.exports = (db) => {
   db.swtickets.belongsTo(db.swtickettypes, {foreignKey: 'tickettype'})
   db.swtickets.belongsTo(db.swticketstatus, {foreignKey: 'ticketstatusid'})
   db.swtickets.belongsTo(db.swticketpriorities, {foreignKey: 'priorityid'})
+  db.swtickets.belongsTo(db.swcustomfieldvalues, {targetKey: 'typeid', foreignKey: 'ticketid'})
   db.swticketposts.belongsTo(db.swusers, {foreignKey: 'userid'})
   /*db.swuseremails.findOne({
     where: {email: 'techsup@hikom.ru'},

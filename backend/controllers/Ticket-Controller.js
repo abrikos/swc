@@ -29,22 +29,5 @@ module.exports = function (app) {
         res.send(list)
     })
 
-    app.get('/api/ticket/view/:id', async (req, res)=>{
-        const {user} = res.locals;
-        const ticket = await db.swtickets.findByPk(req.params.id, {
-            include: [
-                {model: db.swticketposts, include:[{model:db.swusers}]},
-                {model: db.swdepartments},
-                {model: db.swattachments},
-                {model: db.swtickettypes},
-                {model: db.swticketstatus},
-                {model: db.swticketpriorities},
-                {model: db.swusers}
-            ],
-            order: [
-                [db.swticketposts, 'dateline', 'ASC']
-            ]
-        })
-        res.send(ticket)
-    })
+
 }
