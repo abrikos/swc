@@ -4,13 +4,13 @@
       {{ ticket.ticketid }}: {{ ticket.subject }}
     </v-card-title>
     <v-card-subtitle>
-      <strong>Department:</strong> {{ ticket.swdepartment.title }} <br/>
-      <strong>Device:</strong> {{ ticket.swcustomfieldvalue.fieldvalue }} <br/>
-      <strong>Owner:</strong> {{ ticket.ownerstaffname }} <br/>
-      <strong>Type:</strong> {{ ticket.swtickettype.title }} <br/>
-      <strong>Status:</strong> {{ ticket.swticketstatus.title }} <br/>
-      <strong>Priority:</strong> {{ ticket.swticketpriority.title }} <br/>
-      <strong>Created:</strong> {{ $fromUnixTimestamp(ticket.dateline) }} <br/>
+      <strong>Департамент:</strong> {{ ticket.swdepartment.title }} <br/>
+      <strong>Устройство:</strong> {{ ticket.swcustomfieldvalue.fieldvalue }} <br/>
+      <strong>Ответственный:</strong> {{ ticket.ownerstaffname }} <br/>
+      <strong>Тип:</strong> {{ ticket.swtickettype.title }} <br/>
+      <strong>Статус:</strong> {{ ticket.swticketstatus.title }} <br/>
+      <strong>Приоритет:</strong> {{ ticket.swticketpriority.title }} <br/>
+      <strong>Дата:</strong> {{ $fromUnixTimestamp(ticket.dateline) }} <br/>
     </v-card-subtitle>
     <hr/>
     <v-card-text>
