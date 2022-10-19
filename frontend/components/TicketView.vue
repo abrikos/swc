@@ -5,7 +5,7 @@
     </v-card-title>
     <v-card-subtitle>
       <strong>Департамент:</strong> {{ ticket.swdepartment.title }} <br/>
-      <strong>Устройство:</strong> {{ ticket.swcustomfieldvalue.fieldvalue }} <br/>
+      <strong>Устройство:</strong> {{ ticket.swcustomfieldvalue?.fieldvalue }} <br/>
       <strong>Ответственный:</strong> {{ ticket.ownerstaffname }} <br/>
       <strong>Тип:</strong> {{ ticket.swtickettype.title }} <br/>
       <strong>Статус:</strong> {{ ticket.swticketstatus.title }} <br/>

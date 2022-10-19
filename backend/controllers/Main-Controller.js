@@ -38,7 +38,7 @@ module.exports = function (app) {
         if (department) rules1.push({departmenttitle: {[Op.like]: `%${department}%`}})
         return db.swtickets.findAll({
             attributes: ['ticketid', 'departmenttitle', 'email', 'subject', 'fullname', 'dateline', 'ownerstaffname'],
-            include: [{model: db.swcustomfieldvalues, attributes: ['fieldvalue'], where:rulesModel}],
+            include: [{model: db.swcustomfieldvalues, attributes: ['fieldvalue'], where:rulesModel, required:false}],
             where: {
                 [Op.and]: rules1
             },
@@ -54,7 +54,7 @@ module.exports = function (app) {
                 {model: db.swdepartments},
                 {model: db.swattachments},
                 {model: db.swtickettypes},
-                {model: db.swcustomfieldvalues, attributes: ['fieldvalue'], where:{customfieldid: 12}},
+                {model: db.swcustomfieldvalues, attributes: ['fieldvalue'], where:{customfieldid: 12}, required:false},
                 {model: db.swticketstatus},
                 {model: db.swticketpriorities},
                 {model: db.swusers}
