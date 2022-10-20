@@ -21,7 +21,12 @@ module.exports = function (app) {
         db.swuserorganizations.findAll({
             attributes: ['userorganizationid', 'organizationname'],
             order: [['organizationname', 'ASC']],
-            include: [{model: db.swusers, attributes: ['userid', 'fullname'],}]
+            include: [
+                {
+                    model: db.swusers, attributes: ['userid', 'fullname', 'phone'],
+                    include: [{model: db.swuseremails, attributes: ['email'],}]
+                }
+                ]
         })
             .then(list => {
                 res.send(list)
