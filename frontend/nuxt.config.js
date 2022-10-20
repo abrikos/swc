@@ -21,6 +21,11 @@ export default {
             component: resolve(__dirname, 'pages/ticket/view.vue'),
           },
           {
+            name: 'articleView',
+            path: '/article/view/*',
+            component: resolve(__dirname, 'pages/article-view.vue'),
+          },
+          {
             name: 'ticketViewPdf',
             path: '/ticket/viewpdf/*',
             component: resolve(__dirname, 'pages/ticket/viewpdf.vue'),

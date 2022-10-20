@@ -11,6 +11,9 @@
         <v-tab to="/organisation">
           Организации
         </v-tab>
+        <v-tab to="/article">
+          Статьи
+        </v-tab>
         <v-tabs-slider color="pink"></v-tabs-slider>
       </v-tabs>
       <v-spacer></v-spacer>

@@ -38,6 +38,27 @@ module.exports = function (app) {
             })
     })
 
+    app.get('/api/article/list', (req, res) => {
+        db.swkbarticles.findAll({
+            attributes: ['kbarticleid', 'subject', 'dateline', 'views'],
+            order: [['dateline', 'DESC']],
+        })
+            .then(list => {
+                res.send(list)
+            })
+    })
+
+    app.get('/api/article/view/:id', (req, res) => {
+        db.swkbarticles.findByPk(req.params.id, {
+            attributes: ['kbarticleid', 'subject', 'dateline', 'views'],
+            include:[{model:db.swkbarticledata}],
+            order: [['dateline', 'DESC']],
+        })
+            .then(list => {
+                res.send(list)
+            })
+    })
+
     app.get('/api/ticket/organisation/:id', async (req, res) => {
         const users = await db.swusers.findAll({attributes: ['userid'], where: {userorganizationid: req.params.id}})
         const list = await db.swtickets.findAll({
