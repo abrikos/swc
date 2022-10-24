@@ -1,4 +1,5 @@
 <template>
+  <v-container>
   <v-card>
     <v-card-title>{{ $t('Login') }}</v-card-title>
     <v-card-text>
@@ -23,6 +24,7 @@
       <v-btn @click="resetPassword" class="my-4">{{ $t('Reset password') }}</v-btn>
     </v-card-actions>
   </v-card>
+  </v-container>
 </template>
 
 <script>

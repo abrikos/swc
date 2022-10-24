@@ -1,16 +1,14 @@
 const mongoose = require('mongoose');
-const moment = require("moment/moment");
 const Schema = mongoose.Schema;
-const name = 'chassis';
+const name = 'assembly';
 
 
 const schema = new Schema({
-        platforms: [{type: String}],
-        vendor: String,
-        partNumber: String,
-        descShort: String,
-        description: String,
-        price: Number
+        name: {type: String},
+        user: {type: mongoose.Schema.Types.ObjectId, ref: 'user'},
+        components: [{type: mongoose.Schema.Types.ObjectId, ref: 'component'}],
+        chassis: {type: mongoose.Schema.Types.ObjectId, ref: 'chassis'},
+        draft: {type: Boolean, default: true}
     },
     {
         timestamps: {createdAt: 'createdAt'},
@@ -20,10 +18,6 @@ const schema = new Schema({
         toJSON: {virtuals: true}
     });
 
-schema.virtual('date')
-    .get(function () {
-        return moment(this.createdAt).format('YYYY-MM-DD HH:mm');
-    })
 
 module.exports = mongoose.model(name, schema)
 

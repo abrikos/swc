@@ -1,24 +1,27 @@
 <template>
-  <v-form
-      ref="form"
-      v-model="valid"
-      lazy-validation
-  >
+  <v-container>
+    <v-form
+        ref="form"
+        v-model="valid"
+        lazy-validation
+    >
 
-    <v-card>
-      <v-card-title>{{ $t('Sign up') }}</v-card-title>
-      <v-card-text>
-        <v-text-field v-model="form.email" :label="$t('Email')" outlined :rules="emailRules"/>
-        <v-text-field v-model="form.password" type="password" :label="$t('Password')" outlined :rules="passwordRules"/>
-        <v-text-field v-model="form.passwordConfirm" type="password" :label="$t('Confirm password')" outlined
-                      :rules="passwordRules"/>
-      </v-card-text>
-      <v-card-actions>
-        <v-btn @click="registration">{{ $t('Send') }}</v-btn>
-        <!--        <v-btn @click="rnd">Random11</v-btn>-->
-      </v-card-actions>
-    </v-card>
-  </v-form>
+      <v-card>
+        <v-card-title>{{ $t('Sign up') }}</v-card-title>
+        <v-card-text>
+          <v-text-field v-model="form.email" :label="$t('Email')" outlined :rules="emailRules"/>
+          <v-text-field v-model="form.password" type="password" :label="$t('Password')" outlined
+                        :rules="passwordRules"/>
+          <v-text-field v-model="form.passwordConfirm" type="password" :label="$t('Confirm password')" outlined
+                        :rules="passwordRules"/>
+        </v-card-text>
+        <v-card-actions>
+          <v-btn @click="registration">{{ $t('Send') }}</v-btn>
+          <!--        <v-btn @click="rnd">Random11</v-btn>-->
+        </v-card-actions>
+      </v-card>
+    </v-form>
+  </v-container>
 </template>
 
 <script>

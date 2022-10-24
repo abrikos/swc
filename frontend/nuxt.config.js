@@ -15,16 +15,16 @@ export default {
   router: {
     extendRoutes(routes, resolve) {
       routes.push(
-          /*{
-            name: 'ticketView',
-            path: '/ticket/view/!*',
-            component: resolve(__dirname, 'pages/ticket/view.vue'),
-          },*/
+          {
+            name: 'configuratorAssembly',
+            path: '/configurator/assembly/*',
+            component: resolve(__dirname, 'pages/configurator/assembly.vue'),
+          },
       )
     }
   },
   head: {
-    title: 'Kayako',
+    title: 'Веб-конфигуратор',
     htmlAttrs: {
       lang: 'en'
     },

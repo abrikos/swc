@@ -59,4 +59,12 @@ async function isLogged(req, res, next) {
     return next()
 }
 
-module.exports = {...methods, isLogged}
+async function isAdmin(req, res, next) {
+    const found = await methods.getUser(req, res);
+    if (!found) return res.status(401).send({status: 401, message: 'Must be logged user'})
+    if (!found.isAdmin) return res.status(403).send({status: 401, message: 'Access denied'})
+    res.locals.user = found;
+    return next()
+}
+
+module.exports = {...methods, isLogged, isAdmin}

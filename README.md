@@ -1,20 +1,28 @@
-# kayako
+# SWC
+## Env setup
+add environment in .env
+```
+API_PORT=<PORT>
+MONGODB_URI=mongodb://localhost:27017/<DB-NAME>
 
+MAIL_USER=<sender email>
+MAIL_PASSWORD=<sender password>
+
+ADMIN_EMAIL=<admin email>>
+ADMIN_PASSW=<admin passw>
+```
 ## Build Setup
 
 ```bash
 # install dependencies
 $ yarn install
 
-# serve with hot reload at localhost:3000
-$ yarn dev
+# serve with hot reload at localhost:3000 and localhost:process.env.API_PORT 
+$ yarn front
+$ yarn backend:dev
 
 # build for production and launch server
-$ yarn build
-$ yarn start
-
-# generate static project
-$ yarn generate
+$ pm2 start pm2.config.js
 ```
 
 For detailed explanation on how things work, check out the [documentation](https://nuxtjs.org).

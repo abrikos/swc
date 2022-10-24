@@ -34,6 +34,15 @@ module.exports = function (app) {
     res.send(passport.adaptUser(user))
   })
 
+
+  app.get('/api/user/assemblies', passport.isLogged, async (req, res) => {
+    const {user} = res.locals;
+
+    const items = await db.assembly.find({user}).populate('component')
+    console.log(items)
+    res.send(items)
+  })
+
   app.get('/api/user/list', async (req, res) => {
     const list = await db.user.find()
     res.send(list)

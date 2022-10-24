@@ -11,6 +11,7 @@ const validateEmail = function(email) {
 
 const schema = new Schema({
     fullName: {type: String},
+    isAdmin: {type: Boolean},
     email: {type: String,
       trim: true,
       lowercase: true,
@@ -50,6 +51,12 @@ schema.virtual('date')
 
 schema.virtual('tokens', {
   ref: 'token',
+  localField: '_id',
+  foreignField: 'user'
+})
+
+schema.virtual('assemblies', {
+  ref: 'assembly',
   localField: '_id',
   foreignField: 'user'
 })
