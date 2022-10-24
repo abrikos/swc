@@ -1,5 +1,4 @@
 export const state = () => ({
-  loginRedirect: '/user/cabinet',
   user: null,
   accessToken: null,
   refreshToken: null

@@ -4,27 +4,35 @@
         fixed
         app
     >
-      <v-tabs v-model="tab">
-        <v-tab to="/">
-          Поиск
+      <v-tabs>
+        <v-tab to="/" >
+          Начало
         </v-tab>
-        <v-tab to="/organisation">
-          Организации
+        <v-tab to="/configuration" >
+          Конфигуратор
         </v-tab>
-        <v-tab to="/article">
-          Статьи
+        <v-spacer></v-spacer>
+        <v-tab to="/user/cabinet" v-if="user">
+          Кабинет
         </v-tab>
-        <v-tabs-slider color="pink"></v-tabs-slider>
+        <v-tab to="/user/login" v-if="!user">
+          Вход
+        </v-tab>
+        <v-tab @click="logout" v-if="user">
+          Выход
+        </v-tab>
+        <v-tab to="/user/signup" v-if="!user">
+          Регистрация
+        </v-tab>
+<!--        <v-tabs-slider color="pink"></v-tabs-slider>-->
       </v-tabs>
-      <v-spacer></v-spacer>
+
       <v-btn icon @click="switchTheme">
         <v-icon>mdi-theme-light-dark</v-icon>
       </v-btn>
     </v-app-bar>
     <v-main>
-      <v-container>
       <nuxt/>
-      </v-container>
     </v-main>
     <SnackBar/>
   </v-app>
@@ -39,6 +47,10 @@ export default {
     }
   },
   methods:{
+    logout(){
+      this.$store.dispatch('auth/logout')
+          .then(()=>this.$router.push('/user/login'))
+    },
     switchTheme(){
       this.$vuetify.theme.isDark = !this.$vuetify.theme.isDark;
       localStorage.setItem('themeDark', this.$vuetify.theme.isDark)
@@ -48,7 +60,8 @@ export default {
     this.$vuetify.theme.isDark = JSON.parse(localStorage.getItem('themeDark'))
     //this.$axios.$get('/build-date')        .then(res => this.buildDate = res.ctime)
     //this.$store.dispatch('auth/getUser')
-  }
+  },
+
 }
 </script>
 

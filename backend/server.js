@@ -1,13 +1,12 @@
 require('dotenv').config();
-const db = require('./database/models')
 const controllers = require('./controllers')
-const WebSocket = require( "ws");
 const express = require( "express");
 const bodyParser = require("body-parser");
 const http = require( 'http');
 const cookieParser = require('cookie-parser');
 const fileUpload = require('express-fileupload');
 const clc = require("cli-color");
+const db = require("./db")
 
 const app = express();
 app.use(cookieParser());
@@ -21,7 +20,7 @@ app.use(fileUpload({
 }));
 const portWeb = process.env.API_PORT || 4000;
 
-app.set("view engine", "ejs");
+//app.set("view engine", "ejs");
 
 function logger(e, res){
   try {
@@ -49,19 +48,6 @@ app.use(function (req, res) {
   res.status(404).send('404 Not found');
 });
 const server = http.createServer(app);
-
-const webSocketServer = new WebSocket.Server({server});
-
-webSocketServer.on('connection', ws => {
-  console.log('connect')
-  //setInterval(()=>ws.send(''), 40000)
-})
-
-function wsSend(event, payload){
-  //console.log(event, payload)
-  webSocketServer.clients.forEach(client => client.send(JSON.stringify({event, payload})));
-}
-
 
 server.listen(portWeb, () => {
   console.log(`server started at http://localhost:${portWeb}`);

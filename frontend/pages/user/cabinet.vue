@@ -11,14 +11,9 @@
       <v-card-text>
         <v-text-field
             outlined
-            v-model="user.username"
-            :label="$t('Username')"
-        />
-        <v-text-field
-            outlined
-            v-model="user.email"
+            :value="user.email"
             :label="$t('Email')"
-            :rules="[value => !!value || this.$t('Required')]"
+            disabled
         />
         <v-text-field v-model="user.password" type="password" :label="$t('Password')" outlined/>
         <v-text-field v-model="user.passwordConfirm" type="password" :label="$t('Confirm password')" outlined

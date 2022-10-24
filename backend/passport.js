@@ -1,55 +1,47 @@
 const md5 = require('md5')
 const moment = require('moment')
-const cookieName = 'jwtSecure'
+const cookieName = 'authToken'
 
 const methods = {
-
+    cookieName,
     async getUser(req, res) {
         if (!req.cookies[cookieName]) return;
         const name = req.cookies[cookieName];
-
-        const token = await res.locals.db.tokens.findOne({
-            include: [{model: res.locals.db.swuseremails, include: [{model: res.locals.db.swusers}]}],
-            where: {name}
-        })
-        //console.log('token', token.swuseremail.swuser)
+        const token = await res.locals.db.token.findOne({name})
+          .populate('user')
         if (!token) return
-        return token.swuseremail;
+        return token.user;
     },
 
     adaptUser(user){
-        return {email:user.email, username: user.swuser.fullname}
+        return user
     },
 
     async authenticate(req, res) {
         try {
             const {email, password} = req.body
-            const found = await res.locals.db.swuseremails.findOne({
-                where: {email},
-                include: [{model: res.locals.db.swusers}],
-                //logging: console.log
-            })
-            if (!found) return res.status(500).send({message: 'No user found'})
-            if (!found.swuser.checkPassword(password)) {
+            const user = await res.locals.db.user.findOne({email})
+            if (!user) return res.status(500).send({message: 'No user found'})
+            if (!user.checkPasswd(password)) {
                 return res.status(500).send({message: 'Wrong password'});
             }
-            const token = await res.locals.db.tokens.create({userId: found.useremailid, name: md5(moment().unix())});
+            const token = await res.locals.db.token.create({user, name: md5(moment().unix())});
             res.cookie(cookieName, token.name, {
                 secure: true,
                 //secure: process.env.NODE_ENV !== "development",
                 httpOnly: true,
                 expires: new Date(moment().add(30, 'days').toISOString()),
             });
-            res.sendStatus(200)
+            res.send(token.name)
         } catch (e) {
             res.locals.errorLogger(e, res)
         }
     },
 
     async logout(req, res) {
-        const token = await res.locals.db.tokens.findOne({where: {name: req.cookies[cookieName]}});
+        const token = await res.locals.db.token.findOne({name: req.cookies[cookieName]});
         if (!token) return;
-        token.destroy();
+        token.delete();
         res.clearCookie(cookieName);
         res.end();
     },

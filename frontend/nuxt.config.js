@@ -15,31 +15,11 @@ export default {
   router: {
     extendRoutes(routes, resolve) {
       routes.push(
-          {
+          /*{
             name: 'ticketView',
-            path: '/ticket/view/*',
+            path: '/ticket/view/!*',
             component: resolve(__dirname, 'pages/ticket/view.vue'),
-          },
-          {
-            name: 'articleView',
-            path: '/article/view/*',
-            component: resolve(__dirname, 'pages/article-view.vue'),
-          },
-          {
-            name: 'ticketViewPdf',
-            path: '/ticket/viewpdf/*',
-            component: resolve(__dirname, 'pages/ticket/viewpdf.vue'),
-          },
-          {
-            name: 'search',
-            path: '/search/*',
-            component: resolve(__dirname, 'pages/index.vue'),
-          },
-          {
-            name: 'search',
-            path: '/search',
-            component: resolve(__dirname, 'pages/index.vue'),
-          },
+          },*/
       )
     }
   },
@@ -60,15 +40,17 @@ export default {
   },
 
   // Global CSS: https://go.nuxtjs.dev/config-css
-  css: [],
+  css: [
+    'static/icons.css'
+  ],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
     '~/plugins/common',
     '~/plugins/axios',
     //'~/plugins/websocket',
-    '~/plugins/redirection',
-    '~/plugins/vuex-persistedstate',
+    //'~/plugins/redirection',
+    //'~/plugins/vuex-persistedstate',
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
