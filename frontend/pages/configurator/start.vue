@@ -1,5 +1,6 @@
 <template>
   <div>
+    <h1>Конфигуратор <small>Выберите шасси</small></h1>
     <v-data-table
         :headers="headers"
         :items="items"

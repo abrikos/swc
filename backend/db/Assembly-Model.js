@@ -18,6 +18,12 @@ const schema = new Schema({
         toJSON: {virtuals: true}
     });
 
+schema.virtual('price')
+    .get(function () {
+        let sum = this.chassis?.price || 0
+        return sum + this.components.map(c=>c.price).reduce((p,c) => p + c, 0);
+    })
+
 
 module.exports = mongoose.model(name, schema)
 

@@ -37,37 +37,59 @@ module.exports = function (app) {
         res.sendStatus(200)
     })
 
+    db.component.find({type: 'HDD'}).then(console.log)
+
     app.post('/api/admin/upload-list', passport.isAdmin, async (req, res) => {
-        await db.component.deleteMany({})
-        await db.chassis.deleteMany({})
+        //await db.component.deleteMany({})
+        //await db.chassis.deleteMany({})
         fs.createReadStream(req.files.file.tempFilePath)
             .pipe(csv())
             .on('data', async (data) => {
-                const platforms = []
-                if (data.G2R) platforms.push('G2R')
-                if (data.G2) platforms.push('G2')
-                if (data.G3) platforms.push('G3')
-                if (data.AMD) platforms.push('AMD')
-                if (data.JBOD) platforms.push('JBOD')
-                if (data.Family === 'Chassis') {
-                    await db.chassis.create({
-                        platform: platforms.join(''),
-                        vendor: data.Type.trim(),
-                        descShort: data.DescShort.trim(),
-                        partNumber: data.PN.trim(),
-                        price: data['цена GPL '].trim(),
-                        description: data.DescFull.trim()
-                    })
-                } else {
-                    await db.component.create({
-                        platforms,
-                        type: data.Family.trim(),
-                        vendor: data.Type.trim(),
-                        descShort: data.DescShort.trim(),
-                        partNumber: data.PN.trim(),
-                        price: data['цена GPL '].trim(),
-                        descFull: data.DescFull.trim()
-                    })
+                try {
+                    const platforms = []
+                    if (data.G2R) platforms.push('G2R')
+                    if (data.G2) platforms.push('G2')
+                    if (data.G3) platforms.push('G3')
+                    if (data.AMD) platforms.push('AMD')
+                    if (data.JBOD) platforms.push('JBOD')
+                    if (data.Family === 'Chassis') {
+                        await db.chassis.create({
+                            platform: platforms.join(''),
+                            vendor: data.Type.trim(),
+                            descShort: data.DescShort.trim(),
+                            partNumber: data.PN.trim(),
+                            price: data['цена GPL '].trim(),
+                            description: data.DescFull.trim()
+                        })
+                    } else {
+                        let type = data.Family.trim();
+
+                        if (data.Type.trim() === 'SSD') {
+                            type = data.DescShort.match('U.2') ? 'SSD U.2 NVMe' :
+                                data.DescShort.match('M.2') ? 'SSD m.2' : 'SSD 2.5'
+                        } else if (data.Type.match('RAID')) {
+                            type = 'RAID'
+                        } else if (type === 'CPU') {
+                            type = data.Type.trim()
+                        } else if (data.Type.trim() === 'HDD') {
+                            type = 'HDD'
+                        } else if (data.Type.trim() === 'Rear bay') {
+                            type = 'Rear bay'
+                        } else if (type === 'PCI-E') {
+                            type = data.Type.trim()
+                        }
+                        await db.component.create({
+                            platforms,
+                            type,
+                            vendor: data.Type.trim(),
+                            descShort: data.DescShort.trim(),
+                            partNumber: data.PN.trim(),
+                            price: data['цена GPL '].trim(),
+                            descFull: data.DescFull.trim()
+                        })
+                    }
+                } catch (e) {
+
                 }
                 fs.unlink(req.files.file.tempFilePath, () => {
                 })

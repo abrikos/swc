@@ -13,7 +13,7 @@
         Ни чего не найдено
       </template>
       <template v-slot:item.description="{ item }">
-        {{ item.component?.description }}
+        {{ item.chassis?.description }}
       </template>
     </v-data-table>
   </div>

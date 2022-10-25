@@ -8,7 +8,7 @@
       </v-app-bar-title>
       <v-spacer></v-spacer>
       <v-toolbar-items>
-        <v-btn id to="/configurator/start">
+        <v-btn id to="/configurator/start" v-if="user">
           Конфигуратор
         </v-btn>
       </v-toolbar-items>
@@ -47,6 +47,9 @@
         <v-btn to="/user/signup" v-if="!user" id>Регистрация</v-btn>
         <v-btn to="/user/login" v-if="!user" id>Вход</v-btn>
         <v-btn @click="logout" v-if="user" id>Выход</v-btn>
+        <v-btn icon @click="switchTheme">
+          <v-icon>mdi-theme-light-dark</v-icon>
+        </v-btn>
       </v-toolbar-items>
 
     </v-app-bar>
@@ -112,7 +115,9 @@
           </v-btn>
         </v-app-bar>-->
     <v-main>
-      <nuxt/>
+      <div id="container">
+        <nuxt/>
+      </div>
     </v-main>
     <SnackBar/>
   </v-app>
@@ -148,4 +153,15 @@ export default {
 h1
   border-bottom: 1px solid silver
   margin-bottom: 10px
+  text-align: center
+
+  small
+    font-size: .5em
+    font-weight: lighter
+
+h4
+  text-align: center
+#container
+  width: 1024px
+  margin: auto
 </style>
