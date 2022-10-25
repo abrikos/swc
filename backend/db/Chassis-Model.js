@@ -5,11 +5,11 @@ const name = 'chassis';
 
 
 const schema = new Schema({
-        platforms: [{type: String}],
+        platform: {type: String},
         vendor: String,
         partNumber: {type:String, unique: true},
         descShort: String,
-        description: String,
+        descFull: String,
         price: Number
     },
     {
@@ -23,6 +23,11 @@ const schema = new Schema({
 schema.virtual('date')
     .get(function () {
         return moment(this.createdAt).format('YYYY-MM-DD HH:mm');
+    })
+
+schema.virtual('description')
+    .get(function () {
+        return this.descFull || this.descShort;
     })
 
 module.exports = mongoose.model(name, schema)

@@ -37,11 +37,12 @@ module.exports = function (app) {
         res.sendStatus(200)
     })
 
-    db.component.find({type: 'HDD'}).then(console.log)
+    //db.component.find({type: 'HDD'}).then(console.log)
 
     app.post('/api/admin/upload-list', passport.isAdmin, async (req, res) => {
-        //await db.component.deleteMany({})
-        //await db.chassis.deleteMany({})
+        await db.component.deleteMany({})
+        await db.chassis.deleteMany({})
+        await db.assembly.deleteMany({})
         fs.createReadStream(req.files.file.tempFilePath)
             .pipe(csv())
             .on('data', async (data) => {
@@ -62,26 +63,20 @@ module.exports = function (app) {
                             description: data.DescFull.trim()
                         })
                     } else {
-                        let type = data.Family.trim();
-
-                        if (data.Type.trim() === 'SSD') {
+                        let type = data.Type.trim() || data.Family.trim();
+                        const category = data.Family.trim();
+                        if (type === 'SSD') {
                             type = data.DescShort.match('U.2') ? 'SSD U.2 NVMe' :
                                 data.DescShort.match('M.2') ? 'SSD m.2' : 'SSD 2.5'
-                        } else if (data.Type.match('RAID')) {
+                        } else if (type.match('RAID')) {
                             type = 'RAID'
-                        } else if (type === 'CPU') {
-                            type = data.Type.trim()
-                        } else if (data.Type.trim() === 'HDD') {
-                            type = 'HDD'
-                        } else if (data.Type.trim() === 'Rear bay') {
-                            type = 'Rear bay'
-                        } else if (type === 'PCI-E') {
-                            type = data.Type.trim()
+                        } else if (type === 'PSU') {
+                            type = 'Power'
                         }
                         await db.component.create({
                             platforms,
                             type,
-                            vendor: data.Type.trim(),
+                            category,
                             descShort: data.DescShort.trim(),
                             partNumber: data.PN.trim(),
                             price: data['цена GPL '].trim(),

@@ -23,6 +23,7 @@ const portWeb = process.env.API_PORT || 4000;
 //app.set("view engine", "ejs");
 
 function logger(e, res){
+  console.log(e)
   try {
     throw Error('')
   } catch (err) {

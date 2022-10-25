@@ -1,0 +1,72 @@
+<template>
+  <v-card v-if="assembly">
+    <v-card-title>Корзина</v-card-title>
+
+    <table class="cart">
+      <thead>
+        <th>Категория</th>
+        <th>Наименование</th>
+        <th>Количество</th>
+        <th>Цена</th>
+        <th>Сумма</th>
+        <th></th>
+      </thead>
+      <tbody>
+        <tr>
+          <td colspan="2">Платформа
+            {{ assembly.chassis.partNumber }}
+          </td>
+          <td>
+            1
+          </td>
+          <td>
+            {{ assembly.chassis.price }}
+          </td>
+          <td>
+            {{ assembly.chassis.price }}
+          </td>
+        </tr>
+        <tr v-for="(item, i) of assembly.parts" :key="i">
+          <td>{{ item.component.category }}</td>
+          <td>{{ item.component.partNumber }}</td>
+          <td>{{ item.count }}</td>
+          <td>{{ item.component.price }}</td>
+          <td>{{ item.price }}</td>
+          <td><v-btn icon x-small color="red" @click="remove(item)"><v-icon>mdi-close</v-icon></v-btn></td>
+        </tr>
+        <tr class="result">
+          <td colspan="5">Итого: {{ assembly.price }}</td>
+          <td></td>
+        </tr>
+      </tbody>
+    </table>
+  </v-card>
+</template>
+
+<script>
+export default {
+  name: "Basket",
+  props: ['assembly', 'reload'],
+  methods:{
+    remove(item){
+      this.$axios.$delete(`/configuration/assembly/part/${item.id}/remove`)
+          .then(this.reload)
+    }
+  }
+}
+</script>
+
+<style scoped lang="sass">
+.cart
+  width: 100%
+  font-size: .7em
+
+  tr.result
+    //background-color: silver
+    td
+      text-align: right
+  td
+    padding: 10px
+    border-top: 1px solid silver
+
+</style>

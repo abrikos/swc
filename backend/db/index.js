@@ -4,8 +4,9 @@ const user = require("./User-Model")
 const token = require("./Token-Model")
 const assembly = require("./Assembly-Model")
 const chassis = require("./Chassis-Model")
+const part = require("./Part-Model")
 
-module.exports = {component, user, token, assembly, chassis}
+module.exports = {component, user, token, assembly, chassis, part}
 
 try {
   mongoose.connect(process.env.MONGODB_URI, {
