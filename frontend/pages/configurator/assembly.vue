@@ -11,12 +11,13 @@
             :items-per-page="15"
             class="row-pointer"
             style="cursor: pointer"
+            :item-class="itemRowBackground"
         >
           <template v-slot:no-data>
             Ни чего не найдено
           </template>
           <template v-slot:item.controls="{item}">
-            <v-select :items="[0, 1,2,3,4,5]" @change="e=>addPart(e, item)" dense flat :value="0"/>
+            <v-select :items="[0, 1,2,3,4,5]" @change="e=>addPart(e, item)" dense flat :value="calcCount(item)"/>
           </template>
         </v-data-table>
       </v-col>
@@ -115,6 +116,13 @@ export default {
     this.loadComponents()
   },
   methods: {
+    calcCount(item){
+      const part = this.assembly.parts.find(p=> p.component.id === item.id)
+      return part ? part.count : 0
+    },
+    itemRowBackground(item){
+      return this.assembly.parts.map(p=>p.component.id).includes(item.id) ? 'inBasket' : ''
+    },
     async loadComponents() {
       this.components = await this.$axios.$get(`/configurator/assembly/${this.id}/component-type/${this.chosenSubTab?.type || this.chosenTab.type}`)
       //componentsAll.filter(c=> this.subTab ? c.type === this.subTab : c.type === this.tab)
@@ -141,6 +149,10 @@ export default {
 </script>
 
 <style scoped lang="sass">
+.v-data-table
+  ::v-deep .inBasket
+    td
+      background-color: silver
 .count-select
   .v-select
     height: 200px

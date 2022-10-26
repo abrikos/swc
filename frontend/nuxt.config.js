@@ -99,6 +99,12 @@ export default {
     defaultLocale: 'en',
     lazy: true,
     langDir: 'lang/',
+    vueI18n:{
+      silentTranslationWarn: true,
+      missing: function (x){
+        console.log('zzzzzzzz', x)
+      }
+    }
   },
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {

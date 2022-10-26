@@ -36,7 +36,7 @@ export default {
   text-align: center
   border-bottom: 1px solid silver
   padding-bottom: 5px
-  font-size: .7em
+  font-size: .9em
 
   div
     margin: 1px

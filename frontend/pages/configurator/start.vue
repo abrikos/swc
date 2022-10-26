@@ -5,7 +5,9 @@
     <div class="list">
       <div class="chassis" v-for="item of items" @click="createAssembly(item)">
         <img :src="`/${item.platform === 'JBOD' ? '4U': '2U'}.png`" />
-        <small>{{item.partNumber}}</small>
+        <small>{{item.partNumber}} <br/><small>{{item.descShort}}</small></small>
+
+
       </div>
     </div>
   </div>

@@ -10,6 +10,7 @@ const schema = new Schema({
         partNumber: {type:String, unique: true},
         descShort: String,
         descFull: String,
+        specification: String,
         price: Number
     },
     {
@@ -23,11 +24,6 @@ const schema = new Schema({
 schema.virtual('date')
     .get(function () {
         return moment(this.createdAt).format('YYYY-MM-DD HH:mm');
-    })
-
-schema.virtual('description')
-    .get(function () {
-        return this.descFull || this.descShort;
     })
 
 module.exports = mongoose.model(name, schema)

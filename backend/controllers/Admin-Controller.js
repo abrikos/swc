@@ -38,6 +38,7 @@ module.exports = function (app) {
     })
 
     //db.component.find({type: 'HDD'}).then(console.log)
+    //db.chassis.find().then(console.log)
 
     app.post('/api/admin/upload-list', passport.isAdmin, async (req, res) => {
         await db.component.deleteMany({})
@@ -57,10 +58,11 @@ module.exports = function (app) {
                         await db.chassis.create({
                             platform: platforms.join(''),
                             vendor: data.Type.trim(),
-                            descShort: data.DescShort.trim(),
+                            descShort: data['Столбец2'].trim(),
+                            specification: data.DescShort.trim(),
                             partNumber: data.PN.trim(),
                             price: data['цена GPL '].trim(),
-                            description: data.DescFull.trim()
+                            descFull: data.DescFull.trim()
                         })
                     } else {
                         let type = data.Type.trim() || data.Family.trim();

@@ -71,7 +71,7 @@ module.exports = function (app) {
             if (!part) {
                 db.part.create({assembly, component, count})
             } else {
-                part.count += count
+                part.count = count
                 await part.save()
             }
             res.sendStatus(200)

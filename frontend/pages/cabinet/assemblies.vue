@@ -26,6 +26,7 @@ export default {
     return {
       items:[],
       headers:[
+        {text:'PartNum', value:'chassis.partNumber'},
         {text:'Описание', value:'description'}
       ]
     }

@@ -8,9 +8,8 @@ export default function ({app, $axios, store}) {
 
   $axios.onError(error => {
     if (error.response) {
-      console.warn(error.response.data)
       if(error.response.status !== 401) {
-        console.log(error.response)
+        //console.log(error.response)
         try {
           error.response.data.status = error.response.status;
         }catch (e) {
