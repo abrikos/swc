@@ -49,7 +49,7 @@ export default {
   props: ['assembly', 'reload'],
   methods:{
     remove(item){
-      this.$axios.$delete(`/configuration/assembly/part/${item.id}/remove`)
+      this.$axios.$delete(`/assembly/part/${item.id}/remove`)
           .then(this.reload)
     }
   }

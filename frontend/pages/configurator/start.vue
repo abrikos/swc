@@ -52,7 +52,7 @@ export default {
       this.items = await this.$axios.$get('/configurator/chassis/' + this.tabs[index].type)
     },
     createAssembly(e){
-      this.$axios.$get('/configurator/create/assembly/'+ e.id)
+      this.$axios.$get('/assembly/create/chassis/'+ e.id)
           .then(res=>this.$router.push('/configurator/assembly/' + res.id))
     }
   }

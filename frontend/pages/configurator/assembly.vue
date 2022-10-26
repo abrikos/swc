@@ -132,7 +132,7 @@ export default {
       this.componentsFiltered = this.components.filter(c=>c.description.toLowerCase().match(this.filter.toLowerCase()))
     },
     async changeField(field, item){
-      await this.$axios.$put(`/configurator/assembly/${item.id}/${field}`,item)
+      await this.$axios.$put(`/assembly/${item.id}/field/${field}`,item)
     },
     calcCount(item){
       const part = this.assembly.parts.find(p=> p.component.id === item.id)
@@ -142,7 +142,7 @@ export default {
       return this.assembly.parts.map(p=>p.component.id).includes(item.id) ? 'inBasket' : ''
     },
     async loadComponents() {
-      this.components = this.componentsFiltered = await this.$axios.$get(`/configurator/assembly/${this.id}/component-type/${this.chosenSubTab?.type || this.chosenTab.type}`)
+      this.components = this.componentsFiltered = await this.$axios.$get(`/assembly/${this.id}/component-type/${this.chosenSubTab?.type || this.chosenTab.type}`)
       //componentsAll.filter(c=> this.subTab ? c.type === this.subTab : c.type === this.tab)
     },
     tabChanged(index) {
@@ -157,10 +157,10 @@ export default {
       this.loadComponents()
     },
     async loadAssembly() {
-      this.assembly = await this.$axios.$get('/configurator/assembly/' + this.id)
+      this.assembly = await this.$axios.$get('/assembly/' + this.id)
     },
     async addPart(count, item) {
-      await this.$axios.$put(`/configurator/assembly/${this.id}/add/${item.id}`, {count})
+      await this.$axios.$put(`/assembly/${this.id}/part/${item.id}`, {count})
       await this.loadAssembly()
       this.count = 0
     }
