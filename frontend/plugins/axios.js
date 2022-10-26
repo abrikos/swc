@@ -16,11 +16,13 @@ export default function ({app, $axios, store}) {
           error.response.data = error.response
           error.response.data.message = error.response.request.responseText + ': ' + error.response.config.url + ' '
         }
+        console.error(error.response.data)
         store.commit('setSnackBar', error.response.data)
       }
-      return Promise.reject(error.response.data);
+
     }else{
-      console.error('NO error.response', error)
+      console.error('STRANGE error.response', error)
     }
+    return true;
   })
 }

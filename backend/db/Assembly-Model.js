@@ -6,7 +6,6 @@ const schema = new Schema({
         name: {type: String},
         count: {type: Number, default: 1},
         user: {type: mongoose.Schema.Types.ObjectId, ref: 'user'},
-        spec: {type: mongoose.Schema.Types.ObjectId, ref: 'spec'},
         chassis: {type: mongoose.Schema.Types.ObjectId, ref: 'chassis'},
         draft: {type: Boolean, default: true}
     },
@@ -21,7 +20,6 @@ const schema = new Schema({
 schema.statics.population = [
     {path: 'parts', populate: {path: 'component'}},
     {path: 'chassis'},
-    {path: 'spec'},
 ]
 
 schema.virtual('price')

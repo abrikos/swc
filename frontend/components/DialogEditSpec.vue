@@ -8,23 +8,12 @@
       <v-toolbar
           color="primary"
           dark
-      ><strong>{{assembly.name}}</strong> - Добавить в спецификацию
+      >
+        Спецификация <strong>{{ spec.name }}</strong>
       </v-toolbar>
       <v-card-text>
-        <v-text-field
-            v-model="newSpec"
-            flat dense outlined hide-details
-            :append-icon="newSpecEdited ? 'mdi-check' : ''"
-            @click:append="createSpec()"
-            autofocus
-            @keyup="newSpecEdited=true"
-            @mousedown="newSpecEdited=true"
-            @keyup.esc="$refs.newSpec.blur()"
-            @blur="newSpecEdited=false"
-            ref="newSpec"
-        />
         <v-data-table
-            :items="specs"
+            :items="spec.assemblies"
             :headers="headers"
             :items-per-page="5"
         >
@@ -32,11 +21,14 @@
             Ни чего не найдено
           </template>
           <template v-slot:item.count="{item}">
-            {{item.assemblies.length}}
+            {{ item.parts.length }}
           </template>
           <template v-slot:item.controls="{item}">
-            <v-btn icon @click="addToSpec(item)">
-              <v-icon>mdi-arrow-left</v-icon>
+            <v-btn :to="'/configurator/assembly/'+item.id" icon title="Редактировать">
+              <v-icon>mdi-file-edit-outline</v-icon>
+            </v-btn>
+            <v-btn @click="removeAssembly(item)" icon color="red" x-small title="Удалить">
+              <v-icon>mdi-close</v-icon>
             </v-btn>
           </template>
         </v-data-table>
@@ -54,8 +46,8 @@
 
 <script>
 export default {
-  name: "DialogAddToSpec",
-  props: ['assembly', 'dialogVisible'],
+  name: "DialogEditSpec",
+  props: ['spec', 'dialogVisible'],
   computed: {
     intDialogVisible: {
       get: function () {
@@ -68,36 +60,30 @@ export default {
       },
       set: function (value) {
         if (!value) {
-          this.$emit('close', {a:'zzzzz'})
+          this.$emit('close', {a: 'zzzzz'})
         }
       }
     }
   },
-  data(){
+  data() {
     return {
       newSpecEdited: false,
       newSpec: '',
       specs: [],
       headers: [
-        {text:'Название', value: 'name'},
-        {text:'Кол-во сборок', value: 'count'},
-        {text:'', value: 'controls', sortable: false, width: '100px'}
+        {text: 'Название', value: 'name'},
+        {text: 'Кол-во компонентов', value: 'count'},
+        {text: '', value: 'controls', sortable: false, width: '100px'}
       ],
     }
   },
-  methods:{
-    async createSpec(){
-      await this.$axios.$put('/spec/create', {name: this.newSpec, assembly: this.assembly})
-      await this.loadSpecs()
-      this.newSpec = '';
+  methods: {
+    async removeAssembly(item) {
+      await this.$axios.$delete(`/spec/${this.spec.id}/assembly/${item.id}/remove`)
       this.intDialogVisible = false
     },
-    async addToSpec(item){
-      await this.$axios.$put(`/assembly/${this.assembly.id}/to-spec/${item.id}`)
-      this.intDialogVisible = false
-    },
-    async loadSpecs(){
-      this.specs = await this.$axios.$get('/specs')
+    async loadSpecs() {
+      //this.spec = await this.$axios.$get('/spec/' + this.spec.id)
     }
   }
 }

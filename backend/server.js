@@ -33,7 +33,7 @@ function logger(e, res){
     console.log('ERROR:',clc.red(e.message));
     for(const log of out) console.log(log)
   }
-  res.status(e.status || 500).send(e.status ? e : {message: e.message})
+  res.status(e.error || 500).send(e.status ? e : {message: e.message})
 }
 
 app.use(function(req,res, next) {

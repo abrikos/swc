@@ -37,7 +37,7 @@
           </template>
           <v-list dense>
             <v-list-item to="/cabinet/settings">
-              <v-list-item-title>Настройки</v-list-item-title>
+              <v-list-item-title>{{$t('Settings')}}</v-list-item-title>
             </v-list-item>
             <v-list-item to="/cabinet/assemblies">
               <v-list-item-title>Сборки</v-list-item-title>
@@ -54,9 +54,9 @@
 
     </v-app-bar>
     <v-main>
-      <div id="container">
+      <v-container>
         <nuxt/>
-      </div>
+      </v-container>
     </v-main>
     <SnackBar/>
   </v-app>

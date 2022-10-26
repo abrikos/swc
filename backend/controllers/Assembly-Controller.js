@@ -16,6 +16,23 @@ module.exports = function (app) {
         res.send(item)
     })
 
+    app.put('/api/assembly/:assemblyId/to-spec/:specId', passport.isLogged, async (req, res) => {
+        try {
+            const {user} = res.locals;
+            const {assemblyId,  specId} = req.params;
+            const assembly = await db.assembly.findOne({_id: assemblyId, user}).populate(db.assembly.population);
+            if (!assembly) throw {error:403, message: 'Access denied: wrong assembly'}
+            const spec = await db.spec.findOne({_id: specId, user});
+            if (!spec) throw {error:403, message: 'Access denied: wrong spec'}
+            if(spec.assemblies.includes(assembly.id)) throw {error: 406, message: 'Assembly already in this spec'}
+            spec.assemblies.push(assembly)
+            await spec.save()
+            res.sendStatus(200)
+        } catch (e) {
+            app.locals.errorLogger(e, res)
+        }
+    })
+
     app.delete('/api/assembly/:assemblyId', passport.isLogged, async (req, res) => {
         try {
             const {user} = res.locals;
@@ -24,7 +41,7 @@ module.exports = function (app) {
             if (!item) throw {error: 403, message: 'Access denied'}
             await item.delete()
             res.sendStatus(200)
-        }catch (e) {
+        } catch (e) {
             app.locals.errorLogger(e, res)
         }
     })

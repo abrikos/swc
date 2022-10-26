@@ -8,7 +8,7 @@
       <v-card
           v-if="user"
       >
-        <v-card-title>{{ $t('Cabinet') }}</v-card-title>
+        <v-card-title>{{ $t('Settings') }}</v-card-title>
         <v-card-text>
           <v-text-field
               outlined

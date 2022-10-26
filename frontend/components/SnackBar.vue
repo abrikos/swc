@@ -35,6 +35,7 @@ export default {
     },
     color() {
       if(!this.snackData) return;
+      if(this.snackData.status === 406) return 'warning'
       if(this.snackData.status > 400) return 'error'
       return 'success'
     }

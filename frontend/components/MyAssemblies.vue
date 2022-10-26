@@ -4,7 +4,6 @@
         :headers="headers"
         :items="items"
         :items-per-page="15"
-        style="cursor: pointer"
     >
       <template v-slot:no-data>
         Ни чего не найдено
@@ -39,26 +38,33 @@
         />
       </template>
       <template v-slot:item.controls="{ item }">
-        <v-btn @click="goToAssembly(item)" icon title="Редактировать">
+        <v-btn :to="'/configurator/assembly/'+item.id" icon title="Редактировать">
           <v-icon>mdi-file-edit-outline</v-icon>
         </v-btn>
-        <DialogAddToSpec :assembly="item" />
+        <v-btn icon title="Добавить в спецификацию" @click="dialogShow(item)">
+          <v-icon>mdi-plus</v-icon>
+        </v-btn>
+
         <v-btn @click="deleteAssembly(item)" icon color="red" x-small title="Удалить">
           <v-icon>mdi-close</v-icon>
         </v-btn>
       </template>
 
     </v-data-table>
+    <DialogAddToSpec :assembly="dialogAssembly" v-if="dialogAssembly" :dialogVisible="dialogAssembly"
+                     @close="dialogClose"/>
   </div>
 </template>
 
 <script>
 import DialogAddToSpec from "~/components/DialogAddToSpec";
+
 export default {
   name: "MyAssemblies",
   components: {DialogAddToSpec},
   data() {
     return {
+      dialogAssembly: null,
       showNameField: null,
       countEdited: false,
       items: [],
@@ -78,8 +84,15 @@ export default {
     this.loadAssemblies()
   },
   methods: {
-    async deleteAssembly(item){
-      if(window.confirm(`Удалить сборку "${item.name}"?`)){
+    dialogShow(item) {
+      this.dialogAssembly = item
+    },
+    dialogClose() {
+      this.$emit('specReload')
+      this.dialogAssembly = null
+    },
+    async deleteAssembly(item) {
+      if (window.confirm(`Удалить сборку "${item.name}"?`)) {
         await this.$axios.$delete(`/assembly/${item.id}`)
         await this.loadAssemblies()
       }
@@ -87,9 +100,6 @@ export default {
     async changeField(field, item) {
       await this.$axios.$put(`/assembly/${item.id}/field/${field}`, item)
       await this.loadAssemblies()
-    },
-    goToAssembly(e) {
-      this.$router.push('/configurator/assembly/' + e.id)
     },
     async loadAssemblies() {
       this.items = await this.$axios.$get('/assemblies/my')
@@ -102,6 +112,7 @@ export default {
 .v-data-table
   ::v-deep .text-start
     padding: 0
+
   ::v-deep .v-input
     margin: 0
 </style>
