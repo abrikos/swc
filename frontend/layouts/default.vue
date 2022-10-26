@@ -2,9 +2,9 @@
   <v-app>
     <v-app-bar fixed app dense>
       <v-app-bar-title>
-        <link to="/" tag style="cursor:pointer">
-        Веб конфигуратор
-        </link>
+        <v-btn to="/">
+          {{$t('Home')}}
+        </v-btn>
       </v-app-bar-title>
       <v-spacer></v-spacer>
       <v-toolbar-items>
@@ -53,67 +53,6 @@
       </v-toolbar-items>
 
     </v-app-bar>
-    <!--    <v-app-bar
-            fixed
-            app
-        >
-          <v-tabs>
-            <v-tab to="/" >
-              Начало
-            </v-tab>
-            <v-tab to="/configuration" >
-              Конфигуратор
-            </v-tab>
-            <v-spacer></v-spacer>
-            <v-menu
-                top
-                :close-on-content-click="true"
-            >
-              <template v-slot:activator="{ on, attrs }">
-                <v-tab
-                    color="primary"
-                    dark
-                    v-bind="attrs"
-                    v-on="on"
-                >
-                  Dropdown
-                </v-tab>
-              </template>
-
-              <v-list>
-                <v-list-item                to="/admin/users"            >
-                  <v-list-item-title>Users</v-list-item-title>
-                </v-list-item>
-                <v-list-item                to="/admin/upload"            >
-                  <v-list-item-title>Upload components</v-list-item-title>
-                </v-list-item>
-              </v-list>
-            </v-menu>
-            <v-tab to="/admin/users" v-if="user?.isAdmin">
-              Admin Users
-            </v-tab>
-            <v-tab to="/admin/upload" v-if="user?.isAdmin">
-              Admin Upload
-            </v-tab>
-            <v-tab to="/user/cabinet" v-if="user">
-              Кабинет
-            </v-tab>
-            <v-tab to="/user/login" v-if="!user">
-              Вход
-            </v-tab>
-            <v-tab @click="logout" v-if="user">
-              Выход
-            </v-tab>
-            <v-tab to="/user/signup" v-if="!user">
-              Регистрация
-            </v-tab>
-    &lt;!&ndash;        <v-tabs-slider color="pink"></v-tabs-slider>&ndash;&gt;
-          </v-tabs>
-
-          <v-btn icon @click="switchTheme">
-            <v-icon>mdi-theme-light-dark</v-icon>
-          </v-btn>
-        </v-app-bar>-->
     <v-main>
       <div id="container">
         <nuxt/>

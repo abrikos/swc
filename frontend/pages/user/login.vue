@@ -55,7 +55,7 @@ export default {
     }
   },
   created() {
-    if (this.user) this.$router.push('/user/cabinet4')
+    if (this.user) this.$router.push(this.$store.getters.getLoginRedirect)
   },
   methods: {
     async resetPassword() {
