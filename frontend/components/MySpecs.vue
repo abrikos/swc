@@ -15,6 +15,9 @@
         <v-btn @click="dialogShow(item)" icon title="Редактировать">
           <v-icon>mdi-file-edit-outline</v-icon>
         </v-btn>
+        <v-btn @click="deleteSpec(item)" x-small icon color="red" title="Удалить">
+          <v-icon>mdi-close</v-icon>
+        </v-btn>
       </template>
     </v-data-table>
     <DialogEditSpec :spec="dialogSpec" v-if="dialogSpec" :dialogVisible="dialogSpec"
@@ -35,8 +38,9 @@ export default {
       newSpec: '',
       specs: [],
       headers: [
+        {text:'Дата', value: 'date', width: '150px'},
         {text: 'Название', value: 'name'},
-        {text: 'Кол-во', value: 'count'},
+        {text: 'Кол-во сборок', value: 'count', width: '100px'},
         {text: '', value: 'controls', sortable: false, width: '100px'}
       ],
     }
@@ -53,8 +57,13 @@ export default {
       this.dialogSpec = item
     },
     async loadSpecs() {
-      console.log('my-specs load specs')
       this.specs = await this.$axios.$get('/specs')
+    },
+    async deleteSpec(item) {
+      if (window.confirm(`Удалить спецификацию "${item.name}"?`)) {
+        await this.$axios.$delete('/spec/' + item.id)
+        await this.loadSpecs()
+      }
     }
   }
 }

@@ -5,7 +5,7 @@ module.exports = function (app) {
     const {db} = app.locals;
     app.get('/api/assemblies/my', passport.isLogged, async (req, res) => {
         const {user} = res.locals;
-        const items = await db.assembly.find({user}).populate(db.assembly.population)
+        const items = await db.assembly.find({user}).sort({createdAt:'desc'}).populate(db.assembly.population)
         res.send(items)
     })
 

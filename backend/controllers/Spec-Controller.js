@@ -6,7 +6,9 @@ module.exports = function (app) {
 
     app.get('/api/specs', passport.isLogged, async (req, res) => {
         const {user} = res.locals;
-        const item = await db.spec.find({user}).populate({path: 'assemblies', populate: db.assembly.population});
+        const item = await db.spec.find({user})
+            .sort({createdAt:'desc'})
+            .populate({path: 'assemblies', populate: db.assembly.population});
         res.send(item)
     })
 
@@ -16,6 +18,18 @@ module.exports = function (app) {
             const {name, assembly} = req.body;
             if (!name) throw {error: 406, message: 'Name required'}
             await db.spec.create({name, user, assemblies: [assembly]});
+            res.sendStatus(200)
+        } catch (e) {
+            app.locals.errorLogger(e, res)
+        }
+    })
+    app.delete('/api/spec/:id', passport.isLogged, async (req, res) => {
+        try {
+            const {user} = res.locals;
+            const {id} = req.params
+            const spec = await db.spec.findOne({_id: id, user});
+            if (!spec) throw {error: 403, message: 'Access denied'}
+            await spec.delete()
             res.sendStatus(200)
         } catch (e) {
             app.locals.errorLogger(e, res)

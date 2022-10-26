@@ -73,9 +73,9 @@ export default {
         {text: 'Название', value: 'name', width: '300px'},
         {text: 'PartNum', value: 'chassis.partNumber'},
         {text: 'Описание', value: 'chassis.descShort'},
-        {text: 'Количество', value: 'count', width: '100px'},
-        {text: 'Цена', value: 'price'},
-        {text: '', value: 'controls'}
+        {text: 'Штук', value: 'count', width: '60px'},
+        {text: 'Сумма', value: 'price', align: 'right'},
+        {text: '', value: 'controls', width: '110px'}
       ]
     }
 

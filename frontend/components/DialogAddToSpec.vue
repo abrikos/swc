@@ -10,19 +10,24 @@
           dark
       ><strong>{{assembly.name}}</strong> - Добавить в спецификацию
       </v-toolbar>
-      <v-card-text>
+      <v-card-title>
         <v-text-field
+            label="Введите название новой спецификации"
             v-model="newSpec"
             flat dense outlined hide-details
             :append-icon="newSpecEdited ? 'mdi-check' : ''"
-            @click:append="createSpec()"
+            @click:append="createSpec"
             autofocus
             @keyup="newSpecEdited=true"
             @mousedown="newSpecEdited=true"
             @keyup.esc="$refs.newSpec.blur()"
+            @keyup.enter="createSpec"
             @blur="newSpecEdited=false"
             ref="newSpec"
         />
+      </v-card-title>
+      <v-card-text>
+
         <v-data-table
             :items="specs"
             :headers="headers"
@@ -79,6 +84,7 @@ export default {
       newSpec: '',
       specs: [],
       headers: [
+        {text:'Дата', value: 'date'},
         {text:'Название', value: 'name'},
         {text:'Кол-во сборок', value: 'count'},
         {text:'', value: 'controls', sortable: false, width: '100px'}

@@ -7,16 +7,16 @@
         <small>{{item.partNumber}} <br/><small>{{item.descShort}}</small></small>
       </div>
     </div>
-    <MyAssemblies v-if="isTabConfigurations"/>
-
+    <cabinet-assemblies v-if="isTabConfigurations"/>
   </div>
 </template>
 
 <script>
 import MyAssemblies from "~/components/MyAssemblies";
+import CabinetAssemblies from "~/pages/cabinet/assemblies";
 export default {
   name: "configurator-start",
-  components: {MyAssemblies},
+  components: {CabinetAssemblies, MyAssemblies},
   data(){
     return {
       tab:0,
