@@ -1,13 +1,13 @@
 <template>
   <div v-if="assembly">
-    <h1>{{assembly.chassis.partNumber}} <small>{{assembly.chassis.descShort}}</small></h1>
+    <h1>{{assembly.name || assembly.chassis.partNumber}} <small>{{assembly.chassis.descShort}}</small></h1>
     <v-row>
       <v-col sm="7">
         <Tabs :withIcons="true" :items="tabs" :onClick="tabChanged"/>
         <Tabs :items="chosenTab.children" :onClick="subTabChanged" v-if="chosenTab.children"/>
         <v-data-table
             :headers="headers"
-            :items="components"
+            :items="componentsFiltered"
             :items-per-page="15"
             class="row-pointer"
             style="cursor: pointer"
@@ -16,12 +16,22 @@
           <template v-slot:no-data>
             Ни чего не найдено
           </template>
-          <template v-slot:item.controls="{item}">
-            <v-select :items="[0, 1,2,3,4,5]" @change="e=>addPart(e, item)" dense flat :value="calcCount(item)"/>
+          <template v-slot:item.count="{item}">
+            <v-select :items="[0, 1,2,3,4,5]" @change="e=>addPart(e, item)" dense flat :value="calcCount(item)" hide-details/>
+          </template>
+          <template v-slot:header.description>
+            <v-text-field hide-details label="Фильтр описания" flat dense class="table-filter" v-model="filter" @keyup="filterComponents"></v-text-field>
           </template>
         </v-data-table>
       </v-col>
       <v-col sm="5">
+        <v-text-field
+            v-model="assembly.name"
+            outlined
+            :append-icon="nameChanged? 'mdi-check' : ''"
+            @keyup="nameChanged = true"
+            @click:append="changeField('name', assembly); nameChanged = false"
+        />
         <Basket :assembly="assembly" :reload="loadAssembly"/>
       </v-col>
     </v-row>
@@ -83,19 +93,21 @@ export default {
       //{id: 'services', label: 'Сервисы'},
       //{id: 'unconfigured', label: 'Иное'},
     ]
-
     return {
+      nameChanged: false,
+      filter: '',
       count: 0,
       tab: 0,
       subTab: null,
       isHovering: false,
       components: [],
+      componentsFiltered: [],
       assembly: null,
       headers: [
         {text: 'Партномер', value: 'partNumber', width: '20%'},
-        {text: 'Описание', value: 'description', width: '40%'},
+        {text: 'Описание', value: 'description', width: '50%', sortable: false},
         {text: 'Цена', value: 'price', width: '20%'},
-        {text: '', value: 'controls',width: '20%'}
+        {text: '', value: 'count',width: '10%', sortable: false}
       ],
       tabs
     }
@@ -116,6 +128,12 @@ export default {
     this.loadComponents()
   },
   methods: {
+    filterComponents(){
+      this.componentsFiltered = this.components.filter(c=>c.description.toLowerCase().match(this.filter.toLowerCase()))
+    },
+    async changeField(field, item){
+      await this.$axios.$put(`/configurator/assembly/${item.id}/${field}`,item)
+    },
     calcCount(item){
       const part = this.assembly.parts.find(p=> p.component.id === item.id)
       return part ? part.count : 0
@@ -124,15 +142,17 @@ export default {
       return this.assembly.parts.map(p=>p.component.id).includes(item.id) ? 'inBasket' : ''
     },
     async loadComponents() {
-      this.components = await this.$axios.$get(`/configurator/assembly/${this.id}/component-type/${this.chosenSubTab?.type || this.chosenTab.type}`)
+      this.components = this.componentsFiltered = await this.$axios.$get(`/configurator/assembly/${this.id}/component-type/${this.chosenSubTab?.type || this.chosenTab.type}`)
       //componentsAll.filter(c=> this.subTab ? c.type === this.subTab : c.type === this.tab)
     },
     tabChanged(index) {
+      this.filter = ''
       this.tab = index;
       this.subTab = 0;
       this.loadComponents()
     },
     subTabChanged(index) {
+      this.filter = ''
       this.subTab = index
       this.loadComponents()
     },
@@ -140,7 +160,7 @@ export default {
       this.assembly = await this.$axios.$get('/configurator/assembly/' + this.id)
     },
     async addPart(count, item) {
-      await this.$axios.$post(`/configurator/assembly/${this.id}/add/${item.id}`, {count})
+      await this.$axios.$put(`/configurator/assembly/${this.id}/add/${item.id}`, {count})
       await this.loadAssembly()
       this.count = 0
     }
@@ -153,6 +173,9 @@ export default {
   ::v-deep .inBasket
     td
       background-color: silver
+  ::v-deep .table-filter
+    label
+      font-size: .8em
 .count-select
   .v-select
     height: 200px

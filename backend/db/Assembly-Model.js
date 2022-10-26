@@ -4,6 +4,7 @@ const name = 'assembly';
 
 const schema = new Schema({
         name: {type: String},
+        count: {type: Number, default: 1},
         user: {type: mongoose.Schema.Types.ObjectId, ref: 'user'},
         chassis: {type: mongoose.Schema.Types.ObjectId, ref: 'chassis'},
         draft: {type: Boolean, default: true}
@@ -27,7 +28,7 @@ schema.virtual('price')
         for (const item of this.parts) {
             sum += item.price
         }
-        return sum;
+        return sum * this.count;
     })
 
 schema.virtual('parts', {

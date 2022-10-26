@@ -1,4 +1,5 @@
 const passport = require('../passport');
+const moment = require("moment/moment");
 
 module.exports = function (app) {
     const {db} = app.locals;
@@ -39,7 +40,11 @@ module.exports = function (app) {
     //db.assembly.deleteMany({}).then(console.log)
     app.get('/api/configurator/create/assembly/:chassis', passport.isLogged, async (req, res) => {
         const {user} = res.locals;
-        const assembly = await db.assembly.create({chassis: req.params.chassis, user})
+        const assembly = await db.assembly.create({
+            chassis: req.params.chassis,
+            user,
+            name: 'Сборка от ' + moment().format('YYYY-MM-DD HH:mm')
+        })
         await assembly.populate(db.assembly.population);
         res.send(assembly)
     })
@@ -58,7 +63,16 @@ module.exports = function (app) {
         }
     })
 
-    app.post('/api/configurator/assembly/:assemblyId/add/:componentId', passport.isLogged, async (req, res) => {
+    app.put('/api/configurator/assembly/:assemblyId/:field', passport.isLogged, async (req, res) => {
+        const {user} = res.locals;
+        const {assemblyId, field} = req.params;
+        const assembly = await db.assembly.findOne({_id: assemblyId, user}).populate(db.assembly.population);
+        if (!assembly) throw {message: 'Wrong assembly'}
+        assembly[field] = req.body[field]
+        await assembly.save()
+        res.sendStatus(200)
+    })
+    app.put('/api/configurator/assembly/:assemblyId/add/:componentId', passport.isLogged, async (req, res) => {
         try {
             const {user} = res.locals;
             const {assemblyId, componentId} = req.params;
