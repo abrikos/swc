@@ -71,6 +71,7 @@ export default {
     text-align: center
     cursor: pointer
     img
+      margin: auto
       display: block
       width: 80%
 </style>
