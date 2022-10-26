@@ -29,5 +29,7 @@
 	"Reset password": "Сбросить пароль",
 	"Passwords do not match": "Пароли не совпадают",
 	"E-mail must be valid": "Не верный e-mail",
-	"Email exists": "Такой адрес уже зарегистрирован"
+	"Email exists": "Такой адрес уже зарегистрирован",
+	"Password change confirmation code sent to email": "Подтверждение о смене пароля выслано на e-mail",
+	"New password sent to email": "Новый пароль отправлени на e-mail"
 }

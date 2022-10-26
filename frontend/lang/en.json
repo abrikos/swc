@@ -1,10 +1,7 @@
 {
  "Send": "Send",
- "Game": "Game",
  "Login": "Login",
  "Ready!": "Ready!",
- "Wait turn of player": "Wait turn of player",
- "Bet": "Bet",
  "Signup": "Signup",
  "Logout": "Logout",
  "Username": "Username",
@@ -27,6 +24,9 @@
  "Sign up": "Sign up",
  "Email": "Email",
  "Confirm password": "Confirm password",
- "Check": "Check",
- "Reset password": "Reset password"
+ "Reset password": "Reset password",
+ "Passwords do not match": "Passwords do not match",
+ "Password change confirmation code sent to email": "Password change confirmation code sent to email",
+ "New password sent to email": "New password sent to email",
+ "E-mail must be valid": "E-mail must be valid"
 }

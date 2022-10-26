@@ -41,9 +41,7 @@ export default {
         v => this.form.password === this.form.passwordConfirm || this.$t('Passwords do not match')
       ],
       form: {
-        email: Math.random() + '@test.com',
-        password: '1',
-        passwordConfirm: '1',
+
       },
     }
   },

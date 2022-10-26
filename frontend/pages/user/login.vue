@@ -44,8 +44,8 @@ export default {
       ],
       list: [],
       login: {
-        email: 'abrikoz@gmail.com',
-        password: '123',
+        email: '',
+        password: '',
       }
     }
   },

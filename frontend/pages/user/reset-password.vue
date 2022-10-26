@@ -32,7 +32,6 @@ export default {
         v => !v || /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(v) || this.$t('E-mail must be valid')
       ],
       form: {
-        email: 'abrikoz@gmail.com',
       }
     }
   },
