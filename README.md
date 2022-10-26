@@ -22,6 +22,7 @@ $ yarn front
 $ yarn backend:dev
 
 # build for production and launch server
+$yarn generate
 $ pm2 start pm2.config.js
 ```
 
