@@ -38,12 +38,12 @@ module.exports = function (app) {
     })
 
     //db.component.find({type: 'HDD'}).then(console.log)
-    //db.chassis.find().then(console.log)
+    db.component.find({partNumber: '4 SATA - 1*SFF-8643'}).then(console.log)
 
     app.post('/api/admin/upload-list', passport.isAdmin, async (req, res) => {
-        await db.component.deleteMany({})
-        await db.chassis.deleteMany({})
-        await db.assembly.deleteMany({})
+        //await db.component.deleteMany({})
+        //await db.chassis.deleteMany({})
+        //await db.assembly.deleteMany({})
         fs.createReadStream(req.files.file.tempFilePath)
             .pipe(csv())
             .on('data', async (data) => {
@@ -55,7 +55,7 @@ module.exports = function (app) {
                     if (data.AMD) platforms.push('AMD')
                     if (data.JBOD) platforms.push('JBOD')
                     if (data.Family === 'Chassis') {
-                        await db.chassis.create({
+                        await db.chassis.updateOne({partNumber: data.PN.trim()}, {
                             platform: platforms.join(''),
                             vendor: data.Type.trim(),
                             descShort: data['Столбец2'].trim(),
@@ -63,7 +63,7 @@ module.exports = function (app) {
                             partNumber: data.PN.trim(),
                             price: data['цена GPL '].trim(),
                             descFull: data.DescFull.trim()
-                        })
+                        }, {upsert: true})
                     } else {
                         let type = data.Type.trim() || data.Family.trim();
                         const category = data.Family.trim();
@@ -74,8 +74,10 @@ module.exports = function (app) {
                             type = 'RAID'
                         } else if (type === 'PSU') {
                             type = 'Power'
+                        } else if (type === 'Cable for backplane') {
+                            type = 'Cable'
                         }
-                        await db.component.create({
+                        await db.component.updateOne({partNumber: data.PN.trim()}, {
                             platforms,
                             type,
                             category,
@@ -83,7 +85,7 @@ module.exports = function (app) {
                             partNumber: data.PN.trim(),
                             price: data['цена GPL '].trim(),
                             descFull: data.DescFull.trim()
-                        })
+                        }, {upsert: true})
                     }
                 } catch (e) {
 
