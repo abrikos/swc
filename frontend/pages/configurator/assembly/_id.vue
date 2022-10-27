@@ -21,7 +21,7 @@
                       hide-details/>
           </template>
           <template v-slot:header.description>
-            <v-text-field hide-details label="Фильтр описания" flat dense class="table-filter" v-model="filter"
+            <v-text-field hide-details label="Фильтр описания" outlined flat dense class="table-filter" v-model="filter"
                           @keyup="filterComponents"></v-text-field>
           </template>
         </v-data-table>
@@ -61,7 +61,6 @@ export default {
       componentsCurrentFiltered: [],
       assembly: null,
       headers: [
-        {text: 'Партномер', value: 'type', width: '20%'},
         {text: 'Партномер', value: 'partNumber', width: '20%'},
         {text: 'Описание', value: 'description', width: '50%', sortable: false},
         {text: 'Цена', value: 'price', width: '20%'},

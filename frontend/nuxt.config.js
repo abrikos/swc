@@ -11,10 +11,11 @@ export default {
   },
   ssr: false,
   target: 'static',
-  // Global page headers: https://go.nuxtjs.dev/config-head
+
   router: {
     middleware: ['auth'],
   },
+  // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
     title: 'Веб-конфигуратор',
     htmlAttrs: {
@@ -78,6 +79,18 @@ export default {
   auth:{
     strategies: {
       local: {
+        scheme: 'refresh',
+        token: {
+          property: 'access_token',
+          maxAge: 60 * 60 * 24 * 30,
+          global: true,
+          // type: 'Bearer'
+        },
+        refreshToken: {
+          property: 'refresh_token',
+          data: 'refresh_token',
+          maxAge: 60 * 60 * 24 * 30
+        },
         user: {
           property: ''
         },
