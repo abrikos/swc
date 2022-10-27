@@ -33,7 +33,6 @@
 
 export default {
   name: "cabinet-settings",
-  middleware: ['auth'],
   computed: {
     user() {
       return {...this.$store.getters.getLoggedUser}
