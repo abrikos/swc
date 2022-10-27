@@ -131,7 +131,9 @@ module.exports = function (app) {
             const {count} = req.body;
             const assembly = await db.assembly.findById(assemblyId).populate(db.assembly.population);
             if (!assembly.user.equals(user.id)) throw {error: 403, message: 'Access denied'}
-            await db.part.updateOne({component:componentId ,assembly:assemblyId}, {count}, {upsert: true})
+            const component = await db.component.findById(componentId);
+            if (!component) throw {message: 'Wrong component'}
+            await db.part.updateOne({component ,assembly}, {count}, {upsert: true})
             res.sendStatus(200)
         } catch (e) {
             app.locals.errorLogger(e, res)
@@ -148,28 +150,5 @@ module.exports = function (app) {
         await assembly.save()
         res.sendStatus(200)
     })
-
-    app.put('/api/assembly/:assemblyId/add/component/:componentId', passport.isLogged, async (req, res) => {
-        try {
-            const {user} = res.locals;
-            const {assemblyId, componentId} = req.params;
-            const {count} = req.body
-            const assembly = await db.assembly.findOne({_id: assemblyId, user}).populate(db.assembly.population);
-            if (!assembly) throw {message: 'Wrong assembly'}
-            const component = await db.component.findById(componentId);
-            if (!component) throw {message: 'Wrong component'}
-            const part = await db.part.findOne({assembly, component}).populate('component')
-            if (!part) {
-                db.part.create({assembly, component, count})
-            } else {
-                part.count = count
-                await part.save()
-            }
-            res.sendStatus(200)
-        } catch (e) {
-            app.locals.errorLogger(e, res)
-        }
-    })
-
 
 }
