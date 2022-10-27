@@ -101,6 +101,7 @@ export default {
     loadComponents() {
       this.componentsCurrent = this.componentsCurrentFiltered = this.componentsAll.filter(c => {
         const match = c.type === (this.chosenSubTab?.type || this.chosenTab.type) || (this.chosenTab.type === 'CPU' && this.assembly.chassis.cpu === c.type)
+        console.log(c.type, this.chosenTab.type, this.assembly.chassis.cpu)
         return match
       })
     },
@@ -135,11 +136,11 @@ export default {
 
 <style scoped lang="sass">
 .v-data-table
-  ::v-deep .inBasket
+  :deep(.inBasket)
     td
       background-color: silver
 
-  ::v-deep .table-filter
+  :deep(.table-filter)
     label
       font-size: .8em
 

@@ -19,7 +19,6 @@ const methods = {
 
     async authenticate(req, res) {
         try {
-            console.log('passssp', req.body)
             const {email, password} = req.body
             const user = await res.locals.db.user.findOne({email})
             if (!user) throw {error: 404, message: 'No user found'}

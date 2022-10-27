@@ -116,9 +116,9 @@ export default {
 
 <style scoped lang="sass">
 .v-data-table
-  ::v-deep .text-start
+  :deep(.text-start)
     padding: 0
 
-  ::v-deep .v-input
+  :deep(.v-input)
     margin: 0
 </style>

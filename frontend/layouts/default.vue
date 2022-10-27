@@ -31,7 +31,7 @@
           </v-list>
         </v-menu>
 
-        <v-btn to="/cabinet/settings" vif="user" >Кабинет</v-btn>
+        <v-btn to="/cabinet/settings" v-if="user" >Кабинет</v-btn>
         <v-btn to="/user/signup" v-if="!user" id>Регистрация</v-btn>
         <v-btn to="/user/login" v-if="!user" id>Вход</v-btn>
         <v-btn @click="logout" v-if="user" id>Выход</v-btn>
@@ -64,11 +64,11 @@ export default {
     },
     switchTheme() {
       this.$vuetify.theme.isDark = !this.$vuetify.theme.isDark;
-      localStorage.setItem('themeDark', this.$vuetify.theme.isDark)
+      //localStorage.setItem('themeDark', this.$vuetify.theme.isDark)
     }
   },
   created() {
-    this.$vuetify.theme.isDark = JSON.parse(localStorage.getItem('themeDark'))
+    //this.$vuetify.theme.isDark = JSON.parse(localStorage.getItem('themeDark'))
     //this.$axios.$get('/build-date')        .then(res => this.buildDate = res.ctime)
   },
 
