@@ -1,6 +1,6 @@
 <template>
   <div v-if="assembly">
-    <h1>{{assembly.name || assembly.chassis.partNumber}} <small>{{assembly.chassis.descShort}}</small></h1>
+    <h1>{{ assembly.name || assembly.chassis.partNumber }} <small>{{ assembly.chassis.descShort }}</small></h1>
     <v-row>
       <v-col sm="7">
         <Tabs :withIcons="true" :items="tabs" :onClick="tabChanged"/>
@@ -17,10 +17,12 @@
             Ни чего не найдено
           </template>
           <template v-slot:item.count="{item}">
-            <v-select :items="[0, 1,2,3,4,5]" @change="e=>addPart(e, item)" dense flat :value="calcCount(item)" hide-details/>
+            <v-select :items="[0, 1,2,3,4,5]" @change="e=>addPart(e, item)" dense flat :value="calcCount(item)"
+                      hide-details/>
           </template>
           <template v-slot:header.description>
-            <v-text-field hide-details label="Фильтр описания" flat dense class="table-filter" v-model="filter" @keyup="filterComponents"></v-text-field>
+            <v-text-field hide-details label="Фильтр описания" flat dense class="table-filter" v-model="filter"
+                          @keyup="filterComponents"></v-text-field>
           </template>
         </v-data-table>
       </v-col>
@@ -47,52 +49,6 @@ export default {
   name: "configurator-parts",
   components: {Basket, Tabs},
   data() {
-    const tabs = [
-      //{id: 'base', label: 'Основа'},
-      {type: 'CPU'},
-      {
-        type: 'Memory',
-      },
-      {
-        type: 'Storage',
-        children: [
-          {type: 'RAID'},
-          {type: 'HDD'},
-          {type: 'SSD 2.5'},
-          {type: 'SSD m.2'},
-          {type: 'SSD U.2 NVMe'},
-          {type: 'Rear bay'},
-        ]
-      },
-      /*{
-        id: 'os___software',
-        type: 'Soft',
-        label: 'Софт', children: [
-          {id: 'microsoft', label: 'Microsoft'},
-          {id: 'vmware', label: 'VMware'},
-        ]
-      },*/
-      {
-        type: 'Riser',
-      },
-      {
-        type: 'PCI-E',
-        children: [
-          {type: 'LAN OCP 3.0'},
-          {type: 'LAN'},
-          {type: 'FC'},
-          {type: 'GPU'},
-          {type: 'Transceiver'},
-        ]
-      },
-      {
-        type: 'Power',
-      },
-      //{id: 'others', label: 'Другое'},
-      //{id: 'security', label: 'Безопасность'},
-      //{id: 'services', label: 'Сервисы'},
-      //{id: 'unconfigured', label: 'Иное'},
-    ]
     return {
       nameChanged: false,
       filter: '',
@@ -107,9 +63,9 @@ export default {
         {text: 'Партномер', value: 'partNumber', width: '20%'},
         {text: 'Описание', value: 'description', width: '50%', sortable: false},
         {text: 'Цена', value: 'price', width: '20%'},
-        {text: '', value: 'count',width: '10%', sortable: false}
+        {text: '', value: 'count', width: '10%', sortable: false}
       ],
-      tabs
+      tabs: []
     }
   },
   computed: {
@@ -117,7 +73,7 @@ export default {
       return this.$route.params.pathMatch;
     },
     chosenTab() {
-      return this.tabs[this.tab]
+      return this.tabs[this.tab] || {}
     },
     chosenSubTab() {
       return this.chosenTab.children && this.chosenTab.children[this.subTab]
@@ -125,21 +81,20 @@ export default {
   },
   created() {
     this.loadAssembly()
-    this.loadComponents()
   },
   methods: {
-    filterComponents(){
-      this.componentsFiltered = this.components.filter(c=>c.description.toLowerCase().match(this.filter.toLowerCase()))
+    filterComponents() {
+      this.componentsFiltered = this.components.filter(c => c.description.toLowerCase().match(this.filter.toLowerCase()))
     },
-    async changeField(field, item){
-      await this.$axios.$put(`/assembly/${item.id}/field/${field}`,item)
+    async changeField(field, item) {
+      await this.$axios.$put(`/assembly/${item.id}/field/${field}`, item)
     },
-    calcCount(item){
-      const part = this.assembly.parts.find(p=> p.component.id === item.id)
+    calcCount(item) {
+      const part = this.assembly.parts.find(p => p.component.id === item.id)
       return part ? part.count : 0
     },
-    itemRowBackground(item){
-      return this.assembly.parts.map(p=>p.component.id).includes(item.id) ? 'inBasket' : ''
+    itemRowBackground(item) {
+      return this.assembly.parts.map(p => p.component.id).includes(item.id) ? 'inBasket' : ''
     },
     async loadComponents() {
       this.components = this.componentsFiltered = await this.$axios.$get(`/assembly/${this.id}/component-type/${this.chosenSubTab?.type || this.chosenTab.type}`)
@@ -156,8 +111,38 @@ export default {
       this.subTab = index
       this.loadComponents()
     },
+
     async loadAssembly() {
-      this.assembly = await this.$axios.$get('/assembly/' + this.id)
+      this.assembly = await this.$axios.$get('/assembly/' + this.id);
+      this.tabs = !['JBOD'].includes(this.assembly.chassis.platform) ?[
+        //{id: 'base', label: 'Основа'},
+        {type: 'CPU'},
+        {type: 'Memory',},
+        {
+          type: 'Storage',
+          children: [
+            {type: 'RAID'},
+            {type: 'HDD'},
+            {type: 'SSD 2.5'},
+            {type: 'SSD m.2'},
+            {type: 'SSD U.2 NVMe'},
+            {type: 'Rear bay'},
+          ]
+        },
+        {type: 'Riser',},
+        {
+          type: 'PCI-E',
+          children: [
+            {type: 'LAN OCP 3.0'},
+            {type: 'LAN'},
+            {type: 'FC'},
+            {type: 'GPU'},
+            {type: 'Transceiver'},
+          ]
+        },
+        {type: 'Power'},
+      ]:[{type: 'Cable'}]
+      this.loadComponents()
     },
     async addPart(count, item) {
       await this.$axios.$put(`/assembly/${this.id}/part/${item.id}`, {count})
@@ -173,9 +158,11 @@ export default {
   ::v-deep .inBasket
     td
       background-color: silver
+
   ::v-deep .table-filter
     label
       font-size: .8em
+
 .count-select
   .v-select
     height: 200px

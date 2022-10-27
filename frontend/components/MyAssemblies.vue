@@ -8,13 +8,22 @@
       <template v-slot:no-data>
         Ни чего не найдено
       </template>
+      <template v-slot:item.chassis.partNumber="{item}">
+        <div @click="$router.push('/configurator/assembly/'+item.id)" style="cursor: pointer">{{item.chassis.partNumber}}</div>
+      </template>
+      <template v-slot:item.chassis.descShort="{item}">
+        <div @click="$router.push('/configurator/assembly/'+item.id)" style="cursor: pointer">{{item.chassis.descShort}}</div>
+      </template>
+      <template v-slot:item.price="{item}">
+        <div @click="$router.push('/configurator/assembly/'+item.id)" style="cursor: pointer">{{item.price}}</div>
+      </template>
       <template v-slot:item.toSpec="{item}">
         <v-checkbox dense hide-details/>
       </template>
       <template v-slot:item.name="{item}">
 
-        <span v-if="showNameField !== item.id" @click="showNameField=item.id"><v-icon
-            title="click me">mdi-gesture-tap</v-icon>{{ item.name }}</span>
+        <div v-if="showNameField !== item.id" @click="showNameField=item.id"><v-icon
+            title="click me">mdi-gesture-tap</v-icon>{{ item.name }}</div>
         <v-text-field
             v-model="item.name"
             flat dense outlined hide-details append-icon="mdi-check"
@@ -38,9 +47,6 @@
         />
       </template>
       <template v-slot:item.controls="{ item }">
-        <v-btn :to="'/configurator/assembly/'+item.id" icon title="Редактировать">
-          <v-icon>mdi-file-edit-outline</v-icon>
-        </v-btn>
         <v-btn icon title="Добавить в спецификацию" @click="dialogShow(item)">
           <v-icon>mdi-plus</v-icon>
         </v-btn>

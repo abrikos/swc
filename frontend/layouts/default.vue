@@ -11,6 +11,7 @@
         <v-btn id to="/configurator/start" v-if="user">
           Конфигуратор
         </v-btn>
+        <v-btn to="/cabinet/assemblies" v-if="user" >Сборки</v-btn>
       </v-toolbar-items>
       <v-spacer></v-spacer>
       <v-toolbar-items class="hidden-sm-and-down">
@@ -29,21 +30,8 @@
             </v-list-item>
           </v-list>
         </v-menu>
-        <v-menu rounded="true" open-on-hover offset-y transition="slide-x-transition" bottom right v-if="user?.isAdmin">
-          <template v-slot:activator="{ on, attrs }">
-            <v-btn id v-bind="attrs" v-on="on">
-              Кабинет
-            </v-btn>
-          </template>
-          <v-list dense>
-            <v-list-item to="/cabinet/settings">
-              <v-list-item-title>{{$t('Settings')}}</v-list-item-title>
-            </v-list-item>
-            <v-list-item to="/cabinet/assemblies">
-              <v-list-item-title>Сборки</v-list-item-title>
-            </v-list-item>
-          </v-list>
-        </v-menu>
+
+        <v-btn to="/cabinet/settings" v-if="user" >Кабинет</v-btn>
         <v-btn to="/user/signup" v-if="!user" id>Регистрация</v-btn>
         <v-btn to="/user/login" v-if="!user" id>Вход</v-btn>
         <v-btn @click="logout" v-if="user" id>Выход</v-btn>
@@ -89,6 +77,8 @@ export default {
 </script>
 
 <style lang="sass">
+pointer
+  cursor: pointer
 h1
   border-bottom: 1px solid silver
   margin-bottom: 10px
