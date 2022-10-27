@@ -4,7 +4,7 @@
          :class="'tab' + (tab===i ? ' active' : '') + (isHovering===i ? ' hovered':'')"
          @mouseover="isHovering = i"
          @mouseout="isHovering = false">
-      <img :src="`/icons/${type}_icon.png`" v-if="withIcons"/>
+      <img :src="`/icons/${type}_icon.png`" v-if="withIcons" :class="imageStyle"/>
       {{ type }}
     </div>
   </div>
@@ -14,7 +14,13 @@
 export default {
   name: "Tabs",
   props: ['onClick', 'items', 'withIcons'],
+  computed:{
+    imageStyle(){
+      return this.$vuetify.theme.isDark ? 'inverse' : ''
+    }
+  },
   data(){
+
     return {
       tab: 0,
       isHovering : false
@@ -51,7 +57,8 @@ export default {
       margin: auto
       display: block
       width: 55px
-
+    img.inverse
+      filter: invert(1)
   .tab.hovered
     background-color: silver
 
