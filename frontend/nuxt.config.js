@@ -14,15 +14,6 @@ export default {
   // Global page headers: https://go.nuxtjs.dev/config-head
   router: {
     middleware: ['auth'],
-    extendRoutes(routes, resolve) {
-      routes.push(
-          {
-            name: 'configuratorAssembly',
-            path: '/configurator/assembly/*',
-            component: resolve(__dirname, 'pages/configurator/assembly.vue'),
-          },
-      )
-    }
   },
   head: {
     title: 'Веб-конфигуратор',

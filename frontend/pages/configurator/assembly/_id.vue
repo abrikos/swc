@@ -72,7 +72,7 @@ export default {
   },
   computed: {
     id() {
-      return this.$route.params.pathMatch;
+      return this.$route.params.id;
     },
     chosenTab() {
       return this.tabs[this.tab] || {}
@@ -101,7 +101,6 @@ export default {
     loadComponents() {
       this.componentsCurrent = this.componentsCurrentFiltered = this.componentsAll.filter(c => {
         const match = c.type === (this.chosenSubTab?.type || this.chosenTab.type) || (this.chosenTab.type === 'CPU' && this.assembly.chassis.cpu === c.type)
-        console.log(c.type, this.chosenTab.type, this.assembly.chassis.cpu)
         return match
       })
     },
