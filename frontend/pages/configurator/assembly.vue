@@ -4,10 +4,11 @@
     <v-row>
       <v-col sm="7">
         <Tabs :withIcons="true" :items="tabs" :onClick="tabChanged"/>
-        <Tabs :items="chosenTab.children" :onClick="subTabChanged" v-if="chosenTab.children"/>
+        <Tabs :items="chosenTab.children" :onClick="subTabChanged" :style="`display: ${chosenTab.children ? 'flex': 'none'}`" ref="subTabs"/>
+        {{subTab}}
         <v-data-table
             :headers="headers"
-            :items="componentsFiltered"
+            :items="componentsCurrentFiltered"
             :items-per-page="15"
             class="row-pointer"
             style="cursor: pointer"
@@ -56,10 +57,12 @@ export default {
       tab: 0,
       subTab: null,
       isHovering: false,
-      components: [],
-      componentsFiltered: [],
+      componentsAll: [],
+      componentsCurrent: [],
+      componentsCurrentFiltered: [],
       assembly: null,
       headers: [
+        {text: 'Партномер', value: 'type', width: '20%'},
         {text: 'Партномер', value: 'partNumber', width: '20%'},
         {text: 'Описание', value: 'description', width: '50%', sortable: false},
         {text: 'Цена', value: 'price', width: '20%'},
@@ -84,7 +87,7 @@ export default {
   },
   methods: {
     filterComponents() {
-      this.componentsFiltered = this.components.filter(c => c.description.toLowerCase().match(this.filter.toLowerCase()))
+      this.componentsCurrentFiltered = this.componentsCurrent.filter(c => c.description.toLowerCase().match(this.filter.toLowerCase()))
     },
     async changeField(field, item) {
       await this.$axios.$put(`/assembly/${item.id}/field/${field}`, item)
@@ -96,14 +99,17 @@ export default {
     itemRowBackground(item) {
       return this.assembly.parts.map(p => p.component.id).includes(item.id) ? 'inBasket' : ''
     },
-    async loadComponents() {
-      this.components = this.componentsFiltered = await this.$axios.$get(`/assembly/${this.id}/component-type/${this.chosenSubTab?.type || this.chosenTab.type}`)
-      //componentsAll.filter(c=> this.subTab ? c.type === this.subTab : c.type === this.tab)
+    loadComponents() {
+      this.componentsCurrent = this.componentsCurrentFiltered = this.componentsAll.filter(c => {
+        const match = c.type === (this.chosenSubTab?.type || this.chosenTab.type) || (this.chosenTab.type === 'CPU' && this.assembly.chassis.cpu === c.type)
+        return match
+      })
     },
     tabChanged(index) {
       this.filter = ''
       this.tab = index;
       this.subTab = 0;
+      this.$refs.subTabs.resetTab()
       this.loadComponents()
     },
     subTabChanged(index) {
@@ -113,39 +119,14 @@ export default {
     },
 
     async loadAssembly() {
-      this.assembly = await this.$axios.$get('/assembly/' + this.id);
-      this.tabs = !['JBOD'].includes(this.assembly.chassis.platform) ?[
-        //{id: 'base', label: 'Основа'},
-        {type: 'CPU'},
-        {type: 'Memory',},
-        {
-          type: 'Storage',
-          children: [
-            {type: 'RAID'},
-            {type: 'HDD'},
-            {type: 'SSD 2.5'},
-            {type: 'SSD m.2'},
-            {type: 'SSD U.2 NVMe'},
-            {type: 'Rear bay'},
-          ]
-        },
-        {type: 'Riser',},
-        {
-          type: 'PCI-E',
-          children: [
-            {type: 'LAN OCP 3.0'},
-            {type: 'LAN'},
-            {type: 'FC'},
-            {type: 'GPU'},
-            {type: 'Transceiver'},
-          ]
-        },
-        {type: 'Power'},
-      ]:[{type: 'Cable'}]
+      const res = await this.$axios.$get('/assembly/' + this.id);
+      this.assembly = res.assembly
+      this.componentsAll =  this.componentsFiltered = res.components
+      this.tabs = res.tabs
       this.loadComponents()
     },
     async addPart(count, item) {
-      await this.$axios.$put(`/assembly/${this.id}/part/${item.id}`, {count})
+      await this.$axios.$put(`/assembly/${this.id}/component/${item.id}`, {count})
       await this.loadAssembly()
       this.count = 0
     }

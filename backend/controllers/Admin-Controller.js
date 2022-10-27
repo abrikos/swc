@@ -38,7 +38,7 @@ module.exports = function (app) {
     })
 
     //db.component.find({type: 'HDD'}).then(console.log)
-    db.component.find({partNumber: '4 SATA - 1*SFF-8643'}).then(console.log)
+    //db.component.find({partNumber: '4 SATA - 1*SFF-8643'}).then(console.log)
 
     app.post('/api/admin/upload-list', passport.isAdmin, async (req, res) => {
         //await db.component.deleteMany({})
@@ -62,6 +62,7 @@ module.exports = function (app) {
                             specification: data.DescShort.trim(),
                             partNumber: data.PN.trim(),
                             price: data['цена GPL '].trim(),
+                            cpu: data.AMD ? 'AMD' : 'Intel',
                             descFull: data.DescFull.trim()
                         }, {upsert: true})
                     } else {

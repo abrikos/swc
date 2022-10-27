@@ -4,6 +4,7 @@
          :class="'tab' + (tab===i ? ' active' : '') + (isHovering===i ? ' hovered':'')"
          @mouseover="isHovering = i"
          @mouseout="isHovering = false">
+      {{tab}} === {{i}}
       <img :src="`/icons/${type}_icon.png`" v-if="withIcons" :class="imageStyle"/>
       {{ type }}
     </div>
@@ -27,6 +28,9 @@ export default {
     }
   },
   methods:{
+    resetTab(){
+      this.tab = 0
+    },
     tabClick(index){
       this.tab = index
       this.onClick(index)

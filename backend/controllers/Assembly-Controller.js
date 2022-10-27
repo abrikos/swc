@@ -5,26 +5,19 @@ module.exports = function (app) {
     const {db} = app.locals;
     app.get('/api/assemblies/my', passport.isLogged, async (req, res) => {
         const {user} = res.locals;
-        const items = await db.assembly.find({user}).sort({createdAt:'desc'}).populate(db.assembly.population)
+        const items = await db.assembly.find({user}).sort({createdAt: 'desc'}).populate(db.assembly.population)
         res.send(items)
-    })
-
-    app.get('/api/assembly/:assemblyId', passport.isLogged, async (req, res) => {
-        const {user} = res.locals;
-        const {assemblyId} = req.params;
-        const item = await db.assembly.findOne({_id: assemblyId, user}).populate(db.assembly.population);
-        res.send(item)
     })
 
     app.put('/api/assembly/:assemblyId/to-spec/:specId', passport.isLogged, async (req, res) => {
         try {
             const {user} = res.locals;
-            const {assemblyId,  specId} = req.params;
+            const {assemblyId, specId} = req.params;
             const assembly = await db.assembly.findOne({_id: assemblyId, user}).populate(db.assembly.population);
-            if (!assembly) throw {error:403, message: 'Access denied: wrong assembly'}
+            if (!assembly) throw {error: 403, message: 'Access denied: wrong assembly'}
             const spec = await db.spec.findOne({_id: specId, user});
-            if (!spec) throw {error:403, message: 'Access denied: wrong spec'}
-            if(spec.assemblies.includes(assembly.id)) throw {error: 406, message: 'Assembly already in this spec'}
+            if (!spec) throw {error: 403, message: 'Access denied: wrong spec'}
+            if (spec.assemblies.includes(assembly.id)) throw {error: 406, message: 'Assembly already in this spec'}
             spec.assemblies.push(assembly)
             await spec.save()
             res.sendStatus(200)
@@ -46,15 +39,63 @@ module.exports = function (app) {
         }
     })
 
+    app.get('/api/assembly/:assemblyId', passport.isLogged, async (req, res) => {
+        const {user} = res.locals;
+        const {assemblyId} = req.params;
+        const assembly = await db.assembly.findOne({_id: assemblyId, user}).populate(db.assembly.population);
+        res.send({assembly, ...await componentsOfAssembly(assembly)})
+    })
+
+    async function componentsOfAssembly(assembly) {
+        const criteria = {type: {$in: []}}
+        const tabs = !['JBOD'].includes(assembly.chassis.platform) ? [
+            //{id: 'base', label: 'Основа'},
+            {type: 'CPU'},
+            {type: 'Memory',},
+            {
+                type: 'Storage',
+                children: [
+                    {type: 'RAID'},
+                    {type: 'HDD'},
+                    {type: 'SSD 2.5'},
+                    {type: 'SSD m.2'},
+                    {type: 'SSD U.2 NVMe'},
+                    {type: 'Rear bay'},
+                ]
+            },
+            {type: 'Riser',},
+            {
+                type: 'PCI-E',
+                children: [
+                    {type: 'LAN OCP 3.0'},
+                    {type: 'LAN'},
+                    {type: 'FC'},
+                    {type: 'GPU'},
+                    {type: 'Transceiver'},
+                ]
+            },
+            {type: 'Power'},
+        ] : [{type: 'Cable'}]
+        for (const tab of tabs) {
+            if (tab.children) {
+                for (const subTab of tab.children) {
+                    criteria.type.$in.push(subTab.type)
+                }
+            } else {
+                if (tab.type === 'CPU') {
+                    criteria.type.$in.push(assembly.chassis.platform === 'AMD' ? 'AMD' : 'Intel')
+                } else {
+                    criteria.type.$in.push(tab.type)
+                }
+            }
+        }
+        return {components: await db.component.find(criteria), tabs};
+    }
+
     app.get('/api/assembly/:assemblyId/component-type/:componentType', async (req, res) => {
         const {assemblyId, componentType} = req.params;
         const assembly = await db.assembly.findById(assemblyId).populate(db.assembly.population);
-        const criteria = {type: componentType}
-        if (componentType === 'CPU') {
-            criteria.type = assembly.chassis.platform === 'AMD' ? 'AMD' : 'Intel'
-        }
-        const items = await db.component.find(criteria);
-        res.send(items)
+        res.send(await componentsOfAssembly(assembly, componentType))
     })
 
     //db.assembly.deleteMany({}).then(console.log)
@@ -69,7 +110,7 @@ module.exports = function (app) {
         res.send(assembly)
     })
 
-    app.delete('/api/assembly/part/:partId/remove', passport.isLogged, async (req, res) => {
+    app.delete('/api/assembly/part/:partId', passport.isLogged, async (req, res) => {
         try {
             const {user} = res.locals;
             const part = await db.part.findById(req.params.partId);
@@ -82,6 +123,21 @@ module.exports = function (app) {
             app.locals.errorLogger(e, res)
         }
     })
+
+    app.put('/api/assembly/:assemblyId/component/:componentId', passport.isLogged, async (req, res) => {
+        try {
+            const {user} = res.locals;
+            const {componentId, assemblyId} = req.params;
+            const {count} = req.body;
+            const assembly = await db.assembly.findById(assemblyId).populate(db.assembly.population);
+            if (!assembly.user.equals(user.id)) throw {error: 403, message: 'Access denied'}
+            await db.part.updateOne({component:componentId ,assembly:assemblyId}, {count}, {upsert: true})
+            res.sendStatus(200)
+        } catch (e) {
+            app.locals.errorLogger(e, res)
+        }
+
+    });
 
     app.put('/api/assembly/:assemblyId/field/:field', passport.isLogged, async (req, res) => {
         const {user} = res.locals;
