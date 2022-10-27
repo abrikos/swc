@@ -5,7 +5,6 @@
       <v-col sm="7">
         <Tabs :withIcons="true" :items="tabs" :onClick="tabChanged"/>
         <Tabs :items="chosenTab.children" :onClick="subTabChanged" :style="`display: ${chosenTab.children ? 'flex': 'none'}`" ref="subTabs"/>
-        {{subTab}}
         <v-data-table
             :headers="headers"
             :items="componentsCurrentFiltered"
