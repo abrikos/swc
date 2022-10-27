@@ -26,6 +26,11 @@ $yarn generate
 $ pm2 start pm2.config.js
 ```
 
+## Update and reload
+```bash
+$./restart.sh
+```
+
 For detailed explanation on how things work, check out the [documentation](https://nuxtjs.org).
 
 ## Special Directories
