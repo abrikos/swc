@@ -12,6 +12,11 @@
 
 export default {
   auth: false,
+  computed: {
+    user() {
+      return this.$store.getters.getLoggedUser
+    }
+  },
   data() {
     return {
       form: {},
@@ -24,7 +29,9 @@ export default {
 
   },
   created() {
+    if(this.$store.getters.getLoggedUser)
+      this.$router.push(this.$store.getters.getLoginRedirect)
+  }
 
-  },
 }
 </script>
