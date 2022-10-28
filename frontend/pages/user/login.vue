@@ -16,7 +16,6 @@
             :label="$t('Password')"
             :rules="rules"
         />
-
       </v-card-text>
       <v-card-actions>
         <v-btn @click="submit" class="my-4">{{ $t('Send') }}</v-btn>
@@ -44,8 +43,8 @@ export default {
       ],
       list: [],
       login: {
-        email: '',
-        password: '',
+        email: 'abrikoz@gmail.com',
+        password: '123',
       }
     }
   },
@@ -59,7 +58,8 @@ export default {
   },
   methods: {
     async submit() {
-      await this.$auth.login({data:this.login})
+      const x = await this.$auth.login({data:this.login})
+      console.log(x)
       if(this.$store.getters.getLoggedUser)
         await this.$router.push(this.$store.getters.getLoginRedirect)
     }

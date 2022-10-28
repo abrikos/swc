@@ -81,13 +81,13 @@ export default {
       local: {
         scheme: 'refresh',
         token: {
-          property: 'access_token',
-          maxAge: 60 * 60 * 24 * 30,
+          property: 'access_token2222',
+          maxAge: 5,
           global: true,
           // type: 'Bearer'
         },
         refreshToken: {
-          property: 'refresh_token',
+          property: 'refresh_token3333',
           data: 'refresh_token',
           maxAge: 60 * 60 * 24 * 30
         },
@@ -96,6 +96,7 @@ export default {
         },
         endpoints: {
           login: { url: '/auth/login', method: 'post' },
+          refresh: { url: '/auth/refresh', method: 'post' },
           logout: { url: '/auth/logout', method: 'post' },
           user: { url: '/auth/user', method: 'get' }
         }
