@@ -17,7 +17,7 @@
             Ни чего не найдено
           </template>
           <template v-slot:item.count="{item}">
-            <v-select :items="[0, 1,2,3,4,5]" @change="e=>addPart(e, item)" dense flat :value="calcCount(item)"
+            <v-select :items="Array.from(Array(maxCount + 1).keys())" @change="e=>addPart(e, item)" dense flat :value="calcCount(item)"
                       hide-details/>
           </template>
           <template v-slot:header.description>
@@ -54,6 +54,7 @@ export default {
       filter: '',
       count: 0,
       tab: 0,
+      maxCount: 0,
       subTab: null,
       isHovering: false,
       componentsAll: [],
@@ -126,6 +127,7 @@ export default {
       this.assembly = res.assembly
       this.componentsAll =  this.componentsFiltered = res.components
       this.tabs = res.tabs
+      this.maxCount = res.maxCount
       this.loadComponents()
     },
     async addPart(count, item) {

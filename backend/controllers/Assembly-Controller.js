@@ -48,6 +48,7 @@ module.exports = function (app) {
 
     async function componentsOfAssembly(assembly) {
         const criteria = {type: {$in: []}}
+        let maxCount = 51;
         const tabs = !['JBOD'].includes(assembly.chassis.platform) ? [
             //{id: 'base', label: 'Основа'},
             {type: 'CPU'},
@@ -83,13 +84,14 @@ module.exports = function (app) {
                 }
             } else {
                 if (tab.type === 'CPU') {
+                    maxCount = 2;
                     criteria.type.$in.push(assembly.chassis.platform === 'AMD' ? 'AMD' : 'Intel')
                 } else {
                     criteria.type.$in.push(tab.type)
                 }
             }
         }
-        return {components: await db.component.find(criteria), tabs};
+        return {components: await db.component.find(criteria), tabs, maxCount};
     }
 
     app.get('/api/assembly/:assemblyId/component-type/:componentType', async (req, res) => {
