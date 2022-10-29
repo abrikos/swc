@@ -133,7 +133,10 @@ module.exports = function (app) {
             if (!assembly.user.equals(user.id)) throw {error: 403, message: 'Access denied'}
             const component = await db.component.findById(componentId);
             if (!component) throw {message: 'Wrong component'}
-            await db.part.updateOne({component ,assembly}, {count}, {upsert: true})
+            if (count)
+                await db.part.updateOne({component, assembly}, {count}, {upsert: true})
+            else
+                await db.part.deleteOne({component, assembly})
             res.sendStatus(200)
         } catch (e) {
             app.locals.errorLogger(e, res)

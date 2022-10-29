@@ -9,13 +9,13 @@
         Ни чего не найдено
       </template>
       <template v-slot:item.chassis.partNumber="{item}">
-        <div @click="$router.push('/configurator/assembly/'+item.id)" style="cursor: pointer">{{item.chassis.partNumber}}</div>
+        <div @click="$router.push('/configurator/'+item.id)" style="cursor: pointer">{{item.chassis.partNumber}}</div>
       </template>
       <template v-slot:item.chassis.descShort="{item}">
-        <div @click="$router.push('/configurator/assembly/'+item.id)" style="cursor: pointer">{{item.chassis.descShort}}</div>
+        <div @click="$router.push('/configurator/'+item.id)" style="cursor: pointer">{{item.chassis.descShort}}</div>
       </template>
       <template v-slot:item.price="{item}">
-        <div @click="$router.push('/configurator/assembly/'+item.id)" style="cursor: pointer">{{item.price}}</div>
+        <div @click="$router.push('/configurator/'+item.id)" style="cursor: pointer">{{item.price}}</div>
       </template>
       <template v-slot:item.toSpec="{item}">
         <v-checkbox dense hide-details/>

@@ -32,6 +32,11 @@ export default {
   name: "login",
   auth: false,
   data() {
+    console.log('zzzzzzzz', window?.location.host)
+    const login = window?.location.host === 'test.abrikos.pro' ? {
+      email: 'abrikoz@gmail.com',
+      password: '123',
+    } : {}
     return {
       name: '',
       email: '',
@@ -42,10 +47,7 @@ export default {
         //value => (value && value.length >= 3) || 'Min 3 characters',
       ],
       list: [],
-      login: {
-        email: 'abrikoz@gmail.com',
-        password: '123',
-      }
+      login
     }
   },
   computed: {

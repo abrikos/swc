@@ -24,7 +24,7 @@
             {{ item.parts.length }}
           </template>
           <template v-slot:item.controls="{item}">
-            <v-btn :to="'/configurator/assembly/'+item.id" icon title="Редактировать">
+            <v-btn :to="'/configurator/'+item.id" icon title="Редактировать">
               <v-icon>mdi-file-edit-outline</v-icon>
             </v-btn>
             <v-btn @click="removeAssembly(item)" icon color="red" x-small title="Удалить">

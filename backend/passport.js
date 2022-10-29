@@ -42,7 +42,6 @@ const methods = {
     },
 
     async getUser(req, res) {
-        console.log(req.cookies)
         if (!req.cookies[accessTokenName]) return;
         const access_token = req.cookies[accessTokenName].replace('Bearer ','');
         const token = await res.locals.db.token.findOne({access_token})
@@ -60,7 +59,7 @@ async function isLogged(req, res, next) {
         res.locals.user = found;
         return next()
     } catch (e) {
-        res.locals.errorLogger(e, res)
+        res.status(e.error).send(e)
     }
 }
 
@@ -72,7 +71,7 @@ async function isAdmin(req, res, next) {
         res.locals.user = found;
         return next()
     } catch (e) {
-        res.locals.errorLogger(e, res)
+        res.status(e.error).send(e)
     }
 }
 

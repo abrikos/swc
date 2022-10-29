@@ -82,7 +82,7 @@ export default {
         scheme: 'refresh',
         token: {
           property: 'access_token2222',
-          maxAge: 5,
+          maxAge: 1800,
           global: true,
           // type: 'Bearer'
         },

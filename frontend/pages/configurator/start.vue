@@ -53,7 +53,7 @@ export default {
     },
     createAssembly(e){
       this.$axios.$get('/assembly/create/chassis/'+ e.id)
-          .then(res=>this.$router.push('/configurator/assembly/' + res.id))
+          .then(res=>this.$router.push('/configurator/' + res.id))
     }
   }
 }

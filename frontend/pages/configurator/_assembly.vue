@@ -71,7 +71,7 @@ export default {
   },
   computed: {
     id() {
-      return this.$route.params.id;
+      return this.$route.params.assembly;
     },
     chosenTab() {
       return this.tabs[this.tab] || {}
@@ -95,7 +95,12 @@ export default {
       return part ? part.count : 0
     },
     itemRowBackground(item) {
-      return this.assembly.parts.map(p => p.component.id).includes(item.id) ? 'inBasket' : ''
+      if( this.chosenTab.type === 'CPU' ){
+        return this.assembly.parts.length ? this.assembly.parts.map(p => p.component.id).includes(item.id) ? 'inBasket' : 'cpu-disabled' : ''
+      } else {
+        return this.assembly.parts.map(p => p.component.id).includes(item.id) ? 'inBasket' : ''
+      }
+
     },
     loadComponents() {
       this.componentsCurrent = this.componentsCurrentFiltered = this.componentsAll.filter(c => {
@@ -137,6 +142,9 @@ export default {
   :deep(.inBasket)
     td
       background-color: silver
+  :deep(.cpu-disabled)
+    .v-input
+      display: none
 
   :deep(.table-filter)
     label
