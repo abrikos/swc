@@ -25,7 +25,7 @@
 <script>
 
 export default {
-  name: "MySpecs",
+  name: "SpecsList",
   data() {
     return {
       dialogSpec: null,

@@ -32,7 +32,7 @@
           </v-list>
         </v-menu>
 
-        <v-btn to="/cabinet/settings" vif="user" >Кабинет</v-btn>
+        <v-btn to="/cabinet/settings" v-if="user" >Кабинет</v-btn>
         <v-btn to="/user/signup" v-if="!user" id>Регистрация</v-btn>
         <v-btn to="/user/login" v-if="!user" id>Вход</v-btn>
         <v-btn @click="logout" v-if="user" id>Выход</v-btn>

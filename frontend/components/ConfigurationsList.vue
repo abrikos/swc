@@ -74,7 +74,7 @@
 <script>
 
 export default {
-  name: "MyAssemblies",
+  name: "ConfigsList",
   props: ['specReload'],
   data() {
     return {
