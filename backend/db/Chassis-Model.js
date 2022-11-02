@@ -11,7 +11,7 @@ const schema = new Schema({
         partNumber: {type:String, unique: true},
         descShort: String,
         descFull: String,
-        specification: String,
+        params: String,
         price: Number
     },
     {

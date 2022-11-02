@@ -32,7 +32,6 @@ export default {
   name: "login",
   auth: false,
   data() {
-    console.log('zzzzzzzz', window?.location.host)
     const login = window?.location.host === 'test.abrikos.pro' ? {
       email: 'abrikoz@gmail.com',
       password: '123',

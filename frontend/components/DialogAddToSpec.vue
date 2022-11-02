@@ -8,7 +8,7 @@
       <v-toolbar
           color="primary"
           dark
-      ><strong>{{assembly.name}}</strong> - Добавить в спецификацию
+      ><strong>{{configuration.name}}</strong> - Добавить в спецификацию
       </v-toolbar>
       <v-card-title>
         <v-text-field
@@ -60,7 +60,7 @@
 <script>
 export default {
   name: "DialogAddToSpec",
-  props: ['assembly', 'dialogVisible'],
+  props: ['configuration', 'dialogVisible'],
   computed: {
     intDialogVisible: {
       get: function () {
@@ -93,13 +93,13 @@ export default {
   },
   methods:{
     async createSpec(){
-      await this.$axios.$put('/spec/create', {name: this.newSpec, assembly: this.assembly})
+      await this.$axios.$put('/spec/create', {name: this.newSpec, configuration: this.configuration})
       await this.loadSpecs()
       this.newSpec = '';
       this.intDialogVisible = false
     },
     async addToSpec(item){
-      await this.$axios.$put(`/assembly/${this.assembly.id}/to-spec/${item.id}`)
+      await this.$axios.$put(`/configuration/${this.configuration.id}/to-spec/${item.id}`)
       this.intDialogVisible = false
     },
     async loadSpecs(){

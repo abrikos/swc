@@ -1,5 +1,5 @@
 <template>
-  <v-card v-if="assembly">
+  <v-card v-if="configuration">
     <v-card-title>Корзина</v-card-title>
 
     <table class="cart">
@@ -14,19 +14,19 @@
       <tbody>
         <tr>
           <td colspan="2">Платформа
-            {{ assembly.chassis.partNumber }}
+            {{ configuration.chassis.partNumber }}
           </td>
           <td>
             1
           </td>
           <td>
-            {{ assembly.chassis.price }}
+            {{ configuration.chassis.price }}
           </td>
           <td>
-            {{ assembly.chassis.price }}
+            {{ configuration.chassis.price }}
           </td>
         </tr>
-        <tr v-for="(item, i) of assembly.parts" :key="i">
+        <tr v-for="(item, i) of configuration.parts" :key="i">
           <td>{{ item.component.category }}</td>
           <td>{{ item.component.partNumber }}</td>
           <td>{{ item.count }}</td>
@@ -35,7 +35,7 @@
           <td><v-btn icon x-small color="red" @click="remove(item)"><v-icon>mdi-close</v-icon></v-btn></td>
         </tr>
         <tr class="result">
-          <td colspan="5">Итого: {{ assembly.price }}</td>
+          <td colspan="5">Итого: {{ configuration.price }}</td>
           <td></td>
         </tr>
       </tbody>
@@ -46,10 +46,10 @@
 <script>
 export default {
   name: "Basket",
-  props: ['assembly', 'reload'],
+  props: ['configuration', 'reload'],
   methods:{
     remove(item){
-      this.$axios.$delete(`/assembly/part/${item.id}`)
+      this.$axios.$delete(`/configuration/part/${item.id}`)
           .then(this.reload)
     }
   }

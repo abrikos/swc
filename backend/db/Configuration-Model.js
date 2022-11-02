@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
+const moment = require("moment");
 const Schema = mongoose.Schema;
-const name = 'assembly';
+const name = 'configuration';
 
 const schema = new Schema({
         name: {type: String},
@@ -22,6 +23,12 @@ schema.statics.population = [
     {path: 'chassis'},
 ]
 
+schema.virtual('date')
+    .get(function () {
+        return moment(this.createdAt).format('YYYY-MM-DD HH:mm');
+    })
+
+
 schema.virtual('price')
     .get(function () {
         let sum = this.chassis?.price || 0
@@ -34,7 +41,7 @@ schema.virtual('price')
 schema.virtual('parts', {
     ref: 'part',
     localField: '_id',
-    foreignField: 'assembly'
+    foreignField: 'configuration'
 })
 
 

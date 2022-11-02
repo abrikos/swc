@@ -55,8 +55,8 @@ schema.virtual('tokens', {
   foreignField: 'user'
 })
 
-schema.virtual('assemblies', {
-  ref: 'assembly',
+schema.virtual('configurations', {
+  ref: 'configuration',
   localField: '_id',
   foreignField: 'user'
 })

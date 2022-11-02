@@ -21,7 +21,7 @@ module.exports = function (app) {
 
     app.get('/api/configurator/specs', passport.isLogged, async (req, res) => {
         const {user} = res.locals;
-        const item = await db.spec.find({user}).populate({path:'assembly', populate:db.assembly.population});
+        const item = await db.spec.find({user}).populate({path:'configuration', populate:db.configuration.population});
         res.send(item)
     })
 

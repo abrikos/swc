@@ -8,7 +8,7 @@ const name = 'spec';
 const schema = new Schema({
         name: {type: String},
         user: {type: mongoose.Schema.Types.ObjectId, ref: 'user'},
-        assemblies: [{type: mongoose.Schema.Types.ObjectId, ref: 'assembly'}],
+        configurations: [{type: mongoose.Schema.Types.ObjectId, ref: 'configuration'}],
     },
     {
         timestamps: {createdAt: 'createdAt'},
@@ -21,6 +21,15 @@ const schema = new Schema({
 schema.virtual('date')
     .get(function () {
         return moment(this.createdAt).format('YYYY-MM-DD HH:mm');
+    })
+
+schema.virtual('price')
+    .get(function () {
+        let sum = 0;
+        for(const conf of this.configurations){
+            sum += conf.price
+        }
+        return sum
     })
 
 module.exports = mongoose.model(name, schema)

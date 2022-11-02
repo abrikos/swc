@@ -1,22 +1,19 @@
 <template>
   <div>
     <Tabs :items="tabs" :onClick="tabChanged"/>
-    <div class="list" v-if="!isTabConfigurations">
-      <div class="chassis" v-for="item of items" @click="createAssembly(item)">
+    <div class="list">
+      <div class="chassis" v-for="item of items" @click="createConfiguration(item)">
         <img :src="`/${item.platform === 'JBOD' ? '4U': '2U'}.png`" />
-        <small>{{item.partNumber}} <br/><small>{{item.descShort}}</small></small>
+        <small>{{item.partNumber}} <br/><small>{{item.params}}</small></small>
       </div>
     </div>
-    <cabinet-assemblies v-if="isTabConfigurations"/>
   </div>
 </template>
 
 <script>
-import MyAssemblies from "~/components/MyAssemblies";
-import CabinetAssemblies from "~/pages/cabinet/assemblies";
+
 export default {
   name: "configurator-start",
-  components: {CabinetAssemblies, MyAssemblies},
   data(){
     return {
       tab:0,
@@ -26,7 +23,6 @@ export default {
         {type:'G2R'},
         {type:'AMD'},
         {type:'JBOD'},
-        {type:'Сборки'},
       ],
       items:[],
 
@@ -34,11 +30,6 @@ export default {
   },
   created() {
     this.loadChassis(0)
-  },
-  computed: {
-    isTabConfigurations(){
-      return this.tabs[this.tab].type === 'Сборки'
-    }
   },
   methods:{
     tabChanged(index){
@@ -51,9 +42,11 @@ export default {
     async loadChassis(index){
       this.items = await this.$axios.$get('/configurator/chassis/' + this.tabs[index].type)
     },
-    createAssembly(e){
-      this.$axios.$get('/assembly/create/chassis/'+ e.id)
-          .then(res=>this.$router.push('/configurator/' + res.id))
+    createConfiguration(e){
+      this.$axios.$get('/configuration/create/chassis/'+ e.id)
+          .then(res=> {
+            this.$router.push('/configurator/' + res.id)
+          })
     }
   }
 }

@@ -4,32 +4,28 @@
         :items="specs"
         :headers="headers"
         :items-per-page="5"
-        @click:row="dialogShow"
+        @click:row="item=>$router.push('/specifications/' + item.id)"
         style="cursor: pointer"
     >
       <template v-slot:no-data>
         Ни чего не найдено
       </template>
       <template v-slot:item.count="{item}">
-        {{ item.assemblies.length }}
+        {{ item.configurations.length }}
       </template>
       <template v-slot:item.controls="{item}">
-        <v-btn @click="deleteSpec(item)" x-small icon color="red" title="Удалить">
+        <v-btn @click.stop.prevent @click="deleteSpec(item)" x-small icon color="red" title="Удалить">
           <v-icon>mdi-close</v-icon>
         </v-btn>
       </template>
     </v-data-table>
-    <DialogEditSpec :spec="dialogSpec" v-if="dialogSpec" :dialogVisible="dialogSpec"
-                    @close="dialogClose"/>
   </div>
 </template>
 
 <script>
-import DialogEditSpec from "~/components/DialogEditSpec";
 
 export default {
   name: "MySpecs",
-  components: {DialogEditSpec},
   data() {
     return {
       dialogSpec: null,
@@ -39,6 +35,7 @@ export default {
       headers: [
         {text:'Дата', value: 'date', width: '150px'},
         {text: 'Название', value: 'name'},
+        {text: 'Сумма', value: 'price'},
         {text: 'Кол-во сборок', value: 'count', width: '150px', align: 'right'},
         {text: '', value: 'controls', sortable: false, width: '60px'}
       ],

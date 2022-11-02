@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 const name = 'part';
 
 const schema = new Schema({
-        assembly: {type: mongoose.Schema.Types.ObjectId, ref: 'assembly'},
+        configuration: {type: mongoose.Schema.Types.ObjectId, ref: 'configuration'},
         component: {type: mongoose.Schema.Types.ObjectId, ref: 'component'},
         count: Number
     },

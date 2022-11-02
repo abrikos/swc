@@ -8,10 +8,11 @@
       </v-app-bar-title>
       <v-spacer></v-spacer>
       <v-toolbar-items>
-        <v-btn id to="/configurator/start" v-if="user">
-          Конфигуратор
+        <v-btn id to="/configurations/chassis" v-if="user">
+          Выбор шасси
         </v-btn>
-        <v-btn to="/cabinet/assemblies" v-if="user" >Сборки</v-btn>
+        <v-btn to="/configurations/list" v-if="user" >Конфигурации</v-btn>
+        <v-btn to="/specifications/list" v-if="user" >Спецификации</v-btn>
       </v-toolbar-items>
       <v-spacer></v-spacer>
       <v-toolbar-items class="hidden-sm-and-down">

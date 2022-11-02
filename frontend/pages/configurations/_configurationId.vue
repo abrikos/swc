@@ -1,6 +1,7 @@
 <template>
-  <div v-if="assembly">
-    <h1>{{ assembly.name || assembly.chassis.partNumber }} <small>{{ assembly.chassis.descShort }}</small></h1>
+  <div v-if="configuration">
+    <h1>{{ configuration.name || configuration.chassis.partNumber }} <small>{{ configuration.chassis.descShort }}
+      {{ configuration.chassis.platform }}</small></h1>
     <v-row>
       <v-col sm="7">
         <Tabs :withIcons="true" :items="tabs" :onClick="tabChanged"/>
@@ -31,13 +32,17 @@
       </v-col>
       <v-col sm="5">
         <v-text-field
-            v-model="assembly.name"
+            v-model="configuration.name"
             outlined
             :append-icon="nameChanged? 'mdi-check' : ''"
             @keyup="nameChanged = true"
-            @click:append="changeField('name', assembly); nameChanged = false"
+            @click:append="changeField('name', configuration); nameChanged = false"
         />
-        <Basket :assembly="assembly" :reload="loadAssembly"/>
+        <Basket :configuration="configuration" :reload="loadconfiguration"/>
+        <br/>
+        <v-btn color="primary">
+          Создать спецификацию
+        </v-btn>
       </v-col>
     </v-row>
 
@@ -56,7 +61,6 @@ export default {
       nameChanged: false,
       filter: '',
       count: 0,
-      countsArray: [0,1,2],
       tab: 0,
       maxCount: 64,
       subTab: null,
@@ -64,7 +68,7 @@ export default {
       componentsAll: [],
       componentsCurrent: [],
       componentsCurrentFiltered: [],
-      assembly: null,
+      configuration: null,
       headers: [
         {text: 'Партномер', value: 'partNumber', width: '20%'},
         {text: 'Описание', value: 'description', width: '50%', sortable: false},
@@ -76,51 +80,60 @@ export default {
   },
   computed: {
     id() {
-      return this.$route.params.assembly;
+      return this.$route.params.configurationId;
     },
     chosenTab() {
       const tab = this.tabs[this.tab] || {}
-      if (tab.type === 'CPU') {
-        this.countsArray = [0,1,2]
-      } else if (tab.type === 'Memory') {
-        if (['G2', 'G2R'].includes(this.assembly.chassis.platform)) {
-          this.countsArray = this.assembly.parts.filter(p=>p.component.category === 'CPU').length === 1 ? [0,2,4,6,8,10,12] : [0,2,4,6,8,10,12,14,16,18,20,22,24]
-        } else if (this.assembly.chassis.platform === 'G3') {
-          this.countsArray = this.assembly.parts.filter(p=>p.component.category === 'CPU').length === 1 ? [0,2,4,6,8,10,12,14,16] : [0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32]
-        }
 
-      }
       return tab;
+    },
+    countsArray() {
+      if (this.chosenTab.type === 'CPU') {
+        const memoryModulesAttached = this.configuration.parts.filter(p => p.component.category === 'Memory').reduce((a, b) => a + b.count, 0);
+        return this.configuration.chassis.platform === 'G3' ?
+            memoryModulesAttached ===0 || memoryModulesAttached > 16 ? [0, 1, 2] : [0, 1]
+            :
+            memoryModulesAttached ===0 || memoryModulesAttached > 12 ? [0, 1, 2] : [0, 1]
+      } else if (this.chosenTab.type === 'Memory') {
+        if (this.configuration.chassis.platform === 'G3') {
+          return this.configuration.parts.filter(p => p.component.category === 'CPU').length === 1 ? [0, 2, 4, 6, 8, 10, 12, 14, 16] : [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32]
+        } else {
+          return this.configuration.parts.filter(p => p.component.category === 'CPU').length === 1 ? [0, 2, 4, 6, 8, 10, 12] : [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24]
+        }
+      } else if (this.chosenSubTab.type === 'GPU') {
+        return [0, 1, 2]
+      }
+      return [0, 1, 2, 3, 4, 5]
     },
     chosenSubTab() {
       return this.chosenTab.children && this.chosenTab.children[this.subTab]
     }
   },
   created() {
-    this.loadAssembly()
+    this.loadconfiguration()
   },
   methods: {
     filterComponents() {
       this.componentsCurrentFiltered = this.componentsCurrent.filter(c => c.description.toLowerCase().match(this.filter.toLowerCase()))
     },
     async changeField(field, item) {
-      await this.$axios.$put(`/assembly/${item.id}/field/${field}`, item)
+      await this.$axios.$put(`/configuration/${item.id}/field/${field}`, item)
     },
     calcCount(item) {
-      const part = this.assembly.parts.find(p => p.component.id === item.id)
+      const part = this.configuration.parts.find(p => p.component.id === item.id)
       return part ? part.count : 0
     },
     itemRowBackground(item) {
-      if (['CPU', 'Memory'].includes( this.chosenTab.type)) {
-        return this.assembly.parts.filter(p=>p.component.category === this.chosenTab.type).length ? this.assembly.parts.map(p => p.component.id).includes(item.id) ? 'inBasket' : 'count-disabled' : ''
+      if (['CPU', 'Memory'].includes(this.chosenTab.type)) {
+        return this.configuration.parts.filter(p => p.component.category === this.chosenTab.type).length ? this.configuration.parts.map(p => p.component.id).includes(item.id) ? 'inBasket' : 'count-disabled' : ''
       } else {
-        return this.assembly.parts.map(p => p.component.id).includes(item.id) ? 'inBasket' : ''
+        return this.configuration.parts.map(p => p.component.id).includes(item.id) ? 'inBasket' : ''
       }
 
     },
     loadComponents() {
       this.componentsCurrent = this.componentsCurrentFiltered = this.componentsAll.filter(c => {
-        const match = c.type === (this.chosenSubTab?.type || this.chosenTab.type) || (this.chosenTab.type === 'CPU' && this.assembly.chassis.cpu === c.type)
+        const match = c.type === (this.chosenSubTab?.type || this.chosenTab.type) || (this.chosenTab.type === 'CPU' && this.configuration.chassis.cpu === c.type)
         return match
       })
     },
@@ -137,16 +150,18 @@ export default {
       this.loadComponents()
     },
 
-    async loadAssembly() {
-      const res = await this.$axios.$get('/assembly/' + this.id);
-      this.assembly = res.assembly
+    async loadconfiguration() {
+      const res = await this.$axios.$get('/configuration/' + this.id);
+      this.configuration = res.configuration
       this.componentsAll = res.components
       this.tabs = res.tabs
       this.loadComponents()
     },
     async addPart(count, item) {
-      await this.$axios.$put(`/assembly/${this.id}/component/${item.id}`, {count})
-      await this.loadAssembly()
+      let allowAdd = true;
+      if(item.type==='GPU' && count) allowAdd =  confirm('При добавлении GPU на каждое необходим Riser')
+      if(allowAdd) await this.$axios.$put(`/configuration/${this.id}/component/${item.id}`, {count})
+      await this.loadconfiguration()
       this.count = 0
     }
   }

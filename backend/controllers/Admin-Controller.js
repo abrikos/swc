@@ -42,9 +42,10 @@ module.exports = function (app) {
     //db.component.find({partNumber: '4 SATA - 1*SFF-8643'}).then(console.log)
 
     app.post('/api/admin/upload-list', passport.isAdmin, async (req, res) => {
-        //await db.component.deleteMany({})
-        //await db.chassis.deleteMany({})
-        //await db.assembly.deleteMany({})
+        await db.component.deleteMany({})
+        await db.chassis.deleteMany({})
+        await db.configuration.deleteMany({})
+        await db.spec.deleteMany({})
         fs.createReadStream(req.files.file.tempFilePath)
             .pipe(csv())
             .on('data', async (data) => {
@@ -60,7 +61,7 @@ module.exports = function (app) {
                             platform: platforms.join(''),
                             vendor: data.Type.trim(),
                             descShort: data['Столбец2'].trim(),
-                            specification: data.DescShort.trim(),
+                            params: data.DescShort.trim(),
                             partNumber: data.PN.trim(),
                             price: data['цена GPL '].trim(),
                             cpu: data.AMD ? 'AMD' : 'Intel',

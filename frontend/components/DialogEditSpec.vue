@@ -27,7 +27,7 @@
             <v-btn :to="'/configurator/'+item.id" icon title="Редактировать">
               <v-icon>mdi-file-edit-outline</v-icon>
             </v-btn>
-            <v-btn @click="removeAssembly(item)" icon color="red" x-small title="Удалить">
+            <v-btn @click="removeconfiguration(item)" icon color="red" x-small title="Удалить">
               <v-icon>mdi-close</v-icon>
             </v-btn>
           </template>
@@ -78,8 +78,8 @@ export default {
     }
   },
   methods: {
-    async removeAssembly(item) {
-      await this.$axios.$delete(`/spec/${this.spec.id}/assembly/${item.id}/remove`)
+    async removeconfiguration(item) {
+      await this.$axios.$delete(`/spec/${this.spec.id}/configuration/${item.id}/remove`)
       this.intDialogVisible = false
     },
     async loadSpecs() {

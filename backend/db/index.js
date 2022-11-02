@@ -1,13 +1,28 @@
 const mongoose = require('mongoose');
-const component = require("./Component-Model")
-const user = require("./User-Model")
-const token = require("./Token-Model")
-const assembly = require("./Assembly-Model")
-const chassis = require("./Chassis-Model")
-const part = require("./Part-Model")
-const spec = require("./Spec-Model")
+const fs = require("fs");
+const path = require("path");
+const chalk = require('cli-color');
+const basename = path.basename(__filename);
 
-module.exports = {component, user, token, assembly, chassis, part, spec}
+const modules ={};
+fs
+    .readdirSync(__dirname)
+    .filter(file => {
+      return (file.indexOf('.') !== 0) && (file !== basename) && (file.slice(-3) === '.js');
+    })
+    .forEach(file => {
+      const fpath =path.join(__dirname, file);
+      try {
+        const module = require(fpath);
+        modules[module.collection.modelName] = (module)
+        //module(app)
+      }catch (e) {
+        console.log(chalk.red( 'WARN: Script ' + file + ' - not a module', fpath))
+        console.log(e)
+      }
+
+    });
+module.exports = modules
 
 try {
   mongoose.connect(process.env.MONGODB_URI, {
