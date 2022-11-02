@@ -4,7 +4,8 @@
     <v-row>
       <v-col sm="7">
         <Tabs :withIcons="true" :items="tabs" :onClick="tabChanged"/>
-        <Tabs :items="chosenTab.children" :onClick="subTabChanged" :style="`display: ${chosenTab.children ? 'flex': 'none'}`" ref="subTabs"/>
+        <Tabs :items="chosenTab.children" :onClick="subTabChanged"
+              :style="`display: ${chosenTab.children ? 'flex': 'none'}`" ref="subTabs"/>
         <v-data-table
             :headers="headers"
             :items="componentsCurrentFiltered"
@@ -17,12 +18,14 @@
             Ни чего не найдено
           </template>
           <template v-slot:item.count="{item}">
-            <v-select :items="Array.from(Array(maxCount + 1).keys())" @change="e=>addPart(e, item)" dense flat :value="calcCount(item)"
+            <v-select :items="countsArray" @change="e=>addPart(e, item)" dense flat
+                      :value="calcCount(item)"
                       hide-details/>
           </template>
           <template v-slot:header.description>
             <v-text-field hide-details label="Фильтр описания" outlined flat dense class="table-filter" v-model="filter"
                           @keyup="filterComponents"></v-text-field>
+
           </template>
         </v-data-table>
       </v-col>
@@ -53,8 +56,9 @@ export default {
       nameChanged: false,
       filter: '',
       count: 0,
+      countsArray: [0,1,2],
       tab: 0,
-      maxCount: 0,
+      maxCount: 64,
       subTab: null,
       isHovering: false,
       componentsAll: [],
@@ -75,7 +79,18 @@ export default {
       return this.$route.params.assembly;
     },
     chosenTab() {
-      return this.tabs[this.tab] || {}
+      const tab = this.tabs[this.tab] || {}
+      if (tab.type === 'CPU') {
+        this.countsArray = [0,1,2]
+      } else if (tab.type === 'Memory') {
+        if (['G2', 'G2R'].includes(this.assembly.chassis.platform)) {
+          this.countsArray = this.assembly.parts.filter(p=>p.component.category === 'CPU').length === 1 ? [0,2,4,6,8,10,12] : [0,2,4,6,8,10,12,14,16,18,20,22,24]
+        } else if (this.assembly.chassis.platform === 'G3') {
+          this.countsArray = this.assembly.parts.filter(p=>p.component.category === 'CPU').length === 1 ? [0,2,4,6,8,10,12,14,16] : [0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32]
+        }
+
+      }
+      return tab;
     },
     chosenSubTab() {
       return this.chosenTab.children && this.chosenTab.children[this.subTab]
@@ -96,8 +111,8 @@ export default {
       return part ? part.count : 0
     },
     itemRowBackground(item) {
-      if( this.chosenTab.type === 'CPU' ){
-        return this.assembly.parts.length ? this.assembly.parts.map(p => p.component.id).includes(item.id) ? 'inBasket' : 'cpu-disabled' : ''
+      if (['CPU', 'Memory'].includes( this.chosenTab.type)) {
+        return this.assembly.parts.filter(p=>p.component.category === this.chosenTab.type).length ? this.assembly.parts.map(p => p.component.id).includes(item.id) ? 'inBasket' : 'count-disabled' : ''
       } else {
         return this.assembly.parts.map(p => p.component.id).includes(item.id) ? 'inBasket' : ''
       }
@@ -125,9 +140,8 @@ export default {
     async loadAssembly() {
       const res = await this.$axios.$get('/assembly/' + this.id);
       this.assembly = res.assembly
-      this.componentsAll =  this.componentsFiltered = res.components
+      this.componentsAll = res.components
       this.tabs = res.tabs
-      this.maxCount = res.maxCount
       this.loadComponents()
     },
     async addPart(count, item) {
@@ -144,7 +158,12 @@ export default {
   :deep(.inBasket)
     td
       background-color: silver
-  :deep(.cpu-disabled)
+
+  :deep(.count-disabled)
+    .v-input
+      display: none
+
+  :deep(.memory-count-disabled)
     .v-input
       display: none
 

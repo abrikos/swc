@@ -46,13 +46,15 @@ module.exports = function (app) {
         res.send({assembly, ...await componentsOfAssembly(assembly)})
     })
 
+
+    //db.chassis.find({}).then(console.log)
     async function componentsOfAssembly(assembly) {
         const criteria = {type: {$in: []}}
-        let maxCount = 51;
         const tabs = !['JBOD'].includes(assembly.chassis.platform) ? [
             //{id: 'base', label: 'Основа'},
-            {type: 'CPU'},
             {type: 'Memory',},
+            {type: 'CPU'},
+
             {
                 type: 'Storage',
                 children: [
@@ -83,15 +85,15 @@ module.exports = function (app) {
                     criteria.type.$in.push(subTab.type)
                 }
             } else {
+
                 if (tab.type === 'CPU') {
-                    maxCount = 2;
                     criteria.type.$in.push(assembly.chassis.platform === 'AMD' ? 'AMD' : 'Intel')
                 } else {
                     criteria.type.$in.push(tab.type)
                 }
             }
         }
-        return {components: await db.component.find(criteria), tabs, maxCount};
+        return {components: await db.component.find(criteria), tabs};
     }
 
     app.get('/api/assembly/:assemblyId/component-type/:componentType', async (req, res) => {
@@ -100,7 +102,7 @@ module.exports = function (app) {
         res.send(await componentsOfAssembly(assembly, componentType))
     })
 
-    //db.assembly.deleteMany({}).then(console.log)
+
     app.get('/api/assembly/create/chassis/:chassis', passport.isLogged, async (req, res) => {
         const {user} = res.locals;
         const assembly = await db.assembly.create({
