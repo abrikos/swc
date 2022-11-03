@@ -45,7 +45,7 @@ export default {
     createConfiguration(e){
       this.$axios.$get('/configuration/create/chassis/'+ e.id)
           .then(res=> {
-            this.$router.push('/configurator/' + res.id)
+            this.$router.push('/configurations/' + res.id)
           })
     }
   }
