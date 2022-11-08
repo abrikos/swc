@@ -27,7 +27,7 @@ schema.virtual('price')
     .get(function () {
         let sum = 0;
         for(const conf of this.configurations){
-            sum += conf.price
+            sum += conf.priceTotal
         }
         return sum
     })

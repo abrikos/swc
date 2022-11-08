@@ -27,6 +27,7 @@ schema.virtual('date')
         return moment(this.createdAt).format('YYYY-MM-DD HH:mm');
     })
 
+
 module.exports = mongoose.model(name, schema)
 
 

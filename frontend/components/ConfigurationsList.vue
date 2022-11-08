@@ -35,18 +35,7 @@
         />
       </template>
       <template v-slot:item.count="{ item }">
-        <v-text-field
-            v-model="item.count" flat dense hide-details type="number"
-            :append-icon="countEdited === item.id ? 'mdi-check' : ''"
-            :outlined="countEdited === item.id"
-            @change="countEdited=item.id"
-            @keyup="countEdited=item.id"
-            @mousedown="countEdited=item.id"
-            @keyup.esc="$refs['count'+item.id].blur()"
-            @blur="countEdited=false"
-            :ref="'count'+item.id"
-            @click:append="changeField('count', item); countEdited = false"
-        />
+        <ConfigurationCount :item="item" :onChange="loadConfigurations"/>
       </template>
       <template v-slot:item.controls="{ item }">
 <!--        <v-btn icon title="Добавить в спецификацию" @click="dialogShow(item)">
@@ -88,8 +77,9 @@ export default {
         {text: 'Название', value: 'name', width: '300px'},
         {text: 'PartNum', value: 'chassis.partNumber'},
         {text: 'Описание', value: 'chassis.descShort'},
+        {text: 'Цена', value: 'price', align: 'right'},
         {text: 'Штук', value: 'count', width: '100px'},
-        {text: 'Сумма', value: 'price', align: 'right'},
+        {text: 'Сумма', value: 'priceTotal', align: 'right'},
         {text: '', value: 'controls', width: '110px'}
       ]
     }
@@ -101,7 +91,7 @@ export default {
     }
   },
   created() {
-    this.loadAssemblies()
+    this.loadConfigurations()
   },
   methods: {
     gotoConfig(item){
@@ -116,17 +106,18 @@ export default {
     async deleteConfiguration(item) {
       if (window.confirm(`Удалить сборку "${item.name}"?`)) {
         await this.$axios.$delete(`/configuration/${item.id}`)
-        await this.loadAssemblies()
+        await this.loadConfigurations()
         await this.specReload()
       }
     },
     async changeField(field, item) {
       await this.$axios.$put(`/configuration/${item.id}/field/${field}`, item)
-      await this.loadAssemblies()
-      await this.specReload()
+      await this.loadConfigurations()
+
     },
-    async loadAssemblies() {
+    async loadConfigurations() {
       this.items = await this.$axios.$get('/configuration/my')
+      await this.specReload()
     }
   }
 }

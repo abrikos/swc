@@ -35,7 +35,12 @@ schema.virtual('price')
         for (const item of this.parts) {
             sum += item.price
         }
-        return sum * this.count;
+        return sum;
+    })
+
+schema.virtual('priceTotal')
+    .get(function () {
+        return this.price * this.count
     })
 
 schema.virtual('parts', {

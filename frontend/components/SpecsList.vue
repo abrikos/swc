@@ -36,7 +36,7 @@ export default {
         {text:'Дата', value: 'date', width: '150px'},
         {text: 'Название', value: 'name'},
         {text: 'Сумма', value: 'price'},
-        {text: 'Кол-во сборок', value: 'count', width: '150px', align: 'right'},
+        {text: 'Кол-во конфигураций', value: 'count', width: '250px', align: 'right'},
         {text: '', value: 'controls', sortable: false, width: '60px'}
       ],
     }
