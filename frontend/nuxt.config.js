@@ -39,7 +39,7 @@ export default {
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
-    '~/plugins/common',
+    //'~/plugins/common',
     '~/plugins/axios',
     //'~/plugins/websocket',
     //'~/plugins/redirection',
@@ -142,5 +142,7 @@ export default {
     googleId: process.env.GOOGLE_ID
   },
   // Build Configuration: https://go.nuxtjs.dev/config-build
-  build: {}
+  build: {
+    //analyze: true,
+  }
 }
