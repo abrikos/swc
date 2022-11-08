@@ -4,7 +4,9 @@
     <div class="list">
       <div class="chassis" v-for="item of items" @click="createConfiguration(item)">
         <img :src="`/${item.platform === 'JBOD' ? '4U': '2U'}.png`" />
-        <small>{{item.partNumber}} <br/><small>{{item.params}}</small></small>
+        <strong>{{item.partNumber}} </strong>
+        <br/>
+        <small>{{item.params}}</small>
       </div>
     </div>
   </div>
@@ -57,9 +59,10 @@ export default {
   display: flex
   flex-wrap: wrap
   .chassis
-    margin: 2px
+    margin: 12px
     padding: 5px
     border: 1px solid silver
+    box-shadow: 4px 4px 8px 0px rgba(34, 60, 80, 0.2)
     width: 250px
     text-align: center
     cursor: pointer

@@ -49,27 +49,33 @@ export default {
 
   div
     margin: 1px
-    border-radius: 6px 6px 0 0
+    border-radius: 12px 12px 0 0
 
   .tab
     width: 120px
     text-align: center
-    color: #1976d2
     padding: 10px
+    margin: 0 20px
+    border-width: 1px 1px 0 1px
+    //border-style: solid
+    border-color: silver
+    color: black
+    background-color: #ccc
     img
       margin: auto
       display: block
       width: 55px
-    img.inverse
-      filter: invert(1)
   .tab.hovered
     background-color: silver
 
   .tab.active
+    background-color: #aa2238
     border-color: silver
     border-style: solid
     border-width: 1px 1px 0 1px
-    color: inherit
+    color: white
     font-weight: bold
+    img
+      filter: invert(1)
 
 </style>
