@@ -29,6 +29,9 @@
             <v-list-item to="/admin/upload">
               <v-list-item-title>Upload components</v-list-item-title>
             </v-list-item>
+            <v-list-item to="/admin/chassis-list">
+              <v-list-item-title>Chassis</v-list-item-title>
+            </v-list-item>
           </v-list>
         </v-menu>
 
@@ -88,7 +91,7 @@ export default {
     }
   },
   created() {
-    console.log('zzzzzzzzzzzz', this.$route.name, this.$route)
+    //console.log('zzzzzzzzzzzz', this.$route.name, this.$route)
     //this.$vuetify.theme.isDark = JSON.parse(localStorage.getItem('themeDark'))
     //this.$axios.$get('/build-date')        .then(res => this.buildDate = res.ctime)
   },

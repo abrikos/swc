@@ -3,7 +3,7 @@
     <Tabs :items="tabs" :onClick="tabChanged"/>
     <div class="list">
       <div class="chassis" v-for="item of items" @click="createConfiguration(item)">
-        <img :src="`/${item.platform === 'JBOD' ? '4U': '2U'}.png`" />
+        <img :src="`/chassis/${item.partNumber}.jpg`" />
         <strong>{{item.partNumber}} </strong>
         <br/>
         <small>{{item.params}}</small>

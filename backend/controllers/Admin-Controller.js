@@ -31,6 +31,43 @@ module.exports = function (app) {
         res.send(users)
     })
 
+    app.get('/api/admin/chassis', passport.isAdmin, async (req, res) => {
+        const list = await db.chassis.find()
+        res.send(list)
+    })
+
+    app.post('/api/admin/chassis-copy-image/:id', passport.isAdmin, async (req, res) => {
+        const {id} = req.params;
+        const {file} = req.body;
+        console.log(file)
+        const chassis = await db.chassis.findById(id)
+        fs.copyFile('/home/abrikos/Downloads/choosen/'+file, './frontend/static/chassis/' + chassis.partNumber + '.jpg', (err) => {
+            if (err) throw err;
+            res.sendStatus(200)
+        });
+
+    })
+
+
+    app.get('/api/admin/chassis-dirs', passport.isAdmin, async (req, res) => {
+        fs.readdir('/home/abrikos/Downloads/choosen', {}, (e,list)=>{
+            res.send(list)
+        })
+
+    })
+
+
+    app.post('/api/admin/upload-chassis-image/:id', passport.isAdmin, async (req, res) => {
+        try {
+            const {id} = req.params;
+            const chassis = await db.chassis.findById(id)
+            await req.files.file.mv('./frontend/static/chassis/' + chassis.partNumber + '.jpg')
+            res.sendStatus(200)
+        } catch (e) {
+            app.locals.errorLogger(e, res)
+        }
+    })
+
     app.post('/api/admin/switch-role', passport.isAdmin, async (req, res) => {
         const user = await db.user.findById(req.body.id)
         user.isAdmin = !user.isAdmin
