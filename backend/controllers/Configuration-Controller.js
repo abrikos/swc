@@ -38,7 +38,7 @@ module.exports = function (app) {
     })
 
 
-    db.configuration.findById('636235286c9eeecfc0c20d24').populate(db.configuration.population).then(c=>console.log('Config = ',c.price))
+    //db.configuration.findById('636235286c9eeecfc0c20d24').populate(db.configuration.population).then(c=>console.log('Config = ',c.price))
     async function componentsOfconfiguration(configuration) {
         const criteria = {type: {$in: []}}
         const tabs = !['JBOD'].includes(configuration.chassis.platform) ? [
