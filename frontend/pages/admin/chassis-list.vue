@@ -10,9 +10,9 @@
           <v-col>
             <v-btn @click="selectChassis(chassis)">Upload</v-btn>
           </v-col>
-          <v-col>
+<!--          <v-col>
             <v-radio :value="chassis.id"/>
-          </v-col>
+          </v-col>-->
         </div>
       </v-radio-group>
       </div>
