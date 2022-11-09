@@ -6,7 +6,7 @@ const name = 'chassis';
 
 const schema = new Schema({
         platform: {type: String},
-        vendor: String,
+        form: String,
         cpu: String,
         partNumber: {type:String, unique: true},
         descShort: String,

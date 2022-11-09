@@ -6,7 +6,9 @@ const name = 'component';
 
 const schema = new Schema({
         platforms: [{type: String}],
+        category: String,
         type: String,
+        params: String,
         category: String,
         partNumber: {type: String, unique: true},
         descShort: String,

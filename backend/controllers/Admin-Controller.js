@@ -93,27 +93,39 @@ module.exports = function (app) {
                     if (data.G3) platforms.push('G3')
                     if (data.AMD) platforms.push('AMD')
                     if (data.JBOD) platforms.push('JBOD')
-                    if (data.Family === 'Chassis') {
+                    let type = data.Type.trim();
+                    const price = data['цена GPL '].trim();
+                    let category = data.Family.trim();
+                    let params = data.DescShort.trim();
+                    const partNumber = data.PN.trim();
+                    const descFull =  data.DescFull.trim()
+                    if (category === 'Chassis') {
                         await db.chassis.updateOne({partNumber: data.PN.trim()}, {
                             platform: platforms.join(''),
-                            vendor: data.Type.trim(),
+                            form: type,
                             descShort: data['Столбец2'].trim(),
-                            params: data.DescShort.trim(),
-                            partNumber: data.PN.trim(),
-                            price: data['цена GPL '].trim(),
+                            params,
+                            partNumber,
+                            price,
                             cpu: data.AMD ? 'AMD' : 'Intel',
-                            descFull: data.DescFull.trim()
+                            descFull
                         }, {upsert: true})
                     } else {
-                        let type = data.Type.trim() || data.Family.trim();
-                        const category = data.Family.trim();
-                        if (type === 'SSD') {
-                            type = data.DescShort.match('U.2') ? 'SSD U.2 NVMe' :
-                                data.DescShort.match('M.2') ? 'SSD m.2' : 'SSD 2.5'
-                        } else if (type.match('RAID')) {
+                        if(type === 'SSD'){
+                            if(params.match('M.2')){
+                                type = 'SSD m.2'
+                            } else if (params.match('U.2')){
+                                type = 'SSD U.2 NVMe'
+                            } else {
+                                type = 'SSD 2.5'
+                            }
+                        }else
+                        if (type.match('RAID')) {
                             type = 'RAID'
-                        } else if (type === 'PSU') {
-                            type = 'Power'
+                        } else if (category === 'PSU') {
+                            category = 'Power'
+                            const match = params.match(/PSU (\d)\*(\d+)W/)
+                            params = match[1] * match[2]
                         } else if (type === 'Cable for backplane') {
                             type = 'Cable'
                         }
@@ -121,14 +133,15 @@ module.exports = function (app) {
                             platforms,
                             type,
                             category,
+                            params,
                             descShort: data.DescShort.trim(),
-                            partNumber: data.PN.trim(),
-                            price: data['цена GPL '].trim(),
-                            descFull: data.DescFull.trim()
+                            partNumber,
+                            price,
+                            descFull
                         }, {upsert: true})
                     }
                 } catch (e) {
-
+                    console.log(e && e.message)
                 }
                 fs.unlink(req.files.file.tempFilePath, () => {
                 })

@@ -5,8 +5,11 @@
     <v-row>
       <v-col sm="7">
         <Tabs :withIcons="true" :items="tabs" :onClick="tabChanged"/>
-        <Tabs :items="chosenTab.children" :onClick="subTabChanged"
-              :style="`display: ${chosenTab.children ? 'flex': 'none'}`" ref="subTabs"/>
+        <div class="sub-tab">
+          <div v-for="(tab, i) of chosenTab.children" :key="i" @click="subTabChanged(i)"
+               :class="i === subTab? 'active':''">{{ tab.type }}
+          </div>
+        </div>
         <v-data-table
             :headers="headers"
             :items="componentsCurrentFiltered"
@@ -24,9 +27,12 @@
                       hide-details/>
           </template>
           <template v-slot:header.description>
-            <v-text-field hide-details label="Фильтр описания" outlined flat dense class="table-filter" v-model="filter"
-                          @keyup="filterComponents"></v-text-field>
-
+            <v-text-field
+                hide-details
+                label="Фильтр описания"
+                outlined flat dense class="table-filter"
+                v-model="filter"
+            />
           </template>
         </v-data-table>
       </v-col>
@@ -38,7 +44,7 @@
             @keyup="nameChanged = true"
             @click:append="changeField('name', configuration); nameChanged = false"
         />
-        <Basket :configuration="configuration" :reload="loadconfiguration"/>
+        <Basket :configuration="configuration" :reload="loadConfiguration"/>
         <br/>
         <v-btn color="primary">
           Создать спецификацию
@@ -66,8 +72,8 @@ export default {
       subTab: null,
       isHovering: false,
       componentsAll: [],
-      componentsCurrent: [],
-      componentsCurrentFiltered: [],
+      //componentsCurrent: [],
+      //componentsCurrentFiltered: [],
       configuration: null,
       headers: [
         {text: 'Партномер', value: 'partNumber', width: '20%'},
@@ -88,34 +94,57 @@ export default {
       return tab;
     },
     countsArray() {
-      if (this.chosenTab.type === 'CPU') {
+      if (this.chosenTab.category === 'CPU') {
         const memoryModulesAttached = this.configuration.parts.filter(p => p.component.category === 'Memory').reduce((a, b) => a + b.count, 0);
         return this.configuration.chassis.platform === 'G3' ?
-            memoryModulesAttached ===0 || memoryModulesAttached > 16 ? [0, 1, 2] : [0, 1]
+            memoryModulesAttached === 0 || memoryModulesAttached > 16 ? [0, 1, 2] : [0, 1]
             :
-            memoryModulesAttached ===0 || memoryModulesAttached > 12 ? [0, 1, 2] : [0, 1]
-      } else if (this.chosenTab.type === 'Memory') {
+            memoryModulesAttached === 0 || memoryModulesAttached > 12 ? [0, 1, 2] : [0, 1]
+      } else if (this.chosenTab.category === 'Memory') {
         if (this.configuration.chassis.platform === 'G3') {
           return this.configuration.parts.filter(p => p.component.category === 'CPU').length === 1 ? [0, 2, 4, 6, 8, 10, 12, 14, 16] : [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32]
         } else {
           return this.configuration.parts.filter(p => p.component.category === 'CPU').length === 1 ? [0, 2, 4, 6, 8, 10, 12] : [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24]
         }
-      } else if (this.chosenSubTab.type === 'GPU') {
+      } else if (this.chosenSubTab?.type === 'GPU') {
         return [0, 1, 2]
       }
       return [0, 1, 2, 3, 4, 5]
     },
     chosenSubTab() {
       return this.chosenTab.children && this.chosenTab.children[this.subTab]
+    },
+    componentsCurrent() {
+      let gpus = 0;
+      for (const part of this.configuration.parts) {
+        if (part.component.type === 'GPU') {
+          gpus += part.count
+        }
+      }
+      const componentsByType = this.chosenSubTab ?
+          this.componentsAll.filter(c => c.type === this.chosenSubTab.type)
+          :
+          this.componentsAll.filter(c => c.category === this.chosenTab.category)
+      return componentsByType.filter(c => {
+        switch (this.chosenTab.category) {
+          case 'CPU':
+            return this.configuration.chassis.cpu === c.type
+          case 'Power':
+            if(gpus>0) return c.params * 1 >= 1300
+            if(gpus>1) return c.params * 1 >= 1600
+          default:
+            return true
+        }
+      })
+    },
+    componentsCurrentFiltered() {
+      return this.componentsCurrent.filter(c => c.description.toLowerCase().match(this.filter.toLowerCase()))
     }
   },
   created() {
-    this.loadconfiguration()
+    this.loadConfiguration()
   },
   methods: {
-    filterComponents() {
-      this.componentsCurrentFiltered = this.componentsCurrent.filter(c => c.description.toLowerCase().match(this.filter.toLowerCase()))
-    },
     async changeField(field, item) {
       await this.$axios.$put(`/configuration/${item.id}/field/${field}`, item)
     },
@@ -124,44 +153,33 @@ export default {
       return part ? part.count : 0
     },
     itemRowBackground(item) {
-      if (['CPU', 'Memory'].includes(this.chosenTab.type)) {
-        return this.configuration.parts.filter(p => p.component.category === this.chosenTab.type).length ? this.configuration.parts.map(p => p.component.id).includes(item.id) ? 'inBasket' : 'count-disabled' : ''
+      if (['CPU', 'Memory'].includes(this.chosenTab.category)) {
+        return this.configuration.parts.filter(p => p.component.category === this.chosenTab.category).length ? this.configuration.parts.map(p => p.component.id).includes(item.id) ? 'inBasket' : 'count-disabled' : ''
       } else {
         return this.configuration.parts.map(p => p.component.id).includes(item.id) ? 'inBasket' : ''
       }
-
-    },
-    loadComponents() {
-      this.componentsCurrent = this.componentsCurrentFiltered = this.componentsAll.filter(c => {
-        const match = c.type === (this.chosenSubTab?.type || this.chosenTab.type) || (this.chosenTab.type === 'CPU' && this.configuration.chassis.cpu === c.type)
-        return match
-      })
     },
     tabChanged(index) {
       this.filter = ''
       this.tab = index;
       this.subTab = 0;
-      this.$refs.subTabs.resetTab()
-      this.loadComponents()
+      this.$refs.subTabs?.resetTab()
     },
     subTabChanged(index) {
       this.filter = ''
       this.subTab = index
-      this.loadComponents()
     },
-
-    async loadconfiguration() {
+    async loadConfiguration() {
       const res = await this.$axios.$get('/configuration/' + this.id);
       this.configuration = res.configuration
       this.componentsAll = res.components
       this.tabs = res.tabs
-      this.loadComponents()
     },
     async addPart(count, item) {
       let allowAdd = true;
-      if(item.type==='GPU' && count) allowAdd =  confirm('При добавлении GPU на каждое необходим Riser')
-      if(allowAdd) await this.$axios.$put(`/configuration/${this.id}/component/${item.id}`, {count})
-      await this.loadconfiguration()
+      if (item.type === 'GPU' && count) allowAdd = confirm('При добавлении GPU на каждое необходим Riser')
+      if (allowAdd) await this.$axios.$put(`/configuration/${this.id}/component/${item.id}`, {count})
+      await this.loadConfiguration()
       this.count = 0
     }
   }
@@ -169,6 +187,19 @@ export default {
 </script>
 
 <style scoped lang="sass">
+.sub-tab
+  display: flex
+  justify-content: center
+
+  div
+    margin: 10px
+    cursor: pointer
+
+  .active
+    font-weight: bold
+    color: #aa2238
+    border-bottom: 1px solid #aa2238
+
 .v-data-table
   :deep(.inBasket)
     td

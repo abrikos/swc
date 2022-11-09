@@ -31,23 +31,61 @@ module.exports = function (app) {
             const {user} = res.locals;
             const {configurationId} = req.params;
             const configuration = await db.configuration.findOne({_id: configurationId, user}).populate(db.configuration.population);
-            res.send({configuration, ...await componentsOfconfiguration(configuration)})
+            const tabs = !['JBOD'].includes(configuration.chassis.platform) ? [
+                //{id: 'base', label: 'Основа'},
+
+                {category: 'CPU'},
+                {category: 'Memory',},
+                {
+                    category: 'Storage',
+                    children: [
+                        {type: 'RAID'},
+                        {type: 'HDD'},
+                        {type: 'SSD 2.5'},
+                        {type: 'SSD m.2'},
+                        {type: 'SSD U.2 NVMe'},
+                        {type: 'Rear bay'},
+                    ]
+                },
+                {category: 'Riser',},
+                {
+                    category: 'PCI-E',
+                    children: [
+                        {type: 'LAN OCP 3.0'},
+                        {type: 'LAN'},
+                        {type: 'FC'},
+                        {type: 'GPU'},
+                        {type: 'Transceiver'},
+                    ]
+                },
+                {category: 'Power'},
+            ] : [{category: 'Cable'}]
+            const components = await db.component.find()
+            res.send({configuration, tabs, components})
         } catch (e) {
             app.locals.errorLogger(e, res)
         }
     })
 
 
+    db.component.aggregate([
+        {
+            $group: {
+                _id: "$type"
+            }
+        }
+    ]).then(console.log)
+
     //db.configuration.findById('636235286c9eeecfc0c20d24').populate(db.configuration.population).then(c=>console.log('Config = ',c.price))
-    async function componentsOfconfiguration(configuration) {
+    async function componentsOfConfiguration(configuration) {
         const criteria = {type: {$in: []}}
         const tabs = !['JBOD'].includes(configuration.chassis.platform) ? [
             //{id: 'base', label: 'Основа'},
 
-            {type: 'CPU'},
-            {type: 'Memory',},
+            {category: 'CPU'},
+            {category: 'Memory',},
             {
-                type: 'Storage',
+                category: 'Storage',
                 children: [
                     {type: 'RAID'},
                     {type: 'HDD'},
@@ -57,9 +95,9 @@ module.exports = function (app) {
                     {type: 'Rear bay'},
                 ]
             },
-            {type: 'Riser',},
+            {category: 'Riser',},
             {
-                type: 'PCI-E',
+                category: 'PCI-E',
                 children: [
                     {type: 'LAN OCP 3.0'},
                     {type: 'LAN'},
@@ -68,8 +106,8 @@ module.exports = function (app) {
                     {type: 'Transceiver'},
                 ]
             },
-            {type: 'Power'},
-        ] : [{type: 'Cable'}]
+            {category: 'Power'},
+        ] : [{category: 'Cable'}]
         for (const tab of tabs) {
             if (tab.children) {
                 for (const subTab of tab.children) {
@@ -87,15 +125,17 @@ module.exports = function (app) {
         return {components: await db.component.find(criteria), tabs};
     }
 
+/*
     app.get('/api/configuration/:configurationId/component-type/:componentType', async (req, res) => {
         try {
             const {configurationId, componentType} = req.params;
             const configuration = await db.configuration.findById(configurationId).populate(db.configuration.population);
-            res.send(await componentsOfconfiguration(configuration, componentType))
+            res.send(await componentsOfConfiguration(configuration, componentType))
         } catch (e) {
             app.locals.errorLogger(e, res)
         }
     })
+*/
 
 
     app.get('/api/configuration/create/chassis/:chassis', passport.isLogged, async (req, res) => {

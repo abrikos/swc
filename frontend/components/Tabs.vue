@@ -1,11 +1,11 @@
 <template>
   <div class="tabs">
-    <div v-for="({type}, i) of items" :key="i" @click="tabClick(i)"
+    <div v-for="({category}, i) of items" :key="i" @click="tabClick(i)"
          :class="'tab' + (tab===i ? ' active' : '') + (isHovering===i ? ' hovered':'')"
          @mouseover="isHovering = i"
          @mouseout="isHovering = false">
-      <img :src="`/icons/${type}_icon.png`" v-if="withIcons" :class="imageStyle"/>
-      {{ type }}
+      <img :src="`/icons/${category}_icon.png`" v-if="withIcons" />
+      {{ category }}
     </div>
   </div>
 </template>
@@ -14,11 +14,6 @@
 export default {
   name: "Tabs",
   props: ['onClick', 'items', 'withIcons'],
-  computed:{
-    imageStyle(){
-      return this.$vuetify.theme.isDark ? 'inverse' : ''
-    }
-  },
   data(){
 
     return {
