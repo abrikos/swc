@@ -20,11 +20,11 @@ export default {
     return {
       tab:0,
       tabs:[
-        {type:'G2'},
-        {type:'G3'},
-        {type:'G2R'},
-        {type:'AMD'},
-        {type:'JBOD'},
+        {category:'G2'},
+        {category:'G3'},
+        {category:'G2R'},
+        {category:'AMD'},
+        {category:'JBOD'},
       ],
       items:[],
 
@@ -42,7 +42,7 @@ export default {
 
     },
     async loadChassis(index){
-      this.items = await this.$axios.$get('/configurator/chassis/' + this.tabs[index].type)
+      this.items = await this.$axios.$get('/configurator/chassis/' + this.tabs[index].category)
     },
     createConfiguration(e){
       this.$axios.$get('/configuration/create/chassis/'+ e.id)
