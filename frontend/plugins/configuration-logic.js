@@ -16,8 +16,8 @@ export default function ({app}, inject) {
                 case 'CPU':
                     return configuration.chassis.cpu === c.type
                 case 'Power':
-                    if(gpus>0) return c.params * 1 >= 1300
-                    if(gpus>1) return c.params * 1 >= 1600
+                    if(gpus>0) return c.power >= 1300
+                    if(gpus>1) return c.power >= 1600
                 default:
                     return true
             }

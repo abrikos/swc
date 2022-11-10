@@ -28,6 +28,12 @@ schema.virtual('description')
         return this.descFull || this.descShort;
     })
 
+schema.virtual('power')
+    .get(function () {
+        const match = this.params.match(/PSU (\d)\*(\d+)W/)
+        return match && match[1] * match[2];
+    })
+
 schema.virtual('date')
     .get(function () {
         return moment(this.createdAt).format('YYYY-MM-DD HH:mm');

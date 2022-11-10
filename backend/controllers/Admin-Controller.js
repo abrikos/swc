@@ -154,8 +154,6 @@ module.exports = function (app) {
             data.type = 'RAID'
         } else if (data.category === 'PSU') {
             data.category = 'Power'
-            const match = data.params.match(/PSU (\d)\*(\d+)W/)
-            data.params = match[1] * match[2]
         } else if (data.type === 'Cable for backplane') {
             data.type = 'Cable'
         }
