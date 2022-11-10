@@ -81,10 +81,10 @@ module.exports = function (app) {
 
     app.post('/api/admin/upload-list', passport.isAdmin, async (req, res) => {
         try {
-            await parseXLS(req.files.file.tempFilePath);
+            const stat = await parseXLS(req.files.file.tempFilePath);
             fs.unlink(req.files.file.tempFilePath, () => {
             })
-            res.sendStatus(200)
+            res.send(stat)
         } catch (e) {
             app.locals.errorLogger(e, res)
         }
@@ -102,6 +102,8 @@ module.exports = function (app) {
             const workbook = XLSX.readFile(file);
             const sheet_name_list = workbook.SheetNames;
             const items = XLSX.utils.sheet_to_json(workbook.Sheets[sheet_name_list[0]])
+            let chassis = 0;
+            let components = 0;
             for (const item of items) {
                 const platforms = []
                 for (const key of Object.keys(item)) {
@@ -120,13 +122,16 @@ module.exports = function (app) {
                 }
                 if (!fields.descFull) fields.descFull = fields.params
                 if (fields.category === 'Chassis') {
+                    chassis++
                     const data = chassisData(fields)
                     await db.chassis.updateOne({partNumber: data.partNumber}, data, {upsert: true})
                 } else {
+                    components++
                     const data = componentData(fields)
                     await db.component.updateOne({partNumber: data.partNumber}, data, {upsert: true})
                 }
             }
+            return {chassis, components}
         }catch (e) {
             console.error(e)
         }

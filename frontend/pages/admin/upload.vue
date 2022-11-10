@@ -48,8 +48,9 @@ export default {
     async upload(e) {
       let formData = new FormData();
       formData.append("file", e.target.files[0]);
-      await this.$axios.$post('/admin/upload-list', formData)
+      const stat = await this.$axios.$post('/admin/upload-list', formData)
       this.$refs.inputFile.value = null
+      this.$store.commit('setSnackBar', {message: `Загружено шасси: ${stat.chassis}. Загружено компонентов: ${stat.components}.`})
 
     }
   }
