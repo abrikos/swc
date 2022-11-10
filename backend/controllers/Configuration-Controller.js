@@ -68,13 +68,13 @@ module.exports = function (app) {
     })
 
 
-    db.component.aggregate([
+    /*db.component.aggregate([
         {
             $group: {
                 _id: "$type"
             }
         }
-    ]).then(console.log)
+    ]).then(console.log)*/
 
     //db.configuration.findById('636235286c9eeecfc0c20d24').populate(db.configuration.population).then(c=>console.log('Config = ',c.price))
     async function componentsOfConfiguration(configuration) {

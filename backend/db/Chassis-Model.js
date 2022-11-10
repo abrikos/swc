@@ -7,8 +7,8 @@ const name = 'chassis';
 const schema = new Schema({
         platform: {type: String},
         form: String,
-        cpu: String,
-        partNumber: {type:String, unique: true},
+        paramsData: Object,
+        partNumber: {type: String, unique: true},
         descShort: String,
         descFull: String,
         params: String,
@@ -25,6 +25,24 @@ const schema = new Schema({
 schema.virtual('date')
     .get(function () {
         return moment(this.createdAt).format('YYYY-MM-DD HH:mm');
+    })
+
+schema.virtual('discs')
+    .get(function () {
+        const match = this.params.match(/(\d+)\*.*?FF/)
+        return  match[1] * 1;
+    })
+
+schema.virtual('discsOnlySmall')
+    .get(function () {
+        return this.type === 'SFF'
+    })
+
+schema.virtual('cpu')
+    .get(function () {
+        if(this.platform !== 'JBOD') {
+            return this.platforms === 'AMD' ? 'AMD' : 'Intel';
+        }
     })
 
 

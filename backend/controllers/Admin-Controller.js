@@ -2,7 +2,7 @@ const passport = require('../passport');
 const fs = require('fs');
 const csv = require('csv-parser')
 const clc = require("cli-color");
-
+const XLSX = require('xlsx');
 module.exports = function (app) {
     const {db} = app.locals;
 
@@ -41,7 +41,7 @@ module.exports = function (app) {
         const {file} = req.body;
         console.log(file)
         const chassis = await db.chassis.findById(id)
-        fs.copyFile('/home/abrikos/Downloads/choosen/'+file, './frontend/static/chassis/' + chassis.partNumber + '.jpg', (err) => {
+        fs.copyFile('/home/abrikos/Downloads/choosen/' + file, './frontend/static/chassis/' + chassis.partNumber + '.jpg', (err) => {
             if (err) throw err;
             res.sendStatus(200)
         });
@@ -50,7 +50,7 @@ module.exports = function (app) {
 
 
     app.get('/api/admin/chassis-dirs', passport.isAdmin, async (req, res) => {
-        fs.readdir('/home/abrikos/Downloads/choosen', {}, (e,list)=>{
+        fs.readdir('/home/abrikos/Downloads/choosen', {}, (e, list) => {
             res.send(list)
         })
 
@@ -78,80 +78,90 @@ module.exports = function (app) {
     //db.component.find({type: 'HDD'}).then(console.log)
     //db.component.find({partNumber: '4 SATA - 1*SFF-8643'}).then(console.log)
 
+
     app.post('/api/admin/upload-list', passport.isAdmin, async (req, res) => {
-        await db.component.deleteMany({})
-        await db.chassis.deleteMany({})
-        await db.configuration.deleteMany({})
-        await db.spec.deleteMany({})
-        fs.createReadStream(req.files.file.tempFilePath)
-            .pipe(csv())
-            .on('data', async (data) => {
-                try {
-                    const platforms = []
-                    if (data.G2R) platforms.push('G2R')
-                    if (data.G2) platforms.push('G2')
-                    if (data.G3) platforms.push('G3')
-                    if (data.AMD) platforms.push('AMD')
-                    if (data.JBOD) platforms.push('JBOD')
-                    let type = data.Type.trim();
-                    const price = data['цена GPL '].trim();
-                    let category = data.Family.trim();
-                    let params = data.DescShort.trim();
-                    const partNumber = data.PN.trim();
-                    const descFull =  data.DescFull.trim()
-                    if (category === 'Chassis') {
-                        await db.chassis.updateOne({partNumber: data.PN.trim()}, {
-                            platform: platforms.join(''),
-                            form: type,
-                            descShort: data['Столбец2'].trim(),
-                            params,
-                            partNumber,
-                            price,
-                            cpu: data.AMD ? 'AMD' : 'Intel',
-                            descFull
-                        }, {upsert: true})
-                    } else {
-                        if(type === 'SSD'){
-                            if(params.match('M.2')){
-                                type = 'SSD m.2'
-                            } else if (params.match('U.2')){
-                                type = 'SSD U.2 NVMe'
-                            } else {
-                                type = 'SSD 2.5'
-                            }
-                        }else
-                        if (type.match('RAID')) {
-                            type = 'RAID'
-                        } else if (category === 'PSU') {
-                            category = 'Power'
-                            const match = params.match(/PSU (\d)\*(\d+)W/)
-                            params = match[1] * match[2]
-                        } else if (type === 'Cable for backplane') {
-                            type = 'Cable'
-                        }
-                        await db.component.updateOne({partNumber: data.PN.trim()}, {
-                            platforms,
-                            type,
-                            category,
-                            params,
-                            descShort: data.DescShort.trim(),
-                            partNumber,
-                            price,
-                            descFull
-                        }, {upsert: true})
-                    }
-                } catch (e) {
-                    console.log(e && e.message)
-                }
-                fs.unlink(req.files.file.tempFilePath, () => {
-                })
-
+        try {
+            await parseXLS(req.files.file.tempFilePath);
+            fs.unlink(req.files.file.tempFilePath, () => {
             })
-            .on('end', () => {
-                res.sendStatus(200)
-            });
-
-
+            res.sendStatus(200)
+        } catch (e) {
+            app.locals.errorLogger(e, res)
+        }
     })
+
+    async function parseXLS(file) {
+        try {
+            const platformNames = [
+                'G2',
+                'G3',
+                'G2R',
+                'AMD',
+                'JBOD',
+            ]
+            const workbook = XLSX.readFile(file);
+            const sheet_name_list = workbook.SheetNames;
+            const items = XLSX.utils.sheet_to_json(workbook.Sheets[sheet_name_list[0]])
+            for (const item of items) {
+                const platforms = []
+                for (const key of Object.keys(item)) {
+                    if (platformNames.includes(key)) platforms.push(key)
+                    item.platforms = platforms;
+                    //item[key.toLowerCase()] = item[key].trim()
+                }
+                const fields = {
+                    type: item.Type?.trim(),
+                    price: item['цена GPL'],
+                    category: item.Family?.trim(),
+                    params: item.Description?.trim(),
+                    partNumber: item.PN?.trim(),
+                    descFull: item.DescFull?.trim(),
+                    platforms,
+                }
+                if (!fields.descFull) fields.descFull = fields.params
+                if (fields.category === 'Chassis') {
+                    const data = chassisData(fields)
+                    await db.chassis.updateOne({partNumber: data.partNumber}, data, {upsert: true})
+                } else {
+                    const data = componentData(fields)
+                    await db.component.updateOne({partNumber: data.partNumber}, data, {upsert: true})
+                }
+            }
+        }catch (e) {
+            console.error(e)
+        }
+    }
+
+    parseXLS('export.xlsb')
+
+    function chassisData(data) {
+        data.platform = data.platforms.join(',')
+        //console.log(data)
+        return data
+    }
+
+    function componentData(data) {
+        if (data.type === 'SSD') {
+            if (data.params.match('M.2')) {
+                data.type = 'SSD m.2'
+            } else if (data.params.match('U.2')) {
+                data.type = 'SSD U.2 NVMe'
+            } else {
+                data.type = 'SSD 2.5'
+            }
+            //console.log(data)
+        } else if (data.type.match('RAID')) {
+            data.type = 'RAID'
+        } else if (data.category === 'PSU') {
+            data.category = 'Power'
+            const match = data.params.match(/PSU (\d)\*(\d+)W/)
+            data.params = match[1] * match[2]
+        } else if (data.type === 'Cable for backplane') {
+            data.type = 'Cable'
+        }
+
+        return data
+    }
+
 
 }
