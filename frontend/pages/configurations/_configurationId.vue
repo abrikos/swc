@@ -94,48 +94,13 @@ export default {
       return tab;
     },
     countsArray() {
-      if (this.chosenTab.category === 'CPU') {
-        const memoryModulesAttached = this.configuration.parts.filter(p => p.component.category === 'Memory').reduce((a, b) => a + b.count, 0);
-        return this.configuration.chassis.platform === 'G3' ?
-            memoryModulesAttached === 0 || memoryModulesAttached > 16 ? [0, 1, 2] : [0, 1]
-            :
-            memoryModulesAttached === 0 || memoryModulesAttached > 12 ? [0, 1, 2] : [0, 1]
-      } else if (this.chosenTab.category === 'Memory') {
-        if (this.configuration.chassis.platform === 'G3') {
-          return this.configuration.parts.filter(p => p.component.category === 'CPU').length === 1 ? [0, 2, 4, 6, 8, 10, 12, 14, 16] : [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32]
-        } else {
-          return this.configuration.parts.filter(p => p.component.category === 'CPU').length === 1 ? [0, 2, 4, 6, 8, 10, 12] : [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24]
-        }
-      } else if (this.chosenSubTab?.type === 'GPU') {
-        return [0, 1, 2]
-      }
-      return [0, 1, 2, 3, 4, 5]
+      return this.$componentCount(this.configuration, this.chosenTab.category, this.chosenSubTab?.type)
     },
     chosenSubTab() {
       return this.chosenTab.children && this.chosenTab.children[this.subTab]
     },
     componentsCurrent() {
-      let gpus = 0;
-      for (const part of this.configuration.parts) {
-        if (part.component.type === 'GPU') {
-          gpus += part.count
-        }
-      }
-      const componentsByType = this.chosenSubTab ?
-          this.componentsAll.filter(c => c.type === this.chosenSubTab.type)
-          :
-          this.componentsAll.filter(c => c.category === this.chosenTab.category)
-      return componentsByType.filter(c => {
-        switch (this.chosenTab.category) {
-          case 'CPU':
-            return this.configuration.chassis.cpu === c.type
-          case 'Power':
-            if(gpus>0) return c.params * 1 >= 1300
-            if(gpus>1) return c.params * 1 >= 1600
-          default:
-            return true
-        }
-      })
+      return this.$components(this.configuration, this.componentsAll, this.chosenTab.category, this.chosenSubTab?.type)
     },
     componentsCurrentFiltered() {
       return this.componentsCurrent.filter(c => c.description.toLowerCase().match(this.filter.toLowerCase()))

@@ -4,28 +4,28 @@
         :headers="headers"
         :items="items"
         :items-per-page="15"
+        @click:row="gotoConfig"
     >
       <template v-slot:no-data>
         Ни чего не найдено
       </template>
       <template v-slot:item.chassis.partNumber="{item}">
-        <div @click="gotoConfig(item)" style="cursor: pointer">{{item.chassis.partNumber}}</div>
+        <div>{{item.chassis.partNumber}}</div>
       </template>
       <template v-slot:item.chassis.descShort="{item}">
-        <div @click="gotoConfig(item)" style="cursor: pointer">{{item.chassis.descShort}}</div>
+        <div>{{item.chassis.descShort}}</div>
       </template>
-      <template v-slot:item.price="{item}">
-        <div @click="gotoConfig(item)" style="cursor: pointer">{{item.price}}</div>
+      <template v-slot:item.price="{item}" >
+        <div>{{item.price}}</div>
       </template>
       <template v-slot:item.toSpec="{item}">
-        <v-checkbox dense hide-details v-model="checked[item.id]" title="Добавить в спецификацию"/>
+        <v-checkbox @click.stop.prevent dense hide-details v-model="checked[item.id]" title="Добавить в спецификацию"/>
       </template>
       <template v-slot:item.name="{item}">
-
-        <div v-if="showNameField !== item.id" @click="showNameField=item.id"><v-icon
-            title="click me">mdi-gesture-tap</v-icon>{{ item.name }}</div>
+        <div @click.stop.prevent v-if="showNameField !== item.id" @click="showNameField=item.id" title="Нажать для редактирования">{{ item.name }}</div>
         <v-text-field
             v-model="item.name"
+            @click.stop.prevent
             flat dense outlined hide-details append-icon="mdi-check"
             @click:append="changeField('name', item); showNameField=null"
             @blur="showNameField=null"
@@ -35,14 +35,12 @@
         />
       </template>
       <template v-slot:item.count="{ item }">
-        <ConfigurationCount :item="item" :onChange="loadConfigurations"/>
+        <ConfigurationCount @click.stop.prevent :item="item" :onChange="loadConfigurations"/>
       </template>
       <template v-slot:item.controls="{ item }">
-<!--        <v-btn icon title="Добавить в спецификацию" @click="dialogShow(item)">
-          <v-icon>mdi-plus</v-icon>
-        </v-btn>-->
-
-        <v-btn @click="deleteConfiguration(item)" icon color="red" x-small title="Удалить">
+        <v-btn :to="'/configuration/' + item.id" icon x-small title="Перейти">
+          <v-icon>mdi-file-edit</v-icon>
+        </v-btn>        <v-btn @click="deleteConfiguration(item)" icon color="red" x-small title="Удалить">
           <v-icon>mdi-close</v-icon>
         </v-btn>
       </template>
@@ -125,6 +123,8 @@ export default {
 
 <style scoped lang="sass">
 .v-data-table
+  :deep(td)
+    cursor: pointer
   :deep(.text-start)
     padding: 0
   :deep(.v-input)

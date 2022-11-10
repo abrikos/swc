@@ -3,9 +3,9 @@
     <h1>Загрузка базы</h1>
 
     <v-card>
-      <v-card-title>Правила загрузки</v-card-title>
+<!--      <v-card-title>Правила загрузки</v-card-title>-->
       <v-card-text>
-        <ul>
+        <ul v-if="false">
           <li>Принимаются файлы только в формате CSV</li>
           <li>Для создания CSV из excel-файла необходимо:
             <ul>
@@ -25,8 +25,8 @@
           </li>
           <li>Образец excel-файла: <a href="/LoC.xlsb">Loc.xlsb</a></li>
         </ul>
-        <input type="file" accept=".csv" @change="upload" ref="inputFile" hidden>
-        <v-btn @click="btnClick">Загрузить CSV</v-btn>
+        <input type="file" accept=".xlsb" @change="upload" ref="inputFile" hidden>
+        <v-btn @click="btnClick">Загрузить XLSB</v-btn>
       </v-card-text>
     </v-card>
   </div>

@@ -39,7 +39,7 @@ export default {
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
-    //'~/plugins/common',
+    '~/plugins/configuration-logic',
     '~/plugins/axios',
     //'~/plugins/websocket',
     //'~/plugins/redirection',
