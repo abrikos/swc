@@ -18,6 +18,8 @@ export default function ({app}, inject) {
                 case 'Power':
                     if(gpus>0) return c.power >= 1300
                     if(gpus>1) return c.power >= 1600
+                case 'Storage':
+                    if(configuration.chassis.isSFF && c.type === 'HDD') return c.isSFF
                 default:
                     return true
             }

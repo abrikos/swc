@@ -75,8 +75,9 @@ module.exports = function (app) {
         res.sendStatus(200)
     })
 
-    //db.component.find({type: 'HDD'}).then(console.log)
+    //db.chassis.find().then(c=>console.log(c.map(cc=>cc.form)))
     //db.component.find({partNumber: '4 SATA - 1*SFF-8643'}).then(console.log)
+    //db.chassis.find().then(console.log)
 
 
     app.post('/api/admin/upload-list', passport.isAdmin, async (req, res) => {
@@ -90,7 +91,13 @@ module.exports = function (app) {
         }
     })
 
-    async function parseXLS(file) {
+    async function parseXLS(file, deleteAll) {
+        if(deleteAll){
+            await db.component.deleteMany({})
+            await db.chassis.deleteMany({})
+            await db.configuration.deleteMany({})
+            await db.spec.deleteMany({})
+        }
         try {
             const platformNames = [
                 'G2',
@@ -137,11 +144,11 @@ module.exports = function (app) {
         }
     }
 
-    parseXLS('export.xlsb')
+    //parseXLS('export.xlsb', 1)
 
     function chassisData(data) {
         data.platform = data.platforms.join(',')
-        //console.log(data)
+        data.disksFormFactor = data.type
         return data
     }
 

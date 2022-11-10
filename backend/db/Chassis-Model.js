@@ -6,7 +6,7 @@ const name = 'chassis';
 
 const schema = new Schema({
         platform: {type: String},
-        form: String,
+        disksFormFactor: String,
         paramsData: Object,
         partNumber: {type: String, unique: true},
         descShort: String,
@@ -43,6 +43,11 @@ schema.virtual('cpu')
         if(this.platform !== 'JBOD') {
             return this.platforms === 'AMD' ? 'AMD' : 'Intel';
         }
+    })
+
+schema.virtual('isSFF')
+    .get(function () {
+        return this.disksFormFactor === 'SFF'
     })
 
 

@@ -31,6 +31,7 @@ module.exports = function (app) {
             const {user} = res.locals;
             const {configurationId} = req.params;
             const configuration = await db.configuration.findOne({_id: configurationId, user}).populate(db.configuration.population);
+            if(!configuration) res.sendStatus(404)
             const tabs = !['JBOD'].includes(configuration.chassis.platform) ? [
                 //{id: 'base', label: 'Основа'},
 
@@ -39,12 +40,14 @@ module.exports = function (app) {
                 {
                     category: 'Storage',
                     children: [
-                        {type: 'RAID'},
+
                         {type: 'HDD'},
                         {type: 'SSD 2.5'},
                         {type: 'SSD m.2'},
                         {type: 'SSD U.2 NVMe'},
+                        {type: 'RAID'},
                         {type: 'Rear bay'},
+
                     ]
                 },
                 {category: 'Riser',},

@@ -9,7 +9,6 @@ const schema = new Schema({
         category: String,
         type: String,
         params: String,
-        category: String,
         partNumber: {type: String, unique: true},
         descShort: String,
         descFull: String,
@@ -23,15 +22,20 @@ const schema = new Schema({
         toJSON: {virtuals: true}
     });
 
-schema.virtual('description')
+schema.virtual('isSFF')
     .get(function () {
-        return this.descFull || this.descShort;
+        return !!this.params.match('SFF')
     })
 
 schema.virtual('power')
     .get(function () {
         const match = this.params.match(/PSU (\d)\*(\d+)W/)
         return match && match[1] * match[2];
+    })
+
+schema.virtual('description')
+    .get(function () {
+        return this.descFull || this.descShort;
     })
 
 schema.virtual('date')

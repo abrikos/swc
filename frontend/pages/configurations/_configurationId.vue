@@ -1,6 +1,6 @@
 <template>
   <div v-if="configuration">
-    <h1>{{ configuration.name || configuration.chassis.partNumber }} <small>{{ configuration.chassis.descShort }}
+    <h1>{{ configuration.name || configuration.chassis.partNumber }} <small>{{ configuration.chassis.params }}
       {{ configuration.chassis.platform }}</small></h1>
     <v-row>
       <v-col sm="7">
