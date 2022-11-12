@@ -38,7 +38,7 @@ export default function ({app}, inject) {
             if (configuration.chassis.platform === 'G3') {
                 return configuration.parts.filter(p => p.component.category === 'CPU').length === 1 ? [0, 2, 4, 6, 8, 10, 12, 14, 16] : [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32]
             } else {
-                return configuration.parts.filter(p => p.component.category === 'CPU').length === 1 ? [0, 2, 4, 6, 8, 10, 12] : [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24]
+                return configuration.parts.filter(p => p.component.category === 'CPU').length > 1 ? [0, 2, 4, 6, 8, 10, 12] : [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24]
             }
         } else if (subTab === 'GPU') {
             return [0, 1, 2]
