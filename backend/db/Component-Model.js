@@ -33,6 +33,12 @@ schema.virtual('power')
         return match && match[1] * match[2];
     })
 
+schema.virtual('riserPorts')
+    .get(function () {
+        const match = this.params.match('x16')
+        return this.category === 'Riser' ? match ? 16 : 8 : 0;
+    })
+
 schema.virtual('description')
     .get(function () {
         return this.descFull || this.descShort;

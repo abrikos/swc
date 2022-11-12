@@ -66,7 +66,6 @@ export default {
     return {
       nameChanged: false,
       filter: '',
-      count: 0,
       tab: 0,
       maxCount: 64,
       subTab: null,
@@ -141,11 +140,13 @@ export default {
       this.tabs = res.tabs
     },
     async addPart(count, item) {
-      let allowAdd = true;
-      if (item.type === 'GPU' && count) allowAdd = confirm('При добавлении GPU на каждое необходим Riser')
-      if (allowAdd) await this.$axios.$put(`/configuration/${this.id}/component/${item.id}`, {count})
-      await this.loadConfiguration()
-      this.count = 0
+      const result = this.$allowAddPart(this.configuration, item, count);
+      if (result.allow) {
+        await this.$axios.$put(`/configuration/${this.id}/component/${item.id}`, {count})
+        await this.loadConfiguration()
+      }else{
+        alert(result.message)
+      }
     }
   }
 }

@@ -27,7 +27,7 @@
           </td>
         </tr>
         <tr v-for="(item, i) of configuration.parts" :key="i">
-          <td>{{ item.component.category }}</td>
+          <td>{{ item.component.category }} {{ item.component.type }}</td>
           <td>{{ item.component.partNumber }}</td>
           <td>{{ item.count }}</td>
           <td>{{ item.component.price }}</td>
