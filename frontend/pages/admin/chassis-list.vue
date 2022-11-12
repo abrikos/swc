@@ -1,15 +1,15 @@
 <template>
   <v-row>
     <v-col>
-      <input type="file" accept="image" @change="uploadImage" ref="inputFile" hidden>
+      <input type="file" accept="image/*" @change="uploadImage" ref="inputFile" hidden>
       <div  xstyle="height: 600px; overflow: scroll">
       <v-radio-group v-model="selected">
         <div v-for="chassis of list" class="row">
           <v-col>{{ chassis.partNumber }}</v-col>
-          <v-col><img :src="`/chassis/${chassis.partNumber}.jpg?rnd=${rnd}`" height="50"/></v-col>
           <v-col>
             <v-btn @click="selectChassis(chassis)">Upload</v-btn>
           </v-col>
+          <v-col><img :src="`/chassis/${chassis.partNumber}.jpg?rnd=${rnd}`" height="50"/></v-col>
 <!--          <v-col>
             <v-radio :value="chassis.id"/>
           </v-col>-->

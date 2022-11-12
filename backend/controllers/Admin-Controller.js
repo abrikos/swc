@@ -3,6 +3,7 @@ const fs = require('fs');
 const csv = require('csv-parser')
 const clc = require("cli-color");
 const XLSX = require('xlsx');
+const sharp = require('sharp');
 module.exports = function (app) {
     const {db} = app.locals;
 
@@ -25,6 +26,7 @@ module.exports = function (app) {
     }
 
     initAdmin()
+
 
     app.get('/api/admin/users', passport.isAdmin, async (req, res) => {
         const users = await db.user.find()
@@ -61,7 +63,7 @@ module.exports = function (app) {
         try {
             const {id} = req.params;
             const chassis = await db.chassis.findById(id)
-            await req.files.file.mv('./frontend/static/chassis/' + chassis.partNumber + '.jpg')
+            await sharp(req.files.file.tempFilePath).resize(190).toFile('./frontend/static/chassis/' + chassis.partNumber + '.jpg')
             res.sendStatus(200)
         } catch (e) {
             app.locals.errorLogger(e, res)

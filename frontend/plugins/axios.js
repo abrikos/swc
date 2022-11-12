@@ -17,7 +17,12 @@ export default function ({app, $axios, store}) {
           error.response.data.message = error.response.request.responseText + ': ' + error.response.config.url + ' '
         }
         console.error(error.response.data)
-        store.commit('setSnackBar', error.response.data)
+        if(error.response.status === 413){
+          store.commit('setSnackBar', {status: 413, message: 'Загружаемый файл превышает допустимый размер'})
+        }else{
+          store.commit('setSnackBar', error.response.data)
+        }
+
       }
 
     }else{
