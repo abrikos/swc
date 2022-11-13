@@ -21,7 +21,7 @@
       <template v-slot:item.toSpec="{item}">
         <v-checkbox @click.stop.prevent dense hide-details v-model="checked[item.id]" title="Добавить в спецификацию"/>
       </template>
-      <template v-slot:item.name="{item}">
+      <template v-slot:item.nameX="{item}">
         <div @click.stop.prevent v-if="showNameField !== item.id" @click="showNameField=item.id" title="Нажать для редактирования">{{ item.name }}</div>
         <v-text-field
             v-model="item.name"
@@ -38,10 +38,8 @@
         <ConfigurationCount @click.stop.prevent :item="item" :onChange="loadConfigurations"/>
       </template>
       <template v-slot:item.controls="{ item }">
-        <v-btn :to="'/configuration/' + item.id" icon x-small title="Перейти">
-          <v-icon>mdi-file-edit</v-icon>
-        </v-btn>        <v-btn @click="deleteConfiguration(item)" icon color="red" x-small title="Удалить">
-          <v-icon>mdi-close</v-icon>
+        <v-btn @click="deleteConfiguration(item)" icon color="red" x-small title="Удалить">
+          <v-icon>mdi-delete</v-icon>
         </v-btn>
       </template>
       <template v-slot:footer>
@@ -98,6 +96,7 @@ export default {
     async addToSpec(){
       //await this.$axios.$put(`/configuration/${this.configuration.id}/to-spec`, this.checkedArray)
       await this.$axios.$put(`/spec/configurations/add`, this.checkedArray)
+      this.checked = []
       await this.specReload()
 
     },

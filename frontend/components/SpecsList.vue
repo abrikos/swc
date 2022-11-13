@@ -15,7 +15,7 @@
       </template>
       <template v-slot:item.controls="{item}">
         <v-btn @click.stop.prevent @click="deleteSpec(item)" x-small icon color="red" title="Удалить">
-          <v-icon>mdi-close</v-icon>
+          <v-icon>mdi-delete</v-icon>
         </v-btn>
       </template>
     </v-data-table>
