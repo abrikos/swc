@@ -69,13 +69,19 @@ export default {
         'specifications-list': {text: 'Спецификации', href: '/specifications/list'},
         'specifications-specId': {text: 'Просмотр спецификации', disabled: true, parent: 'specifications-list'},
         'configurations-configurationId':{text: 'Просмотр конфигурации', disabled: true, parent:'configurations-list'},
-        'cabinet-settings':{text: 'Кабинет настройки', disabled: true},
+        'cabinet-settings':{text: 'Кабинет настройки'},
+        'user-login':{text: 'Вход'},
+        'user-signup':{text: 'Регистрация'},
+        'admin-users':{text: 'Редактирование пользователей'},
+        'admin-upload':{text: 'Загрузка базы', disabled: true},
+        'admin-chassis-list':{text: 'Загрузка изображений шасси'},
       }
-
+      console.log(this.$route.name)
       const crumbs = [routes.home]
       const current = routes[this.$route.name]
       if(!current) return crumbs
       if(current.parent) crumbs.push(routes[current.parent])
+      current.disabled = true;
       crumbs.push(current)
       return crumbs
     }
