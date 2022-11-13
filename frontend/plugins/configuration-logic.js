@@ -29,13 +29,13 @@ export default function ({app}, inject) {
 
     inject('componentCount', (configuration, tab, subTab) => {
         if (tab === 'CPU') {
-            return [0, 1, 2]
-            /*const memoryModulesAttached = configuration.parts.filter(p => p.component.category === 'Memory').reduce((a, b) => a + b.count, 0);
+            const memoryModulesAttached = configuration.parts.filter(p => p.component.category === 'Memory').reduce((a, b) => a + b.count, 0);
+            console.log(memoryModulesAttached)
             if (configuration.chassis.platform === 'G3') {
-                return memoryModulesAttached === 0 || memoryModulesAttached > 16 ? [0, 1, 2] : [0, 1]
+                return memoryModulesAttached === 0 || memoryModulesAttached > 16 ? [0, 2] : [0, 1, 2]
             } else {
-                return memoryModulesAttached === 0 || memoryModulesAttached > 12 ? [0, 1, 2] : [0, 1]
-            }*/
+                return memoryModulesAttached === 0 || memoryModulesAttached > 12 ? [0, 2] : [0, 1, 2]
+            }
         } else if (tab === 'Memory') {
             const memCount = configuration.parts.filter(p => p.component.category === 'CPU').reduce((a, b) => a + b.count, 0);
             if (configuration.chassis.platform === 'G3') {

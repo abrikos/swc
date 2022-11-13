@@ -49,6 +49,8 @@
         <v-btn color="primary">
           Создать спецификацию
         </v-btn>
+        <br/>
+<!--        <img :src="`/chassis/${configuration.chassis.partNumber}.jpg`" />-->
       </v-col>
     </v-row>
 
