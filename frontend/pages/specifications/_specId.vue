@@ -25,7 +25,7 @@
           dark
           class="ma-2"
           @click="addToSpec">
-        Добавить в спецификацию
+        Прикрепить к этой спецификации
       </v-btn>
       <v-btn @click="showAddConfiguration=false">Отмена</v-btn>
     </div>
