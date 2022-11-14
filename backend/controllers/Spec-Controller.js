@@ -1,9 +1,32 @@
 const passport = require('../passport');
 const moment = require("moment/moment");
-
+const XLSX = require('xlsx');
+const fs = require('fs')
 module.exports = function (app) {
     const {db} = app.locals;
+    const fileType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
+    const fileExtension = '.xlsx';
 
+    const specToXls = (spec) => {
+        const rows = [];
+        rows.push([spec.name])
+        rows.push(['Сумма спецификации', spec.price])
+        const ws = XLSX.utils.json_to_sheet(rows);
+        console.log(ws)
+        const wb = { Sheets: { 'data': ws }, SheetNames: ['data'] };
+        const excelBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+        console.log(excelBuffer)
+        return  new Blob([excelBuffer], {type: fileType});
+    }
+
+    db.spec.findById('63707c9ca32339f54a5cf167')
+        .populate({path: 'configurations', populate: db.configuration.population})
+        .then(spec=>{
+            const data = specToXls(spec)
+            fs.writeFile("test.xls", data, 'base64', function(err) {
+                console.log(err);
+            })
+        })
     app.get('/api/specs', passport.isLogged, async (req, res) => {
         const {user} = res.locals;
         const item = await db.spec.find({user})
