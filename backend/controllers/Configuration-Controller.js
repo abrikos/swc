@@ -40,12 +40,11 @@ module.exports = function (app) {
                 {
                     category: 'Storage',
                     children: [
-
+                        {type: 'RAID'},
                         {type: 'HDD'},
                         {type: 'SSD 2.5'},
                         {type: 'SSD m.2'},
                         {type: 'SSD U.2 NVMe'},
-                        {type: 'RAID'},
                         {type: 'Rear bay'},
 
                     ]

@@ -38,7 +38,7 @@
         <ConfigurationCount @click.stop.prevent :item="item" :onChange="loadConfigurations"/>
       </template>
       <template v-slot:item.controls="{ item }">
-        <v-btn @click="deleteConfiguration(item)" icon color="red" x-small title="Удалить">
+        <v-btn @click.stop="deleteConfiguration(item)" icon color="red" x-small title="Удалить">
           <v-icon>mdi-delete</v-icon>
         </v-btn>
       </template>
