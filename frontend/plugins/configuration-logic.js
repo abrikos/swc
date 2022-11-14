@@ -28,29 +28,39 @@ export default function ({app}, inject) {
 
 
     inject('componentCount', (configuration, tab, subTab) => {
-        if (tab === 'CPU') {
-            const memoryModulesAttached = configuration.parts.filter(p => p.component.category === 'Memory').reduce((a, b) => a + b.count, 0);
-            console.log(memoryModulesAttached)
-            if (configuration.chassis.platform === 'G3') {
-                return memoryModulesAttached === 0 || memoryModulesAttached > 16 ? [0, 2] : [0, 1, 2]
-            } else {
-                return memoryModulesAttached === 0 || memoryModulesAttached > 12 ? [0, 2] : [0, 1, 2]
-            }
-        } else if (tab === 'Memory') {
-            const memCount = configuration.parts.filter(p => p.component.category === 'CPU').reduce((a, b) => a + b.count, 0);
-            if (configuration.chassis.platform === 'G3') {
-                return memCount === 1 ? [0, 2, 4, 6, 8, 10, 12, 14, 16] : [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32]
-            } else {
-                return memCount === 1 ? [0, 2, 4, 6, 8, 10, 12] : [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24]
-            }
-        } else if (subTab === 'GPU') {
-            return [0, 1, 2]
+        console.log(subTab)
+        switch (tab) {
+            case 'CPU':
+                const memoryModulesAttached = configuration.parts.filter(p => p.component.category === 'Memory').reduce((a, b) => a + b.count, 0);
+
+                if (configuration.chassis.platform === 'G3') {
+                    return memoryModulesAttached === 0 || memoryModulesAttached > 16 ? [0, 2] : [0, 1, 2]
+                } else {
+                    return memoryModulesAttached === 0 || memoryModulesAttached > 12 ? [0, 2] : [0, 1, 2]
+                }
+            case 'Memory':
+                const memCount = configuration.parts.filter(p => p.component.category === 'CPU').reduce((a, b) => a + b.count, 0);
+                if (configuration.chassis.platform === 'G3') {
+                    return memCount === 1 ? [0, 2, 4, 6, 8, 10, 12, 14, 16] : [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32]
+                } else {
+                    return memCount === 1 ? [0, 2, 4, 6, 8, 10, 12] : [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24]
+                }
+            case 'Power':
+                return [0, 1]
+        }
+        switch (subTab) {
+            case 'GPU':
+                return [0, 1, 2]
+            case 'SSD m.2':
+                return [0, 1, 2]
+            case 'Rear bay':
+                return [0, 1, 2]
         }
         return [0, 1, 2, 3, 4, 5]
     })
 
     inject('allowAddPart', (configuration, item, count) => {
-        if(!count) return {allow: true}
+        if (!count) return {allow: true}
         switch (item.type) {
             case 'GPU':
                 const allow = configuration.parts.map(p => p.component.riserPorts).includes(16)

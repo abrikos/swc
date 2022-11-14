@@ -49,7 +49,7 @@
             dark
             class="ma-2"
             @click="addToSpec">
-          Создать спецификацию {{checkedArray.length}}
+          Создать новую спецификацию из выбранных
         </v-btn>
       </template>
     </v-data-table>
@@ -95,7 +95,7 @@ export default {
     },
     async addToSpec(){
       //await this.$axios.$put(`/configuration/${this.configuration.id}/to-spec`, this.checkedArray)
-      await this.$axios.$put(`/spec/configurations/add`, this.checkedArray)
+      await this.$axios.$put(`/spec/create`, this.checkedArray)
       this.checked = []
       await this.specReload()
 
