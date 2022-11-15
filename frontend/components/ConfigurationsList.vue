@@ -10,7 +10,11 @@
         Ни чего не найдено
       </template>
       <template v-slot:item.chassis.partNumber="{item}">
-        <div>{{item.chassis.partNumber}}</div>
+        <div>
+          <v-icon color="error" v-if="$validator(item).errors.length" title="Есть ошибки в комплектации">mdi-alert-circle</v-icon>
+          {{item.chassis.partNumber}}
+
+        </div>
       </template>
       <template v-slot:item.chassis.descShort="{item}">
         <div>{{item.chassis.descShort}}</div>
@@ -122,6 +126,8 @@ export default {
 
 <style scoped lang="sass">
 .v-data-table
+  :deep(.error1)
+    color: red
   :deep(td)
     cursor: pointer
   :deep(.text-start)
