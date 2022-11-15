@@ -32,11 +32,11 @@ export default function ({app}, inject) {
         switch (tab) {
             case 'CPU':
                 const memoryModulesAttached = configuration.parts.filter(p => p.component.category === 'Memory').reduce((a, b) => a + b.count, 0);
-
+                if(!memoryModulesAttached) return [0,1,2]
                 if (configuration.chassis.platform === 'G3') {
-                    return memoryModulesAttached === 0 || memoryModulesAttached > 16 ? [0, 2] : [0, 1, 2]
+                    return memoryModulesAttached > 16 ? [0, 2] : [0, 1, 2]
                 } else {
-                    return memoryModulesAttached === 0 || memoryModulesAttached > 12 ? [0, 2] : [0, 1, 2]
+                    return memoryModulesAttached > 12 ? [0, 2] : [0, 1, 2]
                 }
             case 'Memory':
                 const memCount = configuration.parts.filter(p => p.component.category === 'CPU').reduce((a, b) => a + b.count, 0);
