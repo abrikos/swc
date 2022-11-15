@@ -5,6 +5,7 @@
     <v-row>
       <v-col sm="2">Сумма спецификации:</v-col>
       <v-col sm="1" class="numbers">{{ spec.price }}</v-col>
+      <v-col><a :href="`/api/spec/${id}/excel`">Сохранить Excel</a></v-col>
     </v-row>
     <div v-if="showAddConfiguration">
       <hr/>

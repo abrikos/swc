@@ -9,24 +9,48 @@ module.exports = function (app) {
 
     const specToXls = (spec) => {
         const rows = [];
-        rows.push([spec.name])
-        rows.push(['Сумма спецификации', spec.price])
+        rows.push({name: spec.name})
+        rows.push({name: 'Сумма спецификации', price: spec.price})
+        for(const conf of spec.configurations){
+            rows.push({name: conf.name, price: conf.price})
+            for(const part of conf.parts){
+                rows.push({name:'', price:'', partNumber: part.component.partNumber, partCount: part.count, partPrice: part.component.price})
+            }
+        }
         const ws = XLSX.utils.json_to_sheet(rows);
-        console.log(ws)
-        const wb = { Sheets: { 'data': ws }, SheetNames: ['data'] };
-        const excelBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
-        console.log(excelBuffer)
-        return  new Blob([excelBuffer], {type: fileType});
+        //if(!ws["!merges"]) ws["!merges"] = [];
+        //ws["!merges"].push(XLSX.utils.decode_range("A1:E1"))
+        XLSX.utils.sheet_add_aoa(ws, [["Название", "Цена", "PN", "Количество", "Цена"]], { origin: "A1" });
+        const wb = {Sheets: {'data': ws}, SheetNames: ['data']};
+        const excelBuffer = XLSX.write(wb, {bookType: 'xlsx', type: 'array'});
+        return Buffer.from(excelBuffer)
     }
 
+/*
     db.spec.findById('63707c9ca32339f54a5cf167')
         .populate({path: 'configurations', populate: db.configuration.population})
-        .then(spec=>{
+        .then(spec => {
             const data = specToXls(spec)
-            fs.writeFile("test.xls", data, 'base64', function(err) {
-                console.log(err);
+            fs.writeFile("test.xls", data, 'base64', function (err) {
+                const workbook = XLSX.readFile('test.xls');
+                const sheet_name_list = workbook.SheetNames;
+                const items = XLSX.utils.sheet_to_json(workbook.Sheets[sheet_name_list[0]])
+                console.log(items);
             })
         })
+*/
+
+
+    app.get('/api/spec/:_id/excel', passport.isLogged, async (req, res) => {
+        const {user} = res.locals;
+        const {_id, configurationId} = req.params;
+        const spec = await db.spec.findOne({_id, user}).populate({path: 'configurations', populate: db.configuration.population});
+        if (!spec) res.sendStatus(404)
+        res.setHeader('Content-Type', 'application/vnd.openxmlformats');
+        res.setHeader("Content-Disposition", "attachment; filename=" + encodeURIComponent(spec.name) + ".xlsx");
+        res.send(specToXls(spec))
+    })
+
     app.get('/api/specs', passport.isLogged, async (req, res) => {
         const {user} = res.locals;
         const item = await db.spec.find({user})
@@ -62,7 +86,7 @@ module.exports = function (app) {
             const {_id, configurationId} = req.params;
             const spec = await db.spec.findOne({_id, user});
             if (!spec) res.sendStatus(404)
-            spec.configurations = spec.configurations.filter(c=>c._id.toString() !== configurationId);
+            spec.configurations = spec.configurations.filter(c => c._id.toString() !== configurationId);
             await spec.save();
             res.sendStatus(200)
         } catch (e) {
@@ -84,7 +108,8 @@ module.exports = function (app) {
                     configurations.push(conf.id)
                 }
             }
-            spec.configurations.push(configurations);
+            console.log(spec.configurations)
+            spec.configurations.push(...configurations);
             await spec.save();
             res.sendStatus(200)
         } catch (e) {
