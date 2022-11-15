@@ -1,7 +1,11 @@
 <template>
   <div v-if="configuration">
-    <h1>{{ configuration.name || configuration.chassis.partNumber }} <small>{{ configuration.chassis.params }}
-      {{ configuration.chassis.platform }}</small></h1>
+    <h1>
+      {{ configuration.name || configuration.chassis.partNumber }}
+      <v-btn @click.stop="deleteConfiguration" icon color="red" x-small title="Удалить">
+        <v-icon>mdi-delete</v-icon>
+      </v-btn>
+    </h1>
     <v-row>
       <v-col sm="7">
         <Tabs :withIcons="true" :items="tabs" :onClick="tabChanged"/>
@@ -44,6 +48,7 @@
             @keyup="nameChanged = true"
             @click:append="changeField('name', configuration); nameChanged = false"
         />
+        {{ configuration.chassis.platform }} - {{configuration.chassis.params}}
         <Basket :configuration="configuration" :reload="loadConfiguration"/>
         <br/>
         <v-alert border="top" color="red lighten-2" dark v-for="(error,i) of validator.errors" :key="i">{{
@@ -116,9 +121,16 @@ export default {
     }
   },
   created() {
+    if(!this.id) return this.$router.push('/configurations/list')
     this.loadConfiguration()
   },
   methods: {
+    async deleteConfiguration() {
+      if (window.confirm(`Удалить конфигурацию "${this.configuration.name}"?`)) {
+        await this.$axios.$delete(`/configuration/${this.configuration.id}`)
+        this.$router.push('/configurations/list')
+      }
+    },
     async createSpec() {
       const spec = await this.$axios.$put(`/spec/create`, [this.id])
       this.$router.push(`/specifications/${spec.id}`)

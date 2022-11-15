@@ -101,7 +101,7 @@ export default {
 
     },
     async deleteConfiguration(item) {
-      if (window.confirm(`Удалить сборку "${item.name}"?`)) {
+      if (window.confirm(`Удалить конфигурацию "${item.name}"?`)) {
         await this.$axios.$delete(`/configuration/${item.id}`)
         await this.loadConfigurations()
         await this.specReload()

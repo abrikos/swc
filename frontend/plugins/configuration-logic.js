@@ -35,16 +35,26 @@ export default function ({app}, inject) {
             errors: [],
         };
         if (configuration.cpuCount < 2 && configuration.memCount < (configuration.chassis.platform === 'G3' ? 16 : 12)) {
-            result.errors.push(`Для выбранного количества модулей памяти недостаточно процессоров`)
+            result.errors.push(`Для выбранного количества модулей памяти (${configuration.memCount}) недостаточно процессоров (${configuration.cpuCount})`)
         }
-        if (configuration.gpuCount && !configuration.riserX16Count) {
+        if (configuration.gpuCount && !configuration.lanCount && !configuration.riserX16Count) {
             result.errors.push(`При выборе GPU необходим Riser x16`)
+        }
+        if (!configuration.gpuCount && configuration.lanCount && !configuration.riserX16Count) {
+            result.errors.push(`При выборе LAN необходим Riser x16`)
+        }
+        if (configuration.gpuCount && configuration.lanCount && configuration.riserX16Count < configuration.gpuCount + configuration.lanCount) {
+            result.errors.push(`При выборе LAN и GPU необходимо ${configuration.gpuCount + configuration.lanCount} Riser x16.`)
+        }
+        if (!configuration.fcCount && !configuration.raidCount && configuration.chassis.discs > 12) {
+            result.errors.push(`Для платформы сколичеством дисков более 12 необходим RAID или HBA`)
         }
 
         return result
     }
 
     inject('componentCount', (configuration, tab, subTab) => {
+        console.log(configuration.chassis, Array.from(Array(configuration.chassis.discs).keys()))
         switch (tab) {
             case 'CPU':
                 const modules = configuration.memCount;
@@ -73,20 +83,13 @@ export default function ({app}, inject) {
                 return [0, 1, 2]
             case 'LAN OCP 3.0':
                 return [0, 1]
+            case 'SSD U.2 NVMe':
+                return [0, 1, 2, 3, 4]
+            case 'HDD':
+            case 'SSD 2.5':
+                return Array.from(Array(configuration.chassis.discs + 1).keys());
         }
         return [0, 1, 2, 3, 4, 5]
-    })
-
-    inject('allowAddPart', (configuration, item, count) => {
-        if (!count) return {allow: true}
-        switch (item.type) {
-            case 'GPU':
-                const allow = configuration.parts.map(p => p.component.riserPorts).includes(16)
-                const message = allow || 'Добавление GPU возможно лишь после добавления Riser с x16 портом'
-                return {allow, message}
-            default:
-                return {allow: true}
-        }
     })
 
 }

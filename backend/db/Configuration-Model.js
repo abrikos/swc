@@ -58,6 +58,21 @@ schema.virtual('gpuCount')
         return this.parts.filter(p => p.component.type === 'GPU').reduce((a, b) => a + b.count, 0)
     })
 
+schema.virtual('lanCount')
+    .get(function () {
+        return this.parts.filter(p => p.component.type === 'LAN').reduce((a, b) => a + b.count, 0)
+    })
+
+schema.virtual('raidCount')
+    .get(function () {
+        return this.parts.filter(p => p.component.type === 'RAID').reduce((a, b) => a + b.count, 0)
+    })
+
+schema.virtual('fcCount')
+    .get(function () {
+        return this.parts.filter(p => p.component.type === 'FC').reduce((a, b) => a + b.count, 0)
+    })
+
 schema.virtual('riserX16Count')
     .get(function () {
         return this.parts.filter(p => p.component.riserPorts === 16).reduce((a, b) => a + b.count, 0)
