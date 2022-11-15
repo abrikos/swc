@@ -46,6 +46,12 @@ export default function ({app}, inject) {
         if (configuration.gpuCount && configuration.lanCount && configuration.riserX16Count < configuration.gpuCount + configuration.lanCount) {
             result.errors.push(`При выборе LAN и GPU необходимо ${configuration.gpuCount + configuration.lanCount} Riser x16.`)
         }
+        if (configuration.gpuCount === 1 && configuration.power < 1300) {
+            result.errors.push(`При установке 1 GPU необходимо питанее не менее 1300W. Текущее: ${configuration.power}`)
+        }
+        if (configuration.gpuCount > 1 && configuration.power < 1600) {
+            result.errors.push(`При установке 2 и более GPU необходимо питанее не менее 1600W. Текущее: ${configuration.power}`)
+        }
         if (!configuration.fcCount && !configuration.raidCount && configuration.chassis.discs > 12) {
             result.errors.push(`Для платформы сколичеством дисков более 12 необходим RAID или HBA`)
         }

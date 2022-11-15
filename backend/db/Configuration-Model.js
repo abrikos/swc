@@ -73,6 +73,11 @@ schema.virtual('fcCount')
         return this.parts.filter(p => p.component.type === 'FC').reduce((a, b) => a + b.count, 0)
     })
 
+schema.virtual('power')
+    .get(function () {
+        return this.parts.filter(p => p.component.category === 'Power').reduce((a, b) => a + b.component.power, 0)
+    })
+
 schema.virtual('riserX16Count')
     .get(function () {
         return this.parts.filter(p => p.component.riserPorts === 16).reduce((a, b) => a + b.count, 0)
