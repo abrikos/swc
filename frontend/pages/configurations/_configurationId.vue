@@ -46,11 +46,15 @@
         />
         <Basket :configuration="configuration" :reload="loadConfiguration"/>
         <br/>
-        <v-btn color="primary">
+        <v-alert border="top" color="red lighten-2" dark v-for="(error,i) of validator.errors" :key="i">{{
+            error
+          }}
+        </v-alert>
+        <v-btn color="primary" v-if="!validator.errors.length" @click="createSpec">
           Создать спецификацию
         </v-btn>
         <br/>
-<!--        <img :src="`/chassis/${configuration.chassis.partNumber}.jpg`" />-->
+        <!--        <img :src="`/chassis/${configuration.chassis.partNumber}.jpg`" />-->
       </v-col>
     </v-row>
 
@@ -89,9 +93,11 @@ export default {
     id() {
       return this.$route.params.configurationId;
     },
+    validator() {
+      return this.$validator(this.configuration)
+    },
     chosenTab() {
       const tab = this.tabs[this.tab] || {}
-
       return tab;
     },
     countsArray() {
@@ -104,13 +110,19 @@ export default {
       return this.$components(this.configuration, this.componentsAll, this.chosenTab.category, this.chosenSubTab?.type)
     },
     componentsCurrentFiltered() {
-      return this.componentsCurrent.filter(c => c.description.toLowerCase().match(this.filter.toLowerCase()))
+      const filter = this.filter.toLowerCase().replace('+', '\\+')
+      console.log(filter)
+      return this.componentsCurrent.filter(c => c.description.toLowerCase().match(filter))
     }
   },
   created() {
     this.loadConfiguration()
   },
   methods: {
+    async createSpec() {
+      const spec = await this.$axios.$put(`/spec/create`, [this.id])
+      this.$router.push(`/specifications/${spec.id}`)
+    },
     async changeField(field, item) {
       await this.$axios.$put(`/configuration/${item.id}/field/${field}`, item)
     },
@@ -142,13 +154,8 @@ export default {
       this.tabs = res.tabs
     },
     async addPart(count, item) {
-      const result = this.$allowAddPart(this.configuration, item, count);
-      if (result.allow) {
-        await this.$axios.$put(`/configuration/${this.id}/component/${item.id}`, {count})
-        await this.loadConfiguration()
-      }else{
-        alert(result.message)
-      }
+      await this.$axios.$put(`/configuration/${this.id}/component/${item.id}`, {count})
+      await this.loadConfiguration()
     }
   }
 }

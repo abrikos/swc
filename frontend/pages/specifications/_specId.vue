@@ -77,6 +77,7 @@
           </v-col>
         </v-row>
         <v-btn icon @click="removeFromSpec(config.id)" color="red"><v-icon>mdi-delete</v-icon></v-btn>
+        <v-alert border="top" color="red lighten-2" dark v-for="(error,i) of $validator(config).errors" :key="i">{{ error }}</v-alert>
       </div>
     </div>
   </div>

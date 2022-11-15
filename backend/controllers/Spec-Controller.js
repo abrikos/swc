@@ -73,9 +73,12 @@ module.exports = function (app) {
                 }
             }
             if (configurations.length) {
-                await db.spec.create({name: 'Спецификация от ' + moment().format('YYYY-MM-DD HH:mm'), user, configurations});
+                const spec = await db.spec.create({name: 'Спецификация от ' + moment().format('YYYY-MM-DD HH:mm'), user, configurations});
+                res.send(spec)
+            }else{
+                res.sendStatus(406)
             }
-            res.sendStatus(200)
+
         } catch (e) {
             app.locals.errorLogger(e, res)
         }

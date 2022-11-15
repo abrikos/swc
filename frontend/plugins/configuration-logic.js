@@ -26,17 +26,33 @@ export default function ({app}, inject) {
         })
     })
 
+    inject('validator', (configuration) => {
+        return validator(configuration)
+    })
+
+    function validator(configuration) {
+        const result = {
+            errors: [],
+        };
+        if (configuration.cpuCount < 2 && configuration.memCount < (configuration.chassis.platform === 'G3' ? 16 : 12)) {
+            result.errors.push(`Для выбранного количества модулей памяти недостаточно процессоров`)
+        }
+        if (configuration.gpuCount && !configuration.riserX16Count) {
+            result.errors.push(`При выборе GPU необходим Riser x16`)
+        }
+
+        return result
+    }
 
     inject('componentCount', (configuration, tab, subTab) => {
-        console.log(subTab)
         switch (tab) {
             case 'CPU':
-                const memoryModulesAttached = configuration.parts.filter(p => p.component.category === 'Memory').reduce((a, b) => a + b.count, 0);
-                if(!memoryModulesAttached) return [0,1,2]
+                const modules = configuration.memCount;
+                if (!modules) return [0, 1, 2]
                 if (configuration.chassis.platform === 'G3') {
-                    return memoryModulesAttached > 16 ? [0, 2] : [0, 1, 2]
+                    return modules > 16 ? [0, 2] : [0, 1, 2]
                 } else {
-                    return memoryModulesAttached > 12 ? [0, 2] : [0, 1, 2]
+                    return modules > 12 ? [0, 2] : [0, 1, 2]
                 }
             case 'Memory':
                 const memCount = configuration.parts.filter(p => p.component.category === 'CPU').reduce((a, b) => a + b.count, 0);
@@ -55,6 +71,8 @@ export default function ({app}, inject) {
                 return [0, 1, 2]
             case 'Rear bay':
                 return [0, 1, 2]
+            case 'LAN OCP 3.0':
+                return [0, 1]
         }
         return [0, 1, 2, 3, 4, 5]
     })
@@ -70,4 +88,5 @@ export default function ({app}, inject) {
                 return {allow: true}
         }
     })
+
 }

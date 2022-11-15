@@ -43,6 +43,26 @@ schema.virtual('priceTotal')
         return this.price * this.count
     })
 
+schema.virtual('memCount')
+    .get(function () {
+        return this.parts.filter(p => p.component.category === 'Memory').reduce((a, b) => a + b.count, 0)
+    })
+
+schema.virtual('cpuCount')
+    .get(function () {
+        return this.parts.filter(p => p.component.category === 'CPU').reduce((a, b) => a + b.count, 0)
+    })
+
+schema.virtual('gpuCount')
+    .get(function () {
+        return this.parts.filter(p => p.component.type === 'GPU').reduce((a, b) => a + b.count, 0)
+    })
+
+schema.virtual('riserX16Count')
+    .get(function () {
+        return this.parts.filter(p => p.component.riserPorts === 16).reduce((a, b) => a + b.count, 0)
+    })
+
 schema.virtual('parts', {
     ref: 'part',
     localField: '_id',
