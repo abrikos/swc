@@ -13,6 +13,7 @@ module.exports = function (app) {
         rows.push({name: 'Сумма спецификации', price: spec.price})
         for(const conf of spec.configurations){
             rows.push({name: conf.name, price: conf.price})
+            rows.push({name:'', price:'', partNumber: conf.chassis.partNumber, partCount: conf.count, partPrice: conf.chassis.price})
             for(const part of conf.parts){
                 rows.push({name:'', price:'', partNumber: part.component.partNumber, partCount: part.count, partPrice: part.component.price})
             }
@@ -26,7 +27,7 @@ module.exports = function (app) {
         return Buffer.from(excelBuffer)
     }
 
-/*
+
     db.spec.findById('63707c9ca32339f54a5cf167')
         .populate({path: 'configurations', populate: db.configuration.population})
         .then(spec => {
@@ -38,7 +39,7 @@ module.exports = function (app) {
                 console.log(items);
             })
         })
-*/
+
 
 
     app.get('/api/spec/:_id/excel', passport.isLogged, async (req, res) => {
