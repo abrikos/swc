@@ -52,7 +52,7 @@ export default function ({app}, inject) {
         if (configuration.gpuCount > 1 && configuration.power < 1600) {
             result.errors.push(`При установке 2 и более GPU необходимо питанее не менее 1600W. Текущее: ${configuration.power}`)
         }
-        if (!configuration.fcCount && !configuration.raidCount && configuration.chassis.discs > 12) {
+        if (!configuration.fcCount && !configuration.raidCount && configuration.diskCount > 12) {
             result.errors.push(`Для платформы сколичеством дисков более 12 необходим RAID или HBA`)
         }
 
