@@ -28,7 +28,7 @@ module.exports = function (app) {
     }
 
 
-    db.spec.findById('63707c9ca32339f54a5cf167')
+    /*db.spec.findById('63707c9ca32339f54a5cf167')
         .populate({path: 'configurations', populate: db.configuration.population})
         .then(spec => {
             const data = specToXls(spec)
@@ -38,7 +38,7 @@ module.exports = function (app) {
                 const items = XLSX.utils.sheet_to_json(workbook.Sheets[sheet_name_list[0]])
                 console.log(items);
             })
-        })
+        })*/
 
 
 
