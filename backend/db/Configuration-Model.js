@@ -5,7 +5,7 @@ const name = 'configuration';
 
 const schema = new Schema({
         name: {type: String},
-        count: {type: Number, default: 1},
+        count: {type: Number, default: 1, min: 0},
         user: {type: mongoose.Schema.Types.ObjectId, ref: 'user'},
         chassis: {type: mongoose.Schema.Types.ObjectId, ref: 'chassis'},
         draft: {type: Boolean, default: true}
@@ -71,6 +71,16 @@ schema.virtual('raidCount')
 schema.virtual('fcCount')
     .get(function () {
         return this.parts.filter(p => p.component.type === 'FC').reduce((a, b) => a + b.count, 0)
+    })
+
+schema.virtual('nvmeCount')
+    .get(function () {
+        return this.parts.filter(p => p.component.type === 'SSD U.2 NVMe').reduce((a, b) => a + b.count, 0)
+    })
+
+schema.virtual('rearBayCount')
+    .get(function () {
+        return this.parts.filter(p => p.component.type === 'Rear bay').reduce((a, b) => a + b.count, 0)
     })
 
 schema.virtual('diskCount')

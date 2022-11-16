@@ -69,75 +69,8 @@ module.exports = function (app) {
         }
     })
 
-
-    /*db.component.aggregate([
-        {
-            $group: {
-                _id: "$type"
-            }
-        }
-    ]).then(console.log)*/
-
     //db.configuration.findById('636235286c9eeecfc0c20d24').populate(db.configuration.population).then(c=>console.log('Config = ',c.price))
-    async function componentsOfConfiguration(configuration) {
-        const criteria = {type: {$in: []}}
-        const tabs = !['JBOD'].includes(configuration.chassis.platform) ? [
-            //{id: 'base', label: 'Основа'},
 
-            {category: 'CPU'},
-            {category: 'Memory',},
-            {
-                category: 'Storage',
-                children: [
-                    {type: 'RAID'},
-                    {type: 'HDD'},
-                    {type: 'SSD 2.5'},
-                    {type: 'SSD m.2'},
-                    {type: 'SSD U.2 NVMe'},
-                    {type: 'Rear bay'},
-                ]
-            },
-            {category: 'Riser',},
-            {
-                category: 'PCI-E',
-                children: [
-                    {type: 'LAN OCP 3.0'},
-                    {type: 'LAN'},
-                    {type: 'FC'},
-                    {type: 'GPU'},
-                    {type: 'Transceiver'},
-                ]
-            },
-            {category: 'Power'},
-        ] : [{category: 'Cable'}]
-        for (const tab of tabs) {
-            if (tab.children) {
-                for (const subTab of tab.children) {
-                    criteria.type.$in.push(subTab.type)
-                }
-            } else {
-
-                if (tab.type === 'CPU') {
-                    criteria.type.$in.push(configuration.chassis.platform === 'AMD' ? 'AMD' : 'Intel')
-                } else {
-                    criteria.type.$in.push(tab.type)
-                }
-            }
-        }
-        return {components: await db.component.find(criteria), tabs};
-    }
-
-/*
-    app.get('/api/configuration/:configurationId/component-type/:componentType', async (req, res) => {
-        try {
-            const {configurationId, componentType} = req.params;
-            const configuration = await db.configuration.findById(configurationId).populate(db.configuration.population);
-            res.send(await componentsOfConfiguration(configuration, componentType))
-        } catch (e) {
-            app.locals.errorLogger(e, res)
-        }
-    })
-*/
 
 
     app.get('/api/configuration/create/chassis/:chassis', passport.isLogged, async (req, res) => {
@@ -148,6 +81,7 @@ module.exports = function (app) {
                 user,
                 name: 'Конфигурация от ' + moment().format('YYYY-MM-DD HH:mm')
             })
+            const spec = await db.spec.create({name: 'Спецификация от ' + moment().format('YYYY-MM-DD HH:mm'), user, configurations: [configuration]});
             await configuration.populate(db.configuration.population);
             res.send(configuration)
         } catch (e) {

@@ -21,7 +21,7 @@ module.exports = function (app) {
         const ws = XLSX.utils.json_to_sheet(rows);
         //if(!ws["!merges"]) ws["!merges"] = [];
         //ws["!merges"].push(XLSX.utils.decode_range("A1:E1"))
-        XLSX.utils.sheet_add_aoa(ws, [["Название", "Цена", "PN", "Количество", "Цена"]], { origin: "A1" });
+        XLSX.utils.sheet_add_aoa(ws, [["PartNumber", "К-во", "Название", "Стоимость, $", "Цена, $"]], { origin: "A1" });
         const wb = {Sheets: {'data': ws}, SheetNames: ['data']};
         const excelBuffer = XLSX.write(wb, {bookType: 'xlsx', type: 'array'});
         return Buffer.from(excelBuffer)

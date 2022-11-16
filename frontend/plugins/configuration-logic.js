@@ -56,11 +56,16 @@ export default function ({app}, inject) {
             result.errors.push(`Для платформы сколичеством дисков более 12 необходим RAID или HBA`)
         }
 
+        const rearBaysNeeded = [0,0,1,2,2];
+        console.log(rearBaysNeeded, configuration.nvmeCount, configuration.rearBayCount)
+        if (configuration.rearBayCount < rearBaysNeeded[configuration.nvmeCount]) {
+            result.errors.push(`Для выбранных SSD U.2 NVMe (${configuration.nvmeCount})  необходимо ${rearBaysNeeded[configuration.nvmeCount]} Rear bay (${configuration.rearBayCount})`)
+        }
+
         return result
     }
 
     inject('componentCount', (configuration, tab, subTab) => {
-        console.log(configuration.chassis, Array.from(Array(configuration.chassis.discs).keys()))
         switch (tab) {
             case 'CPU':
                 const modules = configuration.memCount;

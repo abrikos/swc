@@ -36,30 +36,18 @@
         <router-link :to="'/configurations/' + config.id">
           <strong style="display: block; text-align: center">{{ config.name }}</strong>
         </router-link>
-        <i>{{ config.chassis.descFull }}</i><br/>
+        <i>{{ config.chassis.descFull }}</i>
         <v-row>
-          <v-col>
-            <v-row>
-              <v-col sm="3">Цена шасси:</v-col>
-              <v-col sm="1" class="numbers">{{ config.chassis.price }}</v-col>
-            </v-row>
+          <v-col>Цена: {{ config.price }}</v-col>
+          <v-col>Количество: <ConfigurationCount :item="config" :onChange="loadSpec"/></v-col>
+          <v-col>Сумма: {{ config.priceTotal }}</v-col>
+        </v-row>
 
-            <v-row>
-              <v-col sm="3">Цена 1й конфигурации:</v-col>
-              <v-col sm="1" class="numbers">{{ config.price }}</v-col>
-            </v-row>
-            <v-row>
-              <v-col sm="3">Количество шасси:</v-col>
-              <v-col sm="3">
-                <ConfigurationCount :item="config" :onChange="loadSpec"/>
-              </v-col>
-            </v-row>
-            <v-row>
-              <v-col sm="3">Итого:</v-col>
-              <v-col sm="1" class="numbers">{{ config.priceTotal }}</v-col>
-            </v-row>
-          </v-col>
-          <v-col>
+
+
+
+
+<!--          <v-col>
             <table style="width: 100%" v-if="config.parts.length">
               <tr>
                 <th>PN</th>
@@ -74,8 +62,8 @@
                 <td class="numbers">{{ part.price }}</td>
               </tr>
             </table>
-          </v-col>
-        </v-row>
+          </v-col>-->
+
         <v-btn icon @click="removeFromSpec(config.id)" color="red"><v-icon>mdi-delete</v-icon></v-btn>
         <v-alert border="top" color="red lighten-2" dark v-for="(error,i) of $validator(config).errors" :key="i">{{ error }}</v-alert>
       </div>
