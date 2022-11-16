@@ -9,7 +9,7 @@
           <v-col>
             <v-btn @click="selectChassis(chassis)">Upload</v-btn>
           </v-col>
-          <v-col><img :src="`/chassis/${chassis.partNumber}.jpg?rnd=${rnd}`" height="50"/></v-col>
+          <v-col><img :src="`/upload/${chassis.partNumber}.jpg?rnd=${rnd}`" height="50"/></v-col>
 <!--          <v-col>
             <v-radio :value="chassis.id"/>
           </v-col>-->

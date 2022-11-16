@@ -63,7 +63,7 @@ module.exports = function (app) {
         try {
             const {id} = req.params;
             const chassis = await db.chassis.findById(id)
-            await sharp(req.files.file.tempFilePath).resize(190).toFile('./frontend/static/chassis/' + chassis.partNumber + '.jpg')
+            await sharp(req.files.file.tempFilePath).resize(190).toFile('./upload/' + chassis.partNumber + '.jpg')
             res.sendStatus(200)
         } catch (e) {
             app.locals.errorLogger(e, res)
