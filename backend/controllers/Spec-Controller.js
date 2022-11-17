@@ -158,7 +158,6 @@ module.exports = function (app) {
                     configurations.push(conf.id)
                 }
             }
-            console.log(spec.configurations)
             spec.configurations.push(...configurations);
             await spec.save();
             res.sendStatus(200)

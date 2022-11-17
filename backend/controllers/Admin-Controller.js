@@ -41,7 +41,7 @@ module.exports = function (app) {
     app.post('/api/admin/chassis-copy-image/:id', passport.isAdmin, async (req, res) => {
         const {id} = req.params;
         const {file} = req.body;
-        console.log(file)
+        //console.log(file)
         const chassis = await db.chassis.findById(id)
         fs.copyFile('/home/abrikos/Downloads/choosen/' + file, './frontend/static/chassis/' + chassis.partNumber + '.jpg', (err) => {
             if (err) throw err;
