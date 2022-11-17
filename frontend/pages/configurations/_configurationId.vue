@@ -8,12 +8,7 @@
     </h1>
     <v-row>
       <v-col sm="7">
-        <Tabs :withIcons="true" :items="tabs" :onClick="tabChanged"/>
-        <div class="sub-tab">
-          <div v-for="(tab, i) of chosenTab.children" :key="i" @click="subTabChanged(i)"
-               :class="i === subTab? 'active':''">{{ tab.type }}
-          </div>
-        </div>
+        <Tabs :withIcons="true" :items="tabs" :onChange="tabChanged"/>
         <v-data-table
             :headers="headers"
             :items="componentsCurrentFiltered"
@@ -79,7 +74,6 @@ export default {
       filter: '',
       tab: 0,
       maxCount: 64,
-      subTab: null,
       isHovering: false,
       componentsAll: [],
       specs: [],
@@ -102,22 +96,14 @@ export default {
     validator() {
       return this.$validator(this.configuration)
     },
-    chosenTab() {
-      const tab = this.tabs[this.tab] || {}
-      return tab;
-    },
     countsArray() {
-      return this.$componentCount(this.configuration, this.chosenTab.category, this.chosenSubTab?.type)
-    },
-    chosenSubTab() {
-      return this.chosenTab.children && this.chosenTab.children[this.subTab]
+      return this.$componentCount(this.configuration, this.tab)
     },
     componentsCurrent() {
-      return this.$components(this.configuration, this.componentsAll, this.chosenTab.category, this.chosenSubTab?.type)
+      return this.$components(this.configuration, this.componentsAll, this.tab)
     },
     componentsCurrentFiltered() {
       const filter = this.filter.toLowerCase().replace('+', '\\+')
-      console.log(filter)
       return this.componentsCurrent.filter(c => c.description.toLowerCase().match(filter))
     }
   },
@@ -132,10 +118,6 @@ export default {
         this.$router.push('/specifications/list')
       }
     },
-    async createSpec() {
-      const spec = await this.$axios.$put(`/spec/create`, [this.id])
-      this.$router.push(`/specifications/${spec.id}`)
-    },
     async changeField(field, item) {
       await this.$axios.$put(`/configuration/${item.id}/field/${field}`, item)
     },
@@ -144,21 +126,17 @@ export default {
       return part ? part.count : 0
     },
     itemRowBackground(item) {
-      if (['CPU', 'Memory'].includes(this.chosenTab.category)) {
-        return this.configuration.parts.filter(p => p.component.category === this.chosenTab.category).length ? this.configuration.parts.map(p => p.component.id).includes(item.id) ? 'inBasket' : 'count-disabled' : ''
+      //TODO tabs changed
+      if (['CPU', 'Memory'].includes(this.tab.category)) {
+        return this.configuration.parts.filter(p => p.component.category === this.tab.category).length ? this.configuration.parts.map(p => p.component.id).includes(item.id) ? 'inBasket' : 'count-disabled' : ''
       } else {
         return this.configuration.parts.map(p => p.component.id).includes(item.id) ? 'inBasket' : ''
       }
     },
-    tabChanged(index) {
+    tabChanged(tab) {
+      console.log('tab selected',JSON.stringify(tab))
       this.filter = ''
-      this.tab = index;
-      this.subTab = 0;
-      this.$refs.subTabs?.resetTab()
-    },
-    subTabChanged(index) {
-      this.filter = ''
-      this.subTab = index
+      this.tab = tab;
     },
     async loadConfiguration() {
       const res = await this.$axios.$get('/configuration/' + this.id);
@@ -166,6 +144,7 @@ export default {
       this.componentsAll = res.components
       this.specs = res.specs
       this.tabs = res.tabs
+      this.tab = res.tabs[0]
     },
     async addPart(count, item) {
       await this.$axios.$put(`/configuration/${this.id}/component/${item.id}`, {count})
@@ -176,19 +155,6 @@ export default {
 </script>
 
 <style scoped lang="sass">
-.sub-tab
-  display: flex
-  justify-content: center
-
-  div
-    margin: 10px
-    cursor: pointer
-
-  .active
-    font-weight: bold
-    color: #aa2238
-    border-bottom: 1px solid #aa2238
-
 .v-data-table
   :deep(.inBasket)
     td

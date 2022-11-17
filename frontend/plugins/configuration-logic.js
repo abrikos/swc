@@ -1,18 +1,19 @@
 export default function ({app}, inject) {
 
-    inject('components', (configuration, components, tab, subTab) => {
+    inject('components', (configuration, components, tab) => {
         let gpus = 0;
         for (const part of configuration.parts) {
             if (part.component.type === 'GPU') {
                 gpus += part.count
             }
         }
-        const componentsByType = subTab ?
-            components.filter(c => c.type === subTab)
+        const componentsByType = tab.type ?
+            components.filter(c => c.type === tab.type)
             :
-            components.filter(c => c.category === tab)
+            components.filter(c => c.category === tab.category)
+        console.log('CCCCCCC', JSON.stringify(tab))
         return componentsByType.filter(c => {
-            switch (tab) {
+            switch (tab.type) {
                 case 'CPU':
                     return configuration.chassis.cpu === c.type
                 case 'Power':
@@ -67,8 +68,8 @@ export default function ({app}, inject) {
         return result
     }
 
-    inject('componentCount', (configuration, tab, subTab) => {
-        switch (tab) {
+    inject('componentCount', (configuration, tab) => {
+        switch (tab.category) {
             case 'CPU':
                 const modules = configuration.memCount;
                 if (!modules) return [0, 1, 2]
@@ -88,7 +89,7 @@ export default function ({app}, inject) {
             case 'Power':
                 return [0, 1]
         }
-        switch (subTab) {
+        switch (tab.type) {
             case 'GPU':
                 return [0, 1, 2]
             case 'SSD m.2':
