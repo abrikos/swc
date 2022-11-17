@@ -69,7 +69,7 @@ module.exports = function (app) {
     }
 
     //db.component.find().then(console.log)
-    db.spec.findById('63707c9ca32339f54a5cf167')
+    /*db.spec.findById('63707c9ca32339f54a5cf167')
         .populate({path: 'configurations', populate: db.configuration.population})
         .then(spec => {
             if(!spec) return
@@ -80,7 +80,7 @@ module.exports = function (app) {
                 const items = XLSX.utils.sheet_to_json(workbook.Sheets[sheet_name_list[0]])
                 //console.log(items);
             })
-        })
+        })*/
 
     app.get('/api/spec/:_id/excel', passport.isLogged, async (req, res) => {
         const {user} = res.locals;

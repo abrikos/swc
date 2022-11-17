@@ -107,6 +107,7 @@ module.exports = function (app) {
                 'G2R',
                 'AMD',
                 'JBOD',
+                'Adisk'
             ]
             const workbook = XLSX.readFile(file);
             const sheet_name_list = workbook.SheetNames;
@@ -114,6 +115,7 @@ module.exports = function (app) {
             let chassis = 0;
             let components = 0;
             for (const item of items) {
+                console.log(item)
                 const platforms = []
                 for (const key of Object.keys(item)) {
                     if (platformNames.includes(key)) platforms.push(key)
@@ -136,6 +138,7 @@ module.exports = function (app) {
                     await db.chassis.updateOne({partNumber: data.partNumber}, data, {upsert: true})
                 } else {
                     components++
+                    console.log(fields)
                     const data = componentData(fields)
                     await db.component.updateOne({partNumber: data.partNumber}, data, {upsert: true})
                 }
@@ -146,8 +149,8 @@ module.exports = function (app) {
         }
     }
 
-    //parseXLS('export.xlsb', 1)
-
+    //parseXLS('export.xlsb.xlsx', 0)
+    //db.component.find().then(console.log)
     function chassisData(data) {
         data.platform = data.platforms.join(',')
         data.disksFormFactor = data.type
@@ -164,14 +167,13 @@ module.exports = function (app) {
                 data.type = 'SSD 2.5'
             }
             //console.log(data)
-        } else if (data.type.match('RAID')) {
+        } else if (data.type && data.type.match('RAID')) {
             data.type = 'RAID'
         } else if (data.category === 'PSU') {
             data.category = 'Power'
         } else if (data.type === 'Cable for backplane') {
             data.type = 'Cable'
         }
-
         return data
     }
 
