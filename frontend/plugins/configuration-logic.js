@@ -17,6 +17,7 @@ export default function ({app}, inject) {
                 case 'CPU':
                     return configuration.chassis.cpu === c.type
                 case 'Power':
+                    if (c.partNumber === 'PSU065R' && configuration.chassis.platform !== 'G2R') return false
                     if (gpus > 0) return c.power >= 1300
                     if (gpus > 1) return c.power >= 1600
                 case 'Storage':
