@@ -31,7 +31,6 @@ schema.virtual('partsSorted')
             if (a.component.basketOrder > b.component.basketOrder) return 1
             return 0
         })
-        console.log('zzzzzz', this.parts)
         return x
     })
 

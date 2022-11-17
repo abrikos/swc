@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Tabs :items="tabs" :onClick="tabChanged"/>
+    <Tabs :items="tabs" :onChange="tabChanged"/>
     <div class="list">
       <div class="chassis" v-for="item of items" @click="createConfiguration(item)">
         <img :src="`/upload/${item.partNumber}.jpg`" />
@@ -31,18 +31,19 @@ export default {
     }
   },
   created() {
-    this.loadChassis(0)
+    this.loadChassis(this.tabs[0])
   },
   methods:{
-    tabChanged(index){
-      this.tab = index
+    tabChanged(tab){
+      console.log(tab)
+      this.tab = tab
       if(!this.isTabConfigurations){
-        this.loadChassis(index)
+        this.loadChassis(tab)
       }
 
     },
-    async loadChassis(index){
-      this.items = await this.$axios.$get('/configurator/chassis/' + this.tabs[index].category)
+    async loadChassis(tab){
+      this.items = await this.$axios.$get('/configurator/chassis/' + tab.category)
     },
     createConfiguration(e){
       this.$axios.$get('/configuration/create/chassis/'+ e.id)
