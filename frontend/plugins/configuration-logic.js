@@ -34,7 +34,10 @@ export default function ({app}, inject) {
         const result = {
             errors: [],
         };
-        if (configuration.cpuCount < 2 && configuration.memCount < (configuration.chassis.platform === 'G3' ? 16 : 12)) {
+        if (!configuration.cpuCount && configuration.memCount) {
+            result.errors.push(`Необходимо выбрать CPU`)
+        }
+        if ((configuration.cpuCount || configuration.memCount) && configuration.cpuCount < 2 && configuration.memCount > (configuration.chassis.platform === 'G3' ? 16 : 12)) {
             result.errors.push(`Для выбранного количества модулей памяти (${configuration.memCount}) недостаточно процессоров (${configuration.cpuCount})`)
         }
         if (configuration.gpuCount && !configuration.lanCount && !configuration.riserX16Count) {
@@ -57,7 +60,6 @@ export default function ({app}, inject) {
         }
 
         const rearBaysNeeded = [0,0,1,2,2];
-        console.log(rearBaysNeeded, configuration.nvmeCount, configuration.rearBayCount)
         if (configuration.rearBayCount < rearBaysNeeded[configuration.nvmeCount]) {
             result.errors.push(`Для выбранных SSD U.2 NVMe (${configuration.nvmeCount})  необходимо ${rearBaysNeeded[configuration.nvmeCount]} Rear bay (${configuration.rearBayCount})`)
         }
@@ -76,12 +78,13 @@ export default function ({app}, inject) {
                     return modules > 12 ? [0, 2] : [0, 1, 2]
                 }
             case 'Memory':
-                const memCount = configuration.parts.filter(p => p.component.category === 'CPU').reduce((a, b) => a + b.count, 0);
+                return configuration.chassis.platform === 'G3' ? [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32] : [0, 2, 4, 6, 8, 10, 12]
+                /*const memCount = configuration.parts.filter(p => p.component.category === 'CPU').reduce((a, b) => a + b.count, 0);
                 if (configuration.chassis.platform === 'G3') {
                     return memCount === 1 ? [0, 2, 4, 6, 8, 10, 12, 14, 16] : [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32]
                 } else {
                     return memCount === 1 ? [0, 2, 4, 6, 8, 10, 12] : [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24]
-                }
+                }*/
             case 'Power':
                 return [0, 1]
         }
