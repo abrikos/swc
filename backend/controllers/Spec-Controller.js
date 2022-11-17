@@ -72,6 +72,7 @@ module.exports = function (app) {
     db.spec.findById('63707c9ca32339f54a5cf167')
         .populate({path: 'configurations', populate: db.configuration.population})
         .then(spec => {
+            if(!spec) return
             const data = specToXls(spec)
             fs.writeFile("test.xls", data, 'base64', function (err) {
                 const workbook = XLSX.readFile('test.xls');
