@@ -5,7 +5,7 @@
     <v-row>
       <v-col sm="2">Сумма спецификации:</v-col>
       <v-col sm="1" class="numbers">{{ spec.price }}</v-col>
-      <v-col><a :href="`/api/spec/${id}/excel`">Сохранить Excel</a></v-col>
+      <v-col align="right"><v-btn @click="showAddConfiguration=true" color="primary">Добавить конфигурацию</v-btn></v-col>
     </v-row>
     <div v-if="showAddConfiguration">
       <hr/>
@@ -31,7 +31,7 @@
       <v-btn @click="showAddConfiguration=false">Отмена</v-btn>
     </div>
     <div v-if="!showAddConfiguration">
-      <v-btn @click="showAddConfiguration=true" color="primary">Добавить конфигурацию</v-btn>
+
       <div v-for="config of spec.configurations" :key="config.id" class="configuration">
         <router-link :to="'/configurations/' + config.id">
           <strong style="display: block; text-align: center">{{ config.name }}</strong>
@@ -68,6 +68,7 @@
         <v-alert border="top" color="red lighten-2" dark v-for="(error,i) of $validator(config).errors" :key="i">{{ error }}</v-alert>
       </div>
     </div>
+    <a :href="`/api/spec/${id}/excel`">Сохранить в Excel</a>
   </div>
 </template>
 

@@ -11,7 +11,7 @@
         <v-btn id to="/configurations/chassis" v-if="user">
           Выбор шасси
         </v-btn>
-        <v-btn to="/configurations/list" v-if="user">Конфигурации</v-btn>
+<!--        <v-btn to="/configurations/list" v-if="user">Конфигурации</v-btn>-->
         <v-btn to="/specifications/list" v-if="user">Спецификации</v-btn>
       </v-toolbar-items>
       <v-spacer></v-spacer>

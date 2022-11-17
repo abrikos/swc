@@ -63,13 +63,14 @@ module.exports = function (app) {
                 {category: 'Power'},
             ] : [{category: 'Cable'}]
             const components = await db.component.find()
-            res.send({configuration, tabs, components})
+            const specs = (await db.spec.find()).filter(s=>s.configurations.includes(configurationId));
+            res.send({configuration, tabs, components, specs})
         } catch (e) {
             app.locals.errorLogger(e, res)
         }
     })
 
-    //db.configuration.findById('636235286c9eeecfc0c20d24').populate(db.configuration.population).then(c=>console.log('Config = ',c.price))
+    //db.spec.find().then(c=>console.log(c))
 
 
 

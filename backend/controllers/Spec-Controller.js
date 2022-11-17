@@ -1,34 +1,75 @@
 const passport = require('../passport');
 const moment = require("moment/moment");
-const XLSX = require('xlsx');
+const XLSX = require('sheetjs-style');
 const fs = require('fs')
 module.exports = function (app) {
     const {db} = app.locals;
-    const fileType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
-    const fileExtension = '.xlsx';
 
     const specToXls = (spec) => {
         const rows = [];
-        rows.push({name: spec.name})
-        rows.push({name: 'Сумма спецификации', price: spec.price})
-        for(const conf of spec.configurations){
-            rows.push({name: conf.name, price: conf.price})
-            rows.push({name:'', price:'', partNumber: conf.chassis.partNumber, partCount: conf.count, partPrice: conf.chassis.price})
-            for(const part of conf.parts){
-                rows.push({name:'', price:'', partNumber: part.component.partNumber, partCount: part.count, partPrice: part.component.price})
+        const rowHeights = [{hpx: 30}]
+        const confStyle = {
+            font: {bold: false}, alignment: {
+                vertical: 'center'
+            }
+        }
+        const partStyle = {font: {color: {rgb: '00999999'}}}
+        for (const conf of spec.configurations) {
+            rowHeights.push({hpx: 50})
+            rows.push([
+                {v: conf.chassis.partNumber, s: confStyle},
+                {v: conf.count, t: 'n', s: confStyle},
+                {v: conf.chassis.params, s: confStyle},
+                {v: conf.price, t: 'n', s: confStyle},
+                {v: conf.priceTotal, t: 'n', s: confStyle}
+            ])
+            for (const part of conf.parts) {
+                rowHeights.push({hpx: 15})
+                rows.push([
+                    {v: part.component.partNumber, s: {alignment: {horizontal: 'right'}, ...partStyle}},
+                    {v: part.count, t: 'n', s: partStyle},
+                    {v: part.component.description, s: partStyle},
+                    {v: part.component.price, t: 'n', s: partStyle},
+                    {v: part.price, t: 'n', s: partStyle}
+                ])
             }
         }
         const ws = XLSX.utils.json_to_sheet(rows);
+
         //if(!ws["!merges"]) ws["!merges"] = [];
         //ws["!merges"].push(XLSX.utils.decode_range("A1:E1"))
-        XLSX.utils.sheet_add_aoa(ws, [["PartNumber", "К-во", "Название", "Стоимость, $", "Цена, $"]], { origin: "A1" });
+        XLSX.utils.sheet_add_aoa(ws, [["PartNumber", "К-во", "Название", "Стоимость, $", "Цена, $"]], {origin: "A1"});
+        const headStyle = {
+            alignment: {
+                vertical: 'center'
+            },
+            fill: {
+                fgColor: {
+                    rgb: "00a92238"
+                }
+            },
+            font: {
+                color: {
+                    rgb: 'FFFFFFFF'
+                },
+                bold: true,
+            },
+        }
+        ws.A1.s = headStyle
+        ws.B1.s = headStyle
+        ws.C1.s = headStyle
+        ws.D1.s = headStyle
+        ws.E1.s = headStyle
+        ws['!rows'] = rowHeights
+        ws['!cols'] = [{wch: 30}, {wch: 10}, {wch: 60}, {wch: 12}, {wch: 10}]
+        console.log(ws)
         const wb = {Sheets: {'data': ws}, SheetNames: ['data']};
         const excelBuffer = XLSX.write(wb, {bookType: 'xlsx', type: 'array'});
         return Buffer.from(excelBuffer)
     }
 
-
-    /*db.spec.findById('63707c9ca32339f54a5cf167')
+    //db.component.find().then(console.log)
+    db.spec.findById('63707c9ca32339f54a5cf167')
         .populate({path: 'configurations', populate: db.configuration.population})
         .then(spec => {
             const data = specToXls(spec)
@@ -36,11 +77,9 @@ module.exports = function (app) {
                 const workbook = XLSX.readFile('test.xls');
                 const sheet_name_list = workbook.SheetNames;
                 const items = XLSX.utils.sheet_to_json(workbook.Sheets[sheet_name_list[0]])
-                console.log(items);
+                //console.log(items);
             })
-        })*/
-
-
+        })
 
     app.get('/api/spec/:_id/excel', passport.isLogged, async (req, res) => {
         const {user} = res.locals;
@@ -75,7 +114,7 @@ module.exports = function (app) {
             if (configurations.length) {
                 const spec = await db.spec.create({name: 'Спецификация от ' + moment().format('YYYY-MM-DD HH:mm'), user, configurations});
                 res.send(spec)
-            }else{
+            } else {
                 res.sendStatus(406)
             }
 

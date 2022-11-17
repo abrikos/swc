@@ -14,9 +14,13 @@
         {{ item.configurations.length }}
       </template>
       <template v-slot:item.controls="{item}">
-        <v-btn @click.stop.prevent @click="deleteSpec(item)" x-small icon color="red" title="Удалить">
-          <v-icon>mdi-delete</v-icon>
-        </v-btn>
+        <div @click.stop>
+          <v-btn icon title="В буфер" @click="copyInCP(item)"><v-icon>mdi-clipboard-text-multiple-outline</v-icon></v-btn>
+          <a class="v-btn" :href="`/api/spec/${item.id}/excel`" @click.stop title="В Excel"><v-icon>mdi-microsoft-excel</v-icon></a>
+          <v-btn @click="deleteSpec(item)" x-small icon color="red" title="Удалить">
+            <v-icon>mdi-delete</v-icon>
+          </v-btn>
+        </div>
       </template>
     </v-data-table>
   </div>
@@ -33,11 +37,11 @@ export default {
       newSpec: '',
       specs: [],
       headers: [
-        {text:'Дата', value: 'date', width: '150px'},
+        {text: 'Дата', value: 'date', width: '150px'},
         {text: 'Название', value: 'name'},
         {text: 'Сумма', value: 'price'},
         {text: 'Кол-во конфигураций', value: 'count', width: '250px', align: 'right'},
-        {text: '', value: 'controls', sortable: false, width: '60px'}
+        {text: '', value: 'controls', sortable: false}
       ],
     }
   },
@@ -45,6 +49,28 @@ export default {
     this.loadSpecs()
   },
   methods: {
+    copyInCP(spec){
+      const textArea = document.createElement("textarea");
+      spec.configurations.forEach(conf=>{
+        textArea.value += conf.chassis.partNumber + '\t'
+            + conf.count + '\t'
+            + conf.chassis.params + '\t'
+            + conf.price + '\t'
+            + conf.priceTotal
+            + '\n';
+      })
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+      try {
+        const successful = document.execCommand('copy');
+        const msg = successful ? 'successful' : 'unsuccessful';
+        console.log('Copying text command was ' + msg);
+      } catch (err) {
+        console.log('Oops, unable to copy');
+      }
+      document.body.removeChild(textArea);
+    },
     dialogClose() {
       this.loadSpecs()
       this.dialogSpec = null

@@ -51,6 +51,10 @@
         {{ configuration.chassis.platform }} - {{configuration.chassis.params}}
         <Basket :configuration="configuration" :reload="loadConfiguration"/>
         <br/>
+        В составе спецификаций: <br/>
+        <div v-for="spec of specs" :key="spec.id">
+          <router-link :to="'/specifications/'+spec.id">{{spec.name}}</router-link>
+        </div>
         <v-alert border="top" color="red lighten-2" dark v-for="(error,i) of validator.errors" :key="i">{{
             error
           }}
@@ -82,6 +86,7 @@ export default {
       subTab: null,
       isHovering: false,
       componentsAll: [],
+      specs: [],
       //componentsCurrent: [],
       //componentsCurrentFiltered: [],
       configuration: null,
@@ -121,14 +126,14 @@ export default {
     }
   },
   created() {
-    if(!this.id) return this.$router.push('/configurations/list')
+    if(!this.id) return this.$router.push('/specifications/list')
     this.loadConfiguration()
   },
   methods: {
     async deleteConfiguration() {
       if (window.confirm(`Удалить конфигурацию "${this.configuration.name}"?`)) {
         await this.$axios.$delete(`/configuration/${this.configuration.id}`)
-        this.$router.push('/configurations/list')
+        this.$router.push('/specifications/list')
       }
     },
     async createSpec() {
@@ -163,6 +168,7 @@ export default {
       const res = await this.$axios.$get('/configuration/' + this.id);
       this.configuration = res.configuration
       this.componentsAll = res.components
+      this.specs = res.specs
       this.tabs = res.tabs
     },
     async addPart(count, item) {
