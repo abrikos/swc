@@ -83,8 +83,8 @@ export default {
       headers: [
         {text: 'Партномер', value: 'partNumber', width: '20%'},
         {text: 'Описание', value: 'description', width: '50%', sortable: false},
-        {text: 'Цена', value: 'price', width: '20%'},
-        {text: '', value: 'count', width: '10%', sortable: false}
+        {text: 'Цена', value: 'price', width: '10%'},
+        {text: '', value: 'count', width: '20%', sortable: false}
       ],
       tabs: []
     }
@@ -126,7 +126,7 @@ export default {
       return part ? part.count : 0
     },
     itemRowBackground(item) {
-      return this.configuration.parts.map(p => p.component.id).includes(item.id) ? 'inBasket' : item.category === 'CPU' ? 'count-disabled' : ''
+      return this.configuration.parts.map(p => p.component.id).includes(item.id) ? 'inBasket' : this.configuration.cpuCount ? item.category === 'CPU' ? 'count-disabled' : '' : ''
     },
     tabChanged(tab) {
       console.log('tab selected',JSON.stringify(tab))
