@@ -23,7 +23,7 @@ module.exports = function (app) {
                 {v: conf.price, t: 'n', s: confStyle},
                 {v: conf.priceTotal, t: 'n', s: confStyle}
             ])
-            for (const part of conf.parts) {
+            for (const part of conf.partsSorted) {
                 rowHeights.push({hpx: 15})
                 rows.push([
                     {v: part.component.partNumber, s: {alignment: {horizontal: 'right'}, ...partStyle}},
@@ -62,17 +62,22 @@ module.exports = function (app) {
         ws.E1.s = headStyle
         ws['!rows'] = rowHeights
         ws['!cols'] = [{wch: 30}, {wch: 10}, {wch: 60}, {wch: 12}, {wch: 10}]
-        console.log(ws)
+        //console.log(ws)
         const wb = {Sheets: {'data': ws}, SheetNames: ['data']};
         const excelBuffer = XLSX.write(wb, {bookType: 'xlsx', type: 'array'});
         return Buffer.from(excelBuffer)
     }
-
-    //db.component.find().then(console.log)
-    /*db.spec.findById('63707c9ca32339f54a5cf167')
+/*
+    db.spec.findOne()
+        .sort({createdAt: - 1})
+        .populate({path: 'configurations', populate: db.configuration.population})
+        .then(s=> {
+            console.log(s.configurations[0].parts)
+        })
+*/
+    /*db.spec.findOne()
         .populate({path: 'configurations', populate: db.configuration.population})
         .then(spec => {
-            if(!spec) return
             const data = specToXls(spec)
             fs.writeFile("test.xls", data, 'base64', function (err) {
                 const workbook = XLSX.readFile('test.xls');
@@ -81,6 +86,7 @@ module.exports = function (app) {
                 //console.log(items);
             })
         })*/
+
 
     app.get('/api/spec/:_id/excel', passport.isLogged, async (req, res) => {
         const {user} = res.locals;
@@ -189,13 +195,13 @@ module.exports = function (app) {
         }
     })
 
-    app.delete('/api/spec/:id', passport.isLogged, async (req, res) => {
+    app.post('/api/spec/delete', passport.isLogged, async (req, res) => {
         try {
             const {user} = res.locals;
-            const {id} = req.params
-            const spec = await db.spec.findOne({_id: id, user}).populate({path: 'configurations', populate: db.configuration.population});
-            if (!spec) throw {error: 403, message: 'Access denied'}
-            await spec.delete()
+            const specs = await db.spec.find({_id: {$in: req.body}, user}).populate({path: 'configurations', populate: db.configuration.population});
+            for (const spec of specs) {
+                await spec.delete()
+            }
             res.sendStatus(200)
         } catch (e) {
             app.locals.errorLogger(e, res)

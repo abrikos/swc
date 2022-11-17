@@ -23,6 +23,18 @@ schema.statics.population = [
     {path: 'chassis'},
 ]
 
+schema.virtual('partsSorted')
+    .get(function () {
+
+        const x = this.parts.sort((a, b) => {
+            if (a.component.basketOrder < b.component.basketOrder) return -1
+            if (a.component.basketOrder > b.component.basketOrder) return 1
+            return 0
+        })
+        console.log('zzzzzz', this.parts)
+        return x
+    })
+
 schema.virtual('date')
     .get(function () {
         return moment(this.createdAt).format('YYYY-MM-DD HH:mm');
@@ -85,7 +97,7 @@ schema.virtual('rearBayCount')
 
 schema.virtual('diskCount')
     .get(function () {
-        return this.parts.filter(p => ['HDD','SSD 2.5'].includes(p.component.type)).reduce((a, b) => a + b.count, 0)
+        return this.parts.filter(p => ['HDD', 'SSD 2.5'].includes(p.component.type)).reduce((a, b) => a + b.count, 0)
     })
 
 schema.virtual('power')

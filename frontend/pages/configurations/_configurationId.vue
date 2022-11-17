@@ -59,10 +59,6 @@
             error
           }}
         </v-alert>
-        <v-btn color="primary" v-if="!validator.errors.length" @click="createSpec">
-          Создать спецификацию
-        </v-btn>
-        <br/>
         <!--        <img :src="`/chassis/${configuration.chassis.partNumber}.jpg`" />-->
       </v-col>
     </v-row>

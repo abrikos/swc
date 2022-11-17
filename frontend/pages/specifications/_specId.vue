@@ -36,6 +36,8 @@
         <router-link :to="'/configurations/' + config.id">
           <strong style="display: block; text-align: center">{{ config.name }}</strong>
         </router-link>
+        <b>{{config.chassis.partNumber}}</b>
+        <br/>
         <i>{{ config.chassis.descFull }}</i>
         <v-row>
           <v-col>Цена: {{ config.price }}</v-col>

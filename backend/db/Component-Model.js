@@ -22,6 +22,19 @@ const schema = new Schema({
         toJSON: {virtuals: true}
     });
 
+schema.virtual('basketOrder')
+    .get(function () {
+        switch (this.category){
+            case 'CPU': return 1
+            case 'Memory': return 2
+            case 'Storage': return 3
+            case 'Riser': return 4
+            case 'PCI-E': return 5
+            case 'Power': return 6
+        }
+        return 0
+    })
+
 schema.virtual('isSFF')
     .get(function () {
         return !!this.params.match('SFF')

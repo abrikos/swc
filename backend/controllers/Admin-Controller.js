@@ -115,7 +115,6 @@ module.exports = function (app) {
             let chassis = 0;
             let components = 0;
             for (const item of items) {
-                console.log(item)
                 const platforms = []
                 for (const key of Object.keys(item)) {
                     if (platformNames.includes(key)) platforms.push(key)
@@ -138,7 +137,6 @@ module.exports = function (app) {
                     await db.chassis.updateOne({partNumber: data.partNumber}, data, {upsert: true})
                 } else {
                     components++
-                    console.log(fields)
                     const data = componentData(fields)
                     await db.component.updateOne({partNumber: data.partNumber}, data, {upsert: true})
                 }
