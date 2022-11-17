@@ -11,9 +11,9 @@ export default function ({app}, inject) {
             components.filter(c => c.type === tab.type)
             :
             components.filter(c => c.category === tab.category)
-        console.log('CCCCCCC', JSON.stringify(tab))
+
         return componentsByType.filter(c => {
-            switch (tab.type) {
+            switch (tab.category) {
                 case 'CPU':
                     return configuration.chassis.cpu === c.type
                 case 'Power':

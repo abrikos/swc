@@ -126,12 +126,7 @@ export default {
       return part ? part.count : 0
     },
     itemRowBackground(item) {
-      //TODO tabs changed
-      if (['CPU', 'Memory'].includes(this.tab.category)) {
-        return this.configuration.parts.filter(p => p.component.category === this.tab.category).length ? this.configuration.parts.map(p => p.component.id).includes(item.id) ? 'inBasket' : 'count-disabled' : ''
-      } else {
-        return this.configuration.parts.map(p => p.component.id).includes(item.id) ? 'inBasket' : ''
-      }
+      return this.configuration.parts.map(p => p.component.id).includes(item.id) ? 'inBasket' : item.category === 'CPU' ? 'count-disabled' : ''
     },
     tabChanged(tab) {
       console.log('tab selected',JSON.stringify(tab))

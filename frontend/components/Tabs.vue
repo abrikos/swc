@@ -35,11 +35,6 @@ export default {
       isHovering: false
     }
   },
-  created(){
-    window.onresize = () =>{
-      console.log(window.innerWidth)
-    }
-  },
   methods: {
     resetTab() {
       this.tab = 0
