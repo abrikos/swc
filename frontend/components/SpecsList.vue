@@ -18,9 +18,14 @@
       </template>
       <template v-slot:item.controls="{item}">
         <div @click.stop>
-          <v-btn icon title="В буфер" @click="copyInCP(item)"><v-icon>mdi-clipboard-text-multiple-outline</v-icon></v-btn>
-          <a class="v-btn" :href="`/api/spec/${item.id}/excel`" @click.stop title="В Excel"><v-icon>mdi-microsoft-excel</v-icon></a>
-          <v-btn @click="deleteOne(item)" x-small icon color="red" title="Удалить">
+          <v-btn icon title="В буфер" @click="copyInCP(item)" height="50">
+            <v-icon size="50">mdi-clipboard-text-multiple-outline</v-icon>
+          </v-btn>
+          &nbsp; &nbsp;
+          <a class="v-btn" :href="`/api/spec/${item.id}/excel`" @click.stop title="В Excel">
+            <v-icon size="50">mdi-microsoft-excel</v-icon>
+          </a>
+          <v-btn @click="deleteOne(item)" icon color="red" title="Удалить">
             <v-icon>mdi-delete</v-icon>
           </v-btn>
         </div>
@@ -64,15 +69,15 @@ export default {
   created() {
     this.loadSpecs()
   },
-  computed:{
-    checkedArray(){
-      return Object.keys(this.checked).filter(k=>this.checked[k])
+  computed: {
+    checkedArray() {
+      return Object.keys(this.checked).filter(k => this.checked[k])
     }
   },
   methods: {
-    copyInCP(spec){
+    copyInCP(spec) {
       const textArea = document.createElement("textarea");
-      spec.configurations.forEach(conf=>{
+      spec.configurations.forEach(conf => {
         textArea.value += conf.chassis.partNumber + '\t'
             + conf.count + '\t'
             + conf.chassis.params + '\t'
