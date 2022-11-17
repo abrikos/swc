@@ -60,11 +60,11 @@ export default {
 <style scoped lang="sass">
 .tabs-small
   display: none
-  @media (max-width: 1280px)
+  @media (max-width: 1023px)
     display: flex
 
 .tabs-large
-  @media (max-width: 1280px)
+  @media (max-width: 1023px)
     display: none
 
 .tabs
@@ -95,6 +95,8 @@ export default {
       margin: auto
       display: block
       width: 55px
+      @media (max-width: 1263px)
+        width: 30px
 
   .tab.hovered
     background-color: silver
