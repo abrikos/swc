@@ -106,6 +106,21 @@ module.exports = function (app) {
         res.send(item)
     })
 
+    app.put('/api/spec/:_id/rename', passport.isLogged, async (req, res) => {
+        try {
+            const {user} = res.locals;
+            const {_id, configurationId} = req.params;
+            const {name} = req.body;
+            const spec = await db.spec.findOne({_id, user});
+            if (!spec) res.sendStatus(404)
+            spec.name = name;
+            await spec.save();
+            res.sendStatus(200)
+        } catch (e) {
+            app.locals.errorLogger(e, res)
+        }
+    })
+
     app.put('/api/spec/create', passport.isLogged, async (req, res) => {
         try {
             const {user} = res.locals;

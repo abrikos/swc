@@ -40,6 +40,19 @@
           Удалить выбранные
         </v-btn>
       </template>
+      <template v-slot:item.name="{item}">
+        <div @click.stop.prevent v-if="showNameField !== item.id" @click="showNameField=item.id" title="Нажать для редактирования">{{ item.name }}</div>
+        <v-text-field
+            v-model="item.name"
+            @click.stop.prevent
+            flat dense outlined hide-details append-icon="mdi-check"
+            @click:append="renameSpec(item); showNameField=null"
+            @blur="showNameField=null"
+            autofocus
+            v-if="showNameField===item.id"
+            :ref="`nameField-${item.id}`"
+        />
+      </template>
     </v-data-table>
 
   </div>
@@ -56,6 +69,7 @@ export default {
       newSpec: '',
       specs: [],
       checked: [],
+      showNameField: false,
       headers: [
         {text: '', value: 'checkIt', width: '30px'},
         {text: 'Дата', value: 'date', width: '150px'},
@@ -75,6 +89,9 @@ export default {
     }
   },
   methods: {
+    async renameSpec(item){
+      await this.$axios.$put(`/spec/${item.id}/rename`, item)
+    },
     copyInCP(spec) {
       const textArea = document.createElement("textarea");
       spec.configurations.forEach(conf => {

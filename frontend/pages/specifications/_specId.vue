@@ -1,7 +1,14 @@
 <template>
   <div v-if="spec">
-    <h1>{{ spec.name }}</h1>
-
+    <h1 v-if="!nameChanged">{{ spec.name }} <v-btn  @click="nameChanged = true" icon><v-icon>mdi-pencil</v-icon> </v-btn></h1>
+    <v-text-field
+        v-if="nameChanged"
+        v-model="spec.name"
+        outlined
+        :append-icon="nameChanged? 'mdi-check' : ''"
+        @keyup="nameChanged = true"
+        @click:append="renameSpec(spec); nameChanged = false"
+    />
     <v-row>
       <v-col sm="2">Сумма спецификации:</v-col>
       <v-col sm="1" class="numbers">{{ spec.price }}</v-col>
@@ -44,11 +51,6 @@
           <v-col>Количество: <ConfigurationCount :item="config" :onChange="loadSpec"/></v-col>
           <v-col>Сумма: {{ config.priceTotal }}</v-col>
         </v-row>
-
-
-
-
-
 <!--          <v-col>
             <table style="width: 100%" v-if="config.parts.length">
               <tr>
@@ -82,6 +84,7 @@ export default {
   components: {ConfigurationCount},
   data() {
     return {
+      nameChanged: false,
       checked: {},
       showAddConfiguration: false,
       spec: null,
@@ -103,6 +106,9 @@ export default {
     this.loadSpec()
   },
   methods: {
+    async renameSpec(item){
+      await this.$axios.$put(`/spec/${item.id}/rename`, item)
+    },
     async removeFromSpec(id){
       await this.$axios.$delete(`/spec/${this.id}/configurations/${id}/remove`, this.checkedArray)
       await this.loadSpec()
