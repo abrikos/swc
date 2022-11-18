@@ -3,7 +3,7 @@
     <h1>
       {{ configuration.name || configuration.chassis.partNumber }}
       <v-btn @click.stop="deleteConfiguration" icon color="red" x-small title="Удалить">
-        <v-icon>mdi-delete</v-icon>
+        <img src="/icons/delete.png"/>
       </v-btn>
     </h1>
     <v-row>
@@ -42,17 +42,17 @@
             :append-icon="nameChanged? 'mdi-check' : ''"
             @keyup="nameChanged = true"
             @click:append="changeField('name', configuration); nameChanged = false"
+            @keyup.enter="changeField('name', configuration); nameChanged = false"
         />
-        {{ configuration.chassis.platform }} - {{configuration.chassis.params}}
+        {{ configuration.chassis.platform }} - {{ configuration.chassis.params }}
         <Basket :configuration="configuration" :reload="loadConfiguration"/>
         <br/>
         В составе спецификаций: <br/>
         <div v-for="spec of specs" :key="spec.id">
-          <router-link :to="'/specifications/'+spec.id">{{spec.name}}</router-link>
+          <router-link :to="'/specifications/'+spec.id">{{ spec.name }}</router-link>
         </div>
-        <v-alert border="top" color="red lighten-2" dark v-for="(error,i) of validator.errors" :key="i">{{
-            error
-          }}
+        <v-alert border="top" color="red lighten-2" dark v-for="(error,i) of validator.errors" :key="i">
+          {{ error }}
         </v-alert>
         <!--        <img :src="`/chassis/${configuration.chassis.partNumber}.jpg`" />-->
       </v-col>
@@ -108,7 +108,7 @@ export default {
     }
   },
   created() {
-    if(!this.id) return this.$router.push('/specifications/list')
+    if (!this.id) return this.$router.push('/specifications/list')
     this.loadConfiguration()
   },
   methods: {
@@ -129,7 +129,7 @@ export default {
       return this.configuration.parts.map(p => p.component.id).includes(item.id) ? 'inBasket' : this.configuration.cpuCount ? item.category === 'CPU' ? 'count-disabled' : '' : ''
     },
     tabChanged(tab) {
-      console.log('tab selected',JSON.stringify(tab))
+      console.log('tab selected', JSON.stringify(tab))
       this.filter = ''
       this.tab = tab;
     },

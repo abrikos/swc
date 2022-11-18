@@ -44,7 +44,7 @@
             <v-icon size="50" color="#aa2238">mdi-microsoft-excel</v-icon>
           </a>
           <v-btn @click="deleteOne(item)" icon color="red" title="Удалить">
-            <v-icon>mdi-delete</v-icon>
+            <img src="/icons/delete.png"/>
           </v-btn>
         </div>
       </template>

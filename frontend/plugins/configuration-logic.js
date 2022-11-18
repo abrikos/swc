@@ -15,7 +15,7 @@ export default function ({app}, inject) {
         return componentsByType.filter(c => {
             switch (tab.category) {
                 case 'CPU':
-                    return configuration.chassis.cpu === c.type
+                    return configuration.chassis.cpu === c.type && c.platforms.includes(configuration.chassis.platform)
                 case 'Power':
                     if (c.partNumber === 'PSU065R' && configuration.chassis.platform !== 'G2R') return false
                     if (gpus > 0) return c.power >= 1300

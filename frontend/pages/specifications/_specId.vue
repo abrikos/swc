@@ -39,7 +39,7 @@
         </v-btn>
         &nbsp;
         <v-btn icon @click="removeSpec(spec)" color="red">
-          <v-icon size="50">mdi-delete</v-icon>
+          <img src="/icons/delete.png"/>
         </v-btn>
       </v-col>
     </v-row>
@@ -83,14 +83,14 @@
             <strong>{{ config.chassis.partNumber }}</strong>
             <br/>
             <v-btn icon @click="removeFromSpec(config.id)" color="red">
-              <v-icon size="50">mdi-delete</v-icon>
+              <img src="/icons/delete.png"/>
             </v-btn>
             &nbsp;&nbsp;
             <v-btn icon @click="$copyToClipBoard(spec)"  color="primary">
               <img src="/icons/copy.png"/>
             </v-btn>
           </v-col>
-          <v-col><i>{{ config.chassis.descFull }}</i></v-col>
+          <v-col>{{ config.chassis.descFull }}</v-col>
           <v-col sm="1">Кол-во:
             <ConfigurationCount :item="config" :onChange="loadSpec"/>
           </v-col>

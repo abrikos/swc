@@ -21,6 +21,7 @@
         type="number"
         @keyup="changeField('count', item)"
         @change="changeField('count', item)"
+        style="text-align: center"
     />
 <!--    <v-btn v-if="countEdited" icon @click="changeField('count', item)"><v-icon>mdi-check</v-icon></v-btn>-->
   </span>
