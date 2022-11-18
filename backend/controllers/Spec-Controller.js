@@ -86,7 +86,7 @@ module.exports = function (app) {
                 console.log(s.configurations[0].parts)
             })
     */
-    if (1) db.spec.findById('637620fa5fd86f390582947e')
+    if (0) db.spec.findById('637620fa5fd86f390582947e')
         .populate({path: 'configurations', populate: db.configuration.population})
         .then(spec => {
             const data = specToXls(spec)
