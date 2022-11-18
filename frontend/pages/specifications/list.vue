@@ -36,11 +36,12 @@
       <template v-slot:item.controls="{item}">
         <div @click.stop>
           <v-btn icon title="В буфер" @click="copyClipBoard(item)" height="50"  color="primary">
-            <v-icon size="50">mdi-clipboard-text-multiple-outline</v-icon>
+<!--            <v-icon size="50">mdi-clipboard-text-multiple-outline</v-icon>-->
+            <img src="/icons/copy.png"/>
           </v-btn>
           &nbsp; &nbsp;
           <a class="v-btn" :href="`/api/spec/${item.id}/excel`" @click.stop title="В Excel">
-            <v-icon size="50"  color="primary">mdi-microsoft-excel</v-icon>
+            <v-icon size="50" color="#aa2238">mdi-microsoft-excel</v-icon>
           </a>
           <v-btn @click="deleteOne(item)" icon color="red" title="Удалить">
             <v-icon>mdi-delete</v-icon>
@@ -64,6 +65,7 @@
             @click.stop.prevent
             flat dense outlined hide-details append-icon="mdi-check"
             @click:append="renameSpec(item); showNameField=null"
+            @keyup.enter="renameSpec(item); showNameField=null"
             @blur="showNameField=null"
             autofocus
             v-if="showNameField===item.id"

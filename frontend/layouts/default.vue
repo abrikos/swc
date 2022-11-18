@@ -140,7 +140,9 @@ export default {
 
 pointer
   cursor: pointer
-
+.v-btn
+  img
+    height: 50px
 h1
   border-bottom: 1px solid silver
   margin-bottom: 10px

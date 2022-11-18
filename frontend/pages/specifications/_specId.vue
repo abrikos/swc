@@ -24,17 +24,18 @@
         </v-btn>
         &nbsp;
         <v-btn icon @click="$copyToClipBoard(spec)" color="primary">
-          <v-icon size="50">mdi-clipboard-text-multiple-outline</v-icon>
+<!--          <v-icon size="50">mdi-clipboard-text-multiple-outline</v-icon>-->
+          <img src="/icons/copy.png"/>
         </v-btn>
         &nbsp;
-        <a :href="`/api/spec/${id}/excel`" class="v-btn" ><v-icon size="50"  color="primary">mdi-microsoft-excel</v-icon></a>
+        <a :href="`/api/spec/${id}/excel`" class="v-btn" ><v-icon size="50"  color="#aa2238">mdi-microsoft-excel</v-icon></a>
         &nbsp;
         <v-btn icon  color="primary">
-          <v-icon size="50">mdi-share</v-icon>
+          <img src="/icons/share.png"/>
         </v-btn>
         &nbsp;
         <v-btn icon  color="primary">
-          <v-icon size="50">mdi-account-group</v-icon>
+          <img src="/icons/command.png"/>
         </v-btn>
         &nbsp;
         <v-btn icon @click="removeSpec(spec)" color="red">
@@ -86,7 +87,7 @@
             </v-btn>
             &nbsp;&nbsp;
             <v-btn icon @click="$copyToClipBoard(spec)"  color="primary">
-              <v-icon size="50">mdi-clipboard-text-multiple-outline</v-icon>
+              <img src="/icons/copy.png"/>
             </v-btn>
           </v-col>
           <v-col><i>{{ config.chassis.descFull }}</i></v-col>
