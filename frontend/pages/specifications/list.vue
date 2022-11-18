@@ -2,7 +2,6 @@
   <div>
     <h1>
       Спецификации
-      <v-btn icon><v-icon>mdi-magnify</v-icon></v-btn>
     </h1>
     <v-data-table
         :items="specsFiltered"
