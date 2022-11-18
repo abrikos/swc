@@ -98,8 +98,8 @@ export default {
         {text: '', value: 'checkIt', width: '30px'},
         {text: 'Дата', value: 'date', width: '150px'},
         {text: 'Название', value: 'name'},
-        {text: 'Сумма', value: 'price'},
-        {text: 'Кол-во конфигураций', value: 'count', width: '250px', align: 'right'},
+        {text: 'Сумма', value: 'price', align: 'right'},
+        {text: 'Конфигураций', value: 'count', width: '250px', align: 'center'},
         {text: '', value: 'controls', sortable: false}
       ],
     }
