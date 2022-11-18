@@ -6,9 +6,11 @@
     <v-data-table
         :items="specsFiltered"
         :headers="headers"
-        :items-per-page="5"
         @click:row="item=>$router.push('/specifications/' + item.id)"
         style="cursor: pointer"
+        :footer-props="{
+          itemsPerPageOptions: [25,50,100]
+        }"
     >
       <template v-slot:header="props">
         <tr>
@@ -86,6 +88,14 @@ export default {
   name: "SpecsList",
   data() {
     return {
+      pagination: {
+        descending: true,
+        page: 1,
+        rowsPerPage: 4,
+        sortBy: 'fat',
+        totalItems: 0,
+        rowsPerPageItems: [1, 12, 4, 8, 16]
+      },
       dateSearch: '',
       nameSearch: '',
       dialogSpec: null,

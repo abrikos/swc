@@ -2,40 +2,29 @@
   <div v-if="spec">
     <v-row justify="center" align="center">
       <v-col>
-        <h2 v-if="!nameChanged" @click="nameChanged = true">{{ spec.name }}
-          <v-btn @click="nameChanged = true" icon>
-            <v-icon>mdi-pencil</v-icon>
-          </v-btn>
-        </h2>
-        <v-text-field
-            v-if="nameChanged"
-            v-model="spec.name"
-            outlined
-            :append-icon="nameChanged? 'mdi-check' : ''"
-            @keyup="nameChanged = true"
-            @click:append="renameSpec(spec); nameChanged = false"
-            @keyup.enter="renameSpec(spec); nameChanged = false"
-            hide-details
-        />
+        <h2>{{ spec.name }} </h2>
       </v-col>
       <v-col sm="2">Сумма: {{ spec.price }}</v-col>
       <v-col sm="4" align="right">
-        <v-btn v-if="!showAddConfiguration" @click="showAddConfiguration=true" color="primary" title="Добавить конфигурацию" icon>
+        <v-btn v-if="!showAddConfiguration" @click="showAddConfiguration=true" color="primary"
+               title="Добавить конфигурацию" icon>
           <v-icon size="50">mdi-plus-circle</v-icon>
         </v-btn>
         &nbsp;
         <v-btn icon @click="$copyToClipBoard(spec)" color="primary">
-<!--          <v-icon size="50">mdi-clipboard-text-multiple-outline</v-icon>-->
+          <!--          <v-icon size="50">mdi-clipboard-text-multiple-outline</v-icon>-->
           <img src="/icons/copy.png"/>
         </v-btn>
         &nbsp;
-        <a :href="`/api/spec/${id}/excel`" class="v-btn" ><v-icon size="50"  color="#aa2238">mdi-microsoft-excel</v-icon></a>
+        <a :href="`/api/spec/${id}/excel`" class="v-btn">
+          <v-icon size="50" color="#aa2238">mdi-microsoft-excel</v-icon>
+        </a>
         &nbsp;
-        <v-btn icon  color="primary">
+        <v-btn icon color="primary">
           <img src="/icons/share.png"/>
         </v-btn>
         &nbsp;
-        <v-btn icon  color="primary">
+        <v-btn icon color="primary">
           <img src="/icons/command.png"/>
         </v-btn>
         &nbsp;
@@ -44,6 +33,15 @@
         </v-btn>
       </v-col>
     </v-row>
+    <v-text-field
+        v-model="spec.name"
+        outlined
+        :append-icon="nameChanged? 'mdi-check' : ''"
+        @keyup="nameChanged = true"
+        @click:append="renameSpec(spec); nameChanged = false"
+        @keyup.enter="renameSpec(spec); nameChanged = false"
+        hide-details
+    />
     <div v-if="showAddConfiguration">
       <hr/>
       <h3>Выбрать конфигурации</h3>
@@ -72,9 +70,20 @@
         <div class="config-header">
 
           <v-row align="center">
+            <v-col sm="8">
+              <v-text-field
+                  v-model="config.name"
+                  outlined
+                  :append-icon="nameChangedConf === config.id ? `mdi-check` : ''"
+                  @click:append="renameConfig(config)"
+                  @keyup.enter="renameConfig(config)"
+                  @keyup="nameChangedConf=config.id"
+                  hide-details
+              />
+            </v-col>
             <v-col>
-              <router-link :to="'/configurations/' + config.id">
-                <b>{{ config.name }}</b>
+              <router-link :to="'/configurations/' + config.id" class="v-btn">
+                <v-icon>mdi-eye</v-icon>
               </router-link>
             </v-col>
           </v-row>
@@ -87,7 +96,7 @@
               <img src="/icons/delete.png"/>
             </v-btn>
             &nbsp;&nbsp;
-            <v-btn icon @click="$copyToClipBoard(spec)"  color="primary">
+            <v-btn icon @click="$copyToClipBoard(spec)" color="primary">
               <img src="/icons/copy.png"/>
             </v-btn>
           </v-col>
@@ -115,6 +124,7 @@ export default {
   data() {
     return {
       nameChanged: false,
+      nameChangedConf: false,
       checked: {},
       showAddConfiguration: false,
       spec: null,
@@ -136,6 +146,10 @@ export default {
     this.loadSpec()
   },
   methods: {
+    async renameConfig(item) {
+      await this.$axios.$put(`/configuration/${item.id}/field/name`, item)
+      this.nameChangedConf = false
+    },
     async removeSpec(item) {
       if (window.confirm(`Удалить спецификацию "${item.name}"?`)) {
         await this.$axios.$post('/spec/delete', [item.id])
@@ -167,9 +181,11 @@ export default {
 <style scoped lang="sass">
 h2
   margin: 9px 0 9px 0
+
 .config-header
   background-color: #ccc
   padding: 10px
+
   a
     color: black
 
