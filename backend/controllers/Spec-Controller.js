@@ -25,15 +25,18 @@ module.exports = function (app) {
                 confName.push(part.component.description)
                 partRows.push([
                     {v: part.component.partNumber, s: {alignment: {horizontal: 'right'}, ...partStyle}},
-                    {v: part.count, t: 'n', s: partStyle},
+                    {v: part.count, t: 'n', s: {alignment: {horizontal: 'center'}, ...partStyle}},
                     {v: part.component.description, s: partStyle},
                     {v: part.component.price, t: 'n', s: partStyle},
                     {v: part.price, t: 'n', s: partStyle}
                 ])
             }
+            const styleConfCount = JSON.parse(JSON.stringify(confStyle))
+            styleConfCount.alignment.horizontal = 'center'
+            console.log(confStyle)
             const confRow = [
                 {v: conf.chassis.partNumber, s: confStyle},
-                {v: conf.count, t: 'n', s: confStyle},
+                {v: conf.count, t: 'n', s: styleConfCount},
                 {v: confName.join(', '), s: confStyle},
                 {v: conf.price, t: 'n', s: confStyle},
                 {v: conf.priceTotal, t: 'n', s: confStyle}
@@ -75,15 +78,15 @@ module.exports = function (app) {
         const excelBuffer = XLSX.write(wb, {bookType: 'xlsx', type: 'array'});
         return Buffer.from(excelBuffer)
     }
-/*
-    db.spec.findOne()
-        .sort({createdAt: - 1})
-        .populate({path: 'configurations', populate: db.configuration.population})
-        .then(s=> {
-            console.log(s.configurations[0].parts)
-        })
-*/
-    if(1) db.spec.findById('637620fa5fd86f390582947e')
+    /*
+        db.spec.findOne()
+            .sort({createdAt: - 1})
+            .populate({path: 'configurations', populate: db.configuration.population})
+            .then(s=> {
+                console.log(s.configurations[0].parts)
+            })
+    */
+    if (1) db.spec.findById('637620fa5fd86f390582947e')
         .populate({path: 'configurations', populate: db.configuration.population})
         .then(spec => {
             const data = specToXls(spec)
