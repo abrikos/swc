@@ -20,7 +20,7 @@ const schema = new Schema({
 
 schema.virtual('date')
     .get(function () {
-        return moment(this.createdAt).format('YYYY-MM-DD HH:mm');
+        return moment(this.createdAt).format('YYYY-MM-DD');
     })
 
 schema.virtual('price')

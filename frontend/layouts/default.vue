@@ -64,11 +64,11 @@ export default {
     breadcrumbs() {
       const routes = {
         home: {text: 'Главная', href: '/'},
-        'configurations-list': {text: 'Конфигурации', href: '/configurations/list'},
+        //'configurations-list': {text: 'Конфигурации', href: '/configurations/list'},
         'configurations-chassis':{text: 'Выбор шасси', href: '/configurations/chassis'},
         'specifications-list': {text: 'Спецификации', href: '/specifications/list'},
         'specifications-specId': {text: 'Просмотр спецификации', disabled: true, parent: 'specifications-list'},
-        'configurations-configurationId':{text: 'Просмотр конфигурации', disabled: true, parent:'configurations-list'},
+        'configurations-configurationId':{text: 'Просмотр конфигурации', disabled: true, parent:'specifications-list'},
         'cabinet-settings':{text: 'Кабинет настройки'},
         'user-login':{text: 'Вход'},
         'user-signup':{text: 'Регистрация'},
