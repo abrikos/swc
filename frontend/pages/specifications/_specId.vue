@@ -14,6 +14,7 @@
             :append-icon="nameChanged? 'mdi-check' : ''"
             @keyup="nameChanged = true"
             @click:append="renameSpec(spec); nameChanged = false"
+            @keyup.enter="renameSpec(spec); nameChanged = false"
             hide-details
         />
       </v-col>

@@ -1,6 +1,6 @@
 <template>
   <div v-if="configuration">
-    <h1>
+    <h1 style="display: flex; justify-content: center; align-items: center; justify-content: space-between">
       {{ configuration.name || configuration.chassis.partNumber }}
       <v-btn @click.stop="deleteConfiguration" icon color="red" x-small title="Удалить">
         <img src="/icons/delete.png"/>
