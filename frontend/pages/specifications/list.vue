@@ -106,7 +106,7 @@ export default {
   },
   computed: {
     specsFiltered(){
-      return this.specs.filter(s=>s.name.match(this.nameSearch) && s.name.match(this.dateSearch))
+      return this.specs.filter(s=>s.name.toLowerCase().match(this.nameSearch.toLowerCase()) && s.name.match(this.dateSearch.toLowerCase()))
     },
     checkedArray() {
       return Object.keys(this.checked).filter(k => this.checked[k])
