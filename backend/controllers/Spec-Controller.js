@@ -9,23 +9,21 @@ module.exports = function (app) {
         const rows = [];
         const rowHeights = [{hpx: 30}]
         const confStyle = {
-            font: {bold: false}, alignment: {
-                vertical: 'center'
+            font: {bold: false},
+            alignment: {
+                vertical: 'center',
+                wrapText: '1',
             }
         }
         const partStyle = {font: {color: {rgb: '00999999'}}}
         for (const conf of spec.configurations) {
             rowHeights.push({hpx: 50})
-            rows.push([
-                {v: conf.chassis.partNumber, s: confStyle},
-                {v: conf.count, t: 'n', s: confStyle},
-                {v: conf.chassis.params, s: confStyle},
-                {v: conf.price, t: 'n', s: confStyle},
-                {v: conf.priceTotal, t: 'n', s: confStyle}
-            ])
+            const partRows = []
+            let confName = [conf.chassis.params]
             for (const part of conf.partsSorted) {
                 rowHeights.push({hpx: 15})
-                rows.push([
+                confName.push(part.component.description)
+                partRows.push([
                     {v: part.component.partNumber, s: {alignment: {horizontal: 'right'}, ...partStyle}},
                     {v: part.count, t: 'n', s: partStyle},
                     {v: part.component.description, s: partStyle},
@@ -33,7 +31,17 @@ module.exports = function (app) {
                     {v: part.price, t: 'n', s: partStyle}
                 ])
             }
+            const confRow = [
+                {v: conf.chassis.partNumber, s: confStyle},
+                {v: conf.count, t: 'n', s: confStyle},
+                {v: confName.join(', '), s: confStyle},
+                {v: conf.price, t: 'n', s: confStyle},
+                {v: conf.priceTotal, t: 'n', s: confStyle}
+            ]
+            rows.push(confRow)
+            rows.push(...partRows)
         }
+
         const ws = XLSX.utils.json_to_sheet(rows);
 
         //if(!ws["!merges"]) ws["!merges"] = [];
@@ -75,7 +83,7 @@ module.exports = function (app) {
             console.log(s.configurations[0].parts)
         })
 */
-    /*db.spec.findOne()
+    if(1) db.spec.findById('637620fa5fd86f390582947e')
         .populate({path: 'configurations', populate: db.configuration.population})
         .then(spec => {
             const data = specToXls(spec)
@@ -85,7 +93,7 @@ module.exports = function (app) {
                 const items = XLSX.utils.sheet_to_json(workbook.Sheets[sheet_name_list[0]])
                 //console.log(items);
             })
-        })*/
+        })
 
 
     app.get('/api/spec/:_id/excel', passport.isLogged, async (req, res) => {
