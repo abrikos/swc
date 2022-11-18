@@ -18,12 +18,12 @@
       </template>
       <template v-slot:item.controls="{item}">
         <div @click.stop>
-          <v-btn icon title="В буфер" @click="copyInCP(item)" height="50">
+          <v-btn icon title="В буфер" @click="copyClipBoard(item)" height="50"  color="primary">
             <v-icon size="50">mdi-clipboard-text-multiple-outline</v-icon>
           </v-btn>
           &nbsp; &nbsp;
           <a class="v-btn" :href="`/api/spec/${item.id}/excel`" @click.stop title="В Excel">
-            <v-icon size="50">mdi-microsoft-excel</v-icon>
+            <v-icon size="50"  color="primary">mdi-microsoft-excel</v-icon>
           </a>
           <v-btn @click="deleteOne(item)" icon color="red" title="Удалить">
             <v-icon>mdi-delete</v-icon>
@@ -92,7 +92,7 @@ export default {
     async renameSpec(item){
       await this.$axios.$put(`/spec/${item.id}/rename`, item)
     },
-    copyInCP(spec) {
+    copyClipBoard(spec) {
       const textArea = document.createElement("textarea");
       spec.configurations.forEach(conf => {
         textArea.value += conf.chassis.partNumber + '\t'

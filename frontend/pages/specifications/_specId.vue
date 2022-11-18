@@ -18,9 +18,28 @@
         />
       </v-col>
       <v-col sm="2">Сумма: {{ spec.price }}</v-col>
-      <v-col sm="2" align="right">
-        <v-btn @click="showAddConfiguration=true" color="primary" title="Добавить конфигурацию" icon><v-icon size="50">mdi-plus-circle</v-icon></v-btn>
-        <a :href="`/api/spec/${id}/excel`" class="v-btn"><v-icon size="50">mdi-microsoft-excel</v-icon></a>
+      <v-col sm="4" align="right">
+        <v-btn v-if="!showAddConfiguration" @click="showAddConfiguration=true" color="primary" title="Добавить конфигурацию" icon>
+          <v-icon size="50">mdi-plus-circle</v-icon>
+        </v-btn>
+        &nbsp;
+        <v-btn icon @click="$copyToClipBoard(spec)" color="primary">
+          <v-icon size="50">mdi-clipboard-text-multiple-outline</v-icon>
+        </v-btn>
+        &nbsp;
+        <a :href="`/api/spec/${id}/excel`" class="v-btn" ><v-icon size="50"  color="primary">mdi-microsoft-excel</v-icon></a>
+        &nbsp;
+        <v-btn icon  color="primary">
+          <v-icon size="50">mdi-share</v-icon>
+        </v-btn>
+        &nbsp;
+        <v-btn icon  color="primary">
+          <v-icon size="50">mdi-account-group</v-icon>
+        </v-btn>
+        &nbsp;
+        <v-btn icon @click="removeSpec(spec)" color="red">
+          <v-icon size="50">mdi-delete</v-icon>
+        </v-btn>
       </v-col>
     </v-row>
     <div v-if="showAddConfiguration">
@@ -56,39 +75,27 @@
                 <b>{{ config.name }}</b>
               </router-link>
             </v-col>
-            <v-col>Цена: {{ config.price }}</v-col>
-            <v-col>Количество:
-              <ConfigurationCount :item="config" :onChange="loadSpec"/>
-            </v-col>
-            <v-col sm="2">Сумма: {{ config.priceTotal }}</v-col>
-            <v-col sm="1">
-              <v-btn icon @click="removeFromSpec(config.id)" color="red">
-                <v-icon>mdi-delete</v-icon>
-              </v-btn>
-            </v-col>
           </v-row>
         </div>
-        <b>{{ config.chassis.partNumber }}</b>
-        <br/>
-        <i>{{ config.chassis.descFull }}</i>
-
-        <!--          <v-col>
-                    <table style="width: 100%" v-if="config.parts.length">
-                      <tr>
-                        <th>PN</th>
-                        <th>Описание</th>
-                        <th>Количество</th>
-                        <th>Сумма</th>
-                      </tr>
-                      <tr v-for="part of config.parts">
-                        <td>{{ part.component.partNumber }}</td>
-                        <td>{{ part.component.descShort }}</td>
-                        <td class="numbers">{{ part.count }}</td>
-                        <td class="numbers">{{ part.price }}</td>
-                      </tr>
-                    </table>
-                  </v-col>-->
-
+        <v-row align="center">
+          <v-col align="center" sm="2">
+            <strong>{{ config.chassis.partNumber }}</strong>
+            <br/>
+            <v-btn icon @click="removeFromSpec(config.id)" color="red">
+              <v-icon size="50">mdi-delete</v-icon>
+            </v-btn>
+            &nbsp;&nbsp;
+            <v-btn icon @click="$copyToClipBoard(spec)"  color="primary">
+              <v-icon size="50">mdi-clipboard-text-multiple-outline</v-icon>
+            </v-btn>
+          </v-col>
+          <v-col><i>{{ config.chassis.descFull }}</i></v-col>
+          <v-col sm="1">Кол-во:
+            <ConfigurationCount :item="config" :onChange="loadSpec"/>
+          </v-col>
+          <v-col sm="1">Цена: {{ config.price }}</v-col>
+          <v-col sm="1">Сумма: {{ config.priceTotal }}</v-col>
+        </v-row>
         <v-alert border="top" color="red lighten-2" dark v-for="(error,i) of $validator(config).errors" :key="i">
           {{ error }}
         </v-alert>
@@ -127,6 +134,12 @@ export default {
     this.loadSpec()
   },
   methods: {
+    async removeSpec(item) {
+      if (window.confirm(`Удалить спецификацию "${item.name}"?`)) {
+        await this.$axios.$post('/spec/delete', [item.id])
+        await this.loadSpecs()
+      }
+    },
     async renameSpec(item) {
       await this.$axios.$put(`/spec/${item.id}/rename`, item)
     },
@@ -159,7 +172,7 @@ h2
     color: black
 
 .configuration
-  margin-bottom: 10px
+  margin-bottom: 20px
 
 .numbers
   text-align: right
