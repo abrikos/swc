@@ -14,10 +14,12 @@
         <tr>
           <th></th>
           <th>
-            <v-text-field outlined placeholder="Фильтр по дате" v-model="dateSearch" dense hide-details style="margin: 0 5px"/>
+            <v-text-field outlined placeholder="Фильтр по дате" v-model="dateSearch" dense hide-details
+                          style="margin: 0 5px"/>
           </th>
           <th>
-            <v-text-field outlined placeholder="Фильтр по названию" v-model="nameSearch" dense hide-details style="margin: 0 5px"/>
+            <v-text-field outlined placeholder="Фильтр по названию" v-model="nameSearch" dense hide-details
+                          style="margin: 0 5px"/>
           </th>
         </tr>
       </template>
@@ -34,8 +36,8 @@
       </template>
       <template v-slot:item.controls="{item}">
         <div @click.stop>
-          <v-btn icon title="В буфер" @click="copyClipBoard(item)" height="50"  color="primary">
-<!--            <v-icon size="50">mdi-clipboard-text-multiple-outline</v-icon>-->
+          <v-btn icon title="В буфер" @click="copyClipBoard(item)" height="50" color="primary">
+            <!--            <v-icon size="50">mdi-clipboard-text-multiple-outline</v-icon>-->
             <img src="/icons/copy.png"/>
           </v-btn>
           &nbsp; &nbsp;
@@ -58,7 +60,9 @@
         </v-btn>
       </template>
       <template v-slot:item.name="{item}">
-        <div @click.stop.prevent v-if="showNameField !== item.id" @click="showNameField=item.id" title="Нажать для редактирования">{{ item.name }}</div>
+        <div @click.stop.prevent v-if="showNameField !== item.id" @click="showNameField=item.id"
+             title="Нажать для редактирования">{{ item.name }}
+        </div>
         <v-text-field
             v-model="item.name"
             @click.stop.prevent
@@ -104,15 +108,15 @@ export default {
     this.loadSpecs()
   },
   computed: {
-    specsFiltered(){
-      return this.specs.filter(s=>s.name.toLowerCase().match(this.nameSearch.toLowerCase()) && s.name.match(this.dateSearch.toLowerCase()))
+    specsFiltered() {
+      return this.specs.filter(s => s.name.toLowerCase().match(this.nameSearch.toLowerCase()) && s.date.match(this.dateSearch.toLowerCase()))
     },
     checkedArray() {
       return Object.keys(this.checked).filter(k => this.checked[k])
     }
   },
   methods: {
-    async renameSpec(item){
+    async renameSpec(item) {
       await this.$axios.$put(`/spec/${item.id}/rename`, item)
     },
     copyClipBoard(spec) {
