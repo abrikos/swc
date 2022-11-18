@@ -1,18 +1,27 @@
 <template>
   <div v-if="spec">
-    <h1 v-if="!nameChanged">{{ spec.name }} <v-btn  @click="nameChanged = true" icon><v-icon>mdi-pencil</v-icon> </v-btn></h1>
-    <v-text-field
-        v-if="nameChanged"
-        v-model="spec.name"
-        outlined
-        :append-icon="nameChanged? 'mdi-check' : ''"
-        @keyup="nameChanged = true"
-        @click:append="renameSpec(spec); nameChanged = false"
-    />
-    <v-row>
-      <v-col sm="2">Сумма спецификации:</v-col>
-      <v-col sm="1" class="numbers">{{ spec.price }}</v-col>
-      <v-col align="right"><v-btn @click="showAddConfiguration=true" color="primary">Добавить конфигурацию</v-btn></v-col>
+    <v-row justify="center" align="center">
+      <v-col>
+        <h2 v-if="!nameChanged" @click="nameChanged = true">{{ spec.name }}
+          <v-btn @click="nameChanged = true" icon>
+            <v-icon>mdi-pencil</v-icon>
+          </v-btn>
+        </h2>
+        <v-text-field
+            v-if="nameChanged"
+            v-model="spec.name"
+            outlined
+            :append-icon="nameChanged? 'mdi-check' : ''"
+            @keyup="nameChanged = true"
+            @click:append="renameSpec(spec); nameChanged = false"
+            hide-details
+        />
+      </v-col>
+      <v-col sm="2">Сумма: {{ spec.price }}</v-col>
+      <v-col sm="2" align="right">
+        <v-btn @click="showAddConfiguration=true" color="primary" title="Добавить конфигурацию" icon><v-icon size="50">mdi-plus-circle</v-icon></v-btn>
+        <a :href="`/api/spec/${id}/excel`" class="v-btn"><v-icon size="50">mdi-microsoft-excel</v-icon></a>
+      </v-col>
     </v-row>
     <div v-if="showAddConfiguration">
       <hr/>
@@ -38,41 +47,53 @@
       <v-btn @click="showAddConfiguration=false">Отмена</v-btn>
     </div>
     <div v-if="!showAddConfiguration">
-
       <div v-for="config of spec.configurations" :key="config.id" class="configuration">
-        <router-link :to="'/configurations/' + config.id">
-          <strong style="display: block; text-align: center">{{ config.name }}</strong>
-        </router-link>
-        <b>{{config.chassis.partNumber}}</b>
+        <div class="config-header">
+
+          <v-row align="center">
+            <v-col>
+              <router-link :to="'/configurations/' + config.id">
+                <b>{{ config.name }}</b>
+              </router-link>
+            </v-col>
+            <v-col>Цена: {{ config.price }}</v-col>
+            <v-col>Количество:
+              <ConfigurationCount :item="config" :onChange="loadSpec"/>
+            </v-col>
+            <v-col sm="2">Сумма: {{ config.priceTotal }}</v-col>
+            <v-col sm="1">
+              <v-btn icon @click="removeFromSpec(config.id)" color="red">
+                <v-icon>mdi-delete</v-icon>
+              </v-btn>
+            </v-col>
+          </v-row>
+        </div>
+        <b>{{ config.chassis.partNumber }}</b>
         <br/>
         <i>{{ config.chassis.descFull }}</i>
-        <v-row>
-          <v-col>Цена: {{ config.price }}</v-col>
-          <v-col>Количество: <ConfigurationCount :item="config" :onChange="loadSpec"/></v-col>
-          <v-col>Сумма: {{ config.priceTotal }}</v-col>
-        </v-row>
-<!--          <v-col>
-            <table style="width: 100%" v-if="config.parts.length">
-              <tr>
-                <th>PN</th>
-                <th>Описание</th>
-                <th>Количество</th>
-                <th>Сумма</th>
-              </tr>
-              <tr v-for="part of config.parts">
-                <td>{{ part.component.partNumber }}</td>
-                <td>{{ part.component.descShort }}</td>
-                <td class="numbers">{{ part.count }}</td>
-                <td class="numbers">{{ part.price }}</td>
-              </tr>
-            </table>
-          </v-col>-->
 
-        <v-btn icon @click="removeFromSpec(config.id)" color="red"><v-icon>mdi-delete</v-icon></v-btn>
-        <v-alert border="top" color="red lighten-2" dark v-for="(error,i) of $validator(config).errors" :key="i">{{ error }}</v-alert>
+        <!--          <v-col>
+                    <table style="width: 100%" v-if="config.parts.length">
+                      <tr>
+                        <th>PN</th>
+                        <th>Описание</th>
+                        <th>Количество</th>
+                        <th>Сумма</th>
+                      </tr>
+                      <tr v-for="part of config.parts">
+                        <td>{{ part.component.partNumber }}</td>
+                        <td>{{ part.component.descShort }}</td>
+                        <td class="numbers">{{ part.count }}</td>
+                        <td class="numbers">{{ part.price }}</td>
+                      </tr>
+                    </table>
+                  </v-col>-->
+
+        <v-alert border="top" color="red lighten-2" dark v-for="(error,i) of $validator(config).errors" :key="i">
+          {{ error }}
+        </v-alert>
       </div>
     </div>
-    <a :href="`/api/spec/${id}/excel`">Сохранить в Excel</a>
   </div>
 </template>
 
@@ -92,8 +113,8 @@ export default {
     }
   },
   computed: {
-    checkedArray(){
-      return Object.keys(this.checked).filter(k=>this.checked[k])
+    checkedArray() {
+      return Object.keys(this.checked).filter(k => this.checked[k])
     },
     otherConfigurations() {
       return this.configurations.filter(c => !this.spec.configurations.map(cc => cc.id).includes(c.id))
@@ -106,14 +127,14 @@ export default {
     this.loadSpec()
   },
   methods: {
-    async renameSpec(item){
+    async renameSpec(item) {
       await this.$axios.$put(`/spec/${item.id}/rename`, item)
     },
-    async removeFromSpec(id){
+    async removeFromSpec(id) {
       await this.$axios.$delete(`/spec/${this.id}/configurations/${id}/remove`, this.checkedArray)
       await this.loadSpec()
     },
-    async addToSpec(){
+    async addToSpec() {
       //await this.$axios.$put(`/configuration/${this.configuration.id}/to-spec`, this.checkedArray)
       await this.$axios.$put(`/spec/${this.id}/configurations/add`, this.checkedArray)
       await this.loadSpec()
@@ -129,9 +150,15 @@ export default {
 </script>
 
 <style scoped lang="sass">
-.configuration
-  border: 1px solid silver
+h2
+  margin: 9px 0 9px 0
+.config-header
+  background-color: #ccc
   padding: 10px
+  a
+    color: black
+
+.configuration
   margin-bottom: 10px
 
 .numbers

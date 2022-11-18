@@ -19,9 +19,10 @@
         v-model="item.count"
         @keyup.enter="changeField('count', item)"
         type="number"
-        @keyup="keyUp"
+        @keyup="changeField('count', item)"
+        @change="changeField('count', item)"
     />
-    <v-btn v-if="countEdited" icon @click="changeField('count', item)"><v-icon>mdi-check</v-icon></v-btn>
+<!--    <v-btn v-if="countEdited" icon @click="changeField('count', item)"><v-icon>mdi-check</v-icon></v-btn>-->
   </span>
 </template>
 

@@ -110,7 +110,6 @@ export default {
   .v-breadcrumbs
     li.v-breadcrumbs__divider
       color: gray
-
     a
       color: gray
 
