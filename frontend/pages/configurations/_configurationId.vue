@@ -100,6 +100,7 @@ export default {
       return this.$componentCount(this.configuration, this.tab)
     },
     componentsCurrent() {
+      console.log('zzzzzzzz', JSON.stringify(this.tab))
       return this.$components(this.configuration, this.componentsAll, this.tab)
     },
     componentsCurrentFiltered() {
@@ -139,7 +140,7 @@ export default {
       this.componentsAll = res.components
       this.specs = res.specs
       this.tabs = res.tabs
-      this.tab = res.tabs[0]
+      if(!this.tab) this.tab = res.tabs[0]
     },
     async addPart(count, item) {
       await this.$axios.$put(`/configuration/${this.id}/component/${item.id}`, {count})

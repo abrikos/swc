@@ -7,8 +7,8 @@
     <div class="tabs-large">
       <div class="tabs">
         <div v-for="(item, i) of items" :key="i" @click="tabClick(item)"
-             :class="'tab' + (tab===item ? ' active' : '') + (isHovering===item ? ' hovered':'')"
-             @mouseover="isHovering = item"
+             :class="'tab' + (tab.category===item.category ? ' active' : '') + (isHovering.category===item.category ? ' hovered':'')"
+             @mouseover="isHovering = item.category"
              @mouseout="isHovering = false">
           <img :src="`/icons/${item.category}_icon.png`" v-if="withIcons"/>
           {{ item.category }}
@@ -16,7 +16,7 @@
       </div>
       <div class="sub-tab">
         <div v-for="(item, i) of tab.children" :key="i" @click="subTabClick(item)"
-             :class="item === subTab? 'active':''">{{ item.type }}
+             :class="item.type === subTab.type? 'active':''">{{ item.type }}
         </div>
       </div>
     </div>
