@@ -96,8 +96,8 @@
               <img src="/icons/delete.png"/>
             </v-btn>
             &nbsp;&nbsp;
-            <v-btn icon @click="$copyToClipBoard(spec)" color="primary">
-              <img src="/icons/copy.png"/>
+            <v-btn icon @click="copyConfiguration(config)" color="primary">
+              <img src="/icons/copyFiles.png"/>
             </v-btn>
           </v-col>
           <v-col>{{ config.chassis.descFull }}</v-col>
@@ -146,6 +146,10 @@ export default {
     this.loadSpec()
   },
   methods: {
+    async copyConfiguration(item){
+      await this.$axios.$get(`/spec/${this.spec.id}/configuration/${item.id}/copy`)
+      await this.loadSpec()
+    },
     async renameConfig(item) {
       await this.$axios.$put(`/configuration/${item.id}/field/name`, item)
       this.nameChangedConf = false

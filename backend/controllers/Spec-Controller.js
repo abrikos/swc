@@ -2,6 +2,7 @@ const passport = require('../passport');
 const moment = require("moment/moment");
 const XLSX = require('sheetjs-style');
 const fs = require('fs')
+const mongoose = require("mongoose");
 module.exports = function (app) {
     const {db} = app.locals;
 
@@ -97,6 +98,24 @@ module.exports = function (app) {
                 //console.log(items);
             })
         })
+
+    app.get('/api/spec/:_id/configuration/:configurationId/copy', passport.isLogged, async (req, res) => {
+        try {
+            const {user} = res.locals;
+            const {_id, configurationId} = req.params;
+            const spec = await db.spec.findOne({_id, user});
+            const item = await db.configuration.findOne({_id: configurationId, user}).populate(db.configuration.population);
+            if (!item) throw {error: 403, message: 'Access denied'}
+            item._id = mongoose.Types.ObjectId();
+            item.isNew = true;
+            await item.save()
+            spec.configurations.push(item.id)
+            await spec.save()
+            res.sendStatus(200)
+        } catch (e) {
+            app.locals.errorLogger(e, res)
+        }
+    })
 
 
     app.get('/api/spec/:_id/excel', passport.isLogged, async (req, res) => {

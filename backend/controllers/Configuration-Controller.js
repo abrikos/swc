@@ -1,5 +1,6 @@
 const passport = require('../passport');
 const moment = require("moment/moment");
+const mongoose = require('mongoose')
 
 module.exports = function (app) {
     const {db} = app.locals;
