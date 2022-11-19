@@ -107,6 +107,7 @@ module.exports = function (app) {
             const item = await db.configuration.findOne({_id: configurationId, user}).populate(db.configuration.population);
             if (!item) throw {error: 403, message: 'Access denied'}
             item._id = mongoose.Types.ObjectId();
+            item.name = 'Копия ' + item.name
             item.isNew = true;
             await item.save()
             spec.configurations.push(item.id)
