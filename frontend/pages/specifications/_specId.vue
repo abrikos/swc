@@ -44,25 +44,36 @@
     />
     <div v-if="showAddConfiguration">
       <hr/>
-      <h3>Выбрать конфигурации</h3>
-      <table>
-        <tr v-for="conf of otherConfigurations">
-          <td>
-            <v-checkbox @click.stop.prevent dense hide-details v-model="checked[conf.id]"
-                        title="Добавить в спецификацию"/>
-          </td>
-          <td>{{ conf.name }}</td>
-        </tr>
-      </table>
-
-      <v-btn
-          v-if="checkedArray.length"
-          color="primary"
-          dark
-          class="ma-2"
-          @click="addToSpec">
-        Прикрепить к этой спецификации
-      </v-btn>
+      <h3>Добавить конфигурацию</h3>
+      <v-row>
+        <v-col sm="1">
+          <v-list>
+            <v-subheader>Платформа</v-subheader>
+            <v-list-item-group v-model="platformSelected">
+              <v-list-item v-for="p of platforms" :key="p">
+                <v-list-item-content>
+                  <v-list-item-title v-text="p"/>
+                </v-list-item-content>
+              </v-list-item>
+            </v-list-item-group>
+          </v-list>
+        </v-col>
+        <v-col>
+          <v-list>
+            <v-subheader>Шасси</v-subheader>
+            <v-list-item-group>
+              <v-list-item v-for="p of chassis.filter(c=>c.platform === platforms[platformSelected])" :key="p.id" @click="addToSpec(p)">
+                <v-list-item-icon>
+                  <img :src="`/upload/${p.partNumber}.jpg`" height="20px"/>
+                </v-list-item-icon>
+                <v-list-item-content>
+                  <v-list-item-title v-text="p.partNumber"></v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
+            </v-list-item-group>
+          </v-list>
+        </v-col>
+      </v-row>
       <v-btn @click="showAddConfiguration=false">Отмена</v-btn>
     </div>
     <div v-if="!showAddConfiguration">
@@ -123,12 +134,21 @@ export default {
   components: {ConfigurationCount},
   data() {
     return {
+      chassis: [],
       nameChanged: false,
       nameChangedConf: false,
       checked: {},
       showAddConfiguration: false,
       spec: null,
-      configurations: []
+      configurations: [],
+      platformSelected: 0,
+      platforms: [
+        'G2',
+        'G3',
+        'G2R',
+        'AMD',
+        'JBOD',
+      ],
     }
   },
   computed: {
@@ -144,9 +164,19 @@ export default {
   },
   created() {
     this.loadSpec()
+    this.loadChassis()
   },
   methods: {
-    async copyConfiguration(item){
+    async loadChassis() {
+      this.chassis = await this.$axios.$get('/configuration/chassis')
+    },
+    createConfiguration(e) {
+      this.$axios.$get('/configuration/create/chassis/' + e.id)
+          .then(res => {
+            this.$router.push('/configurations/' + res.id)
+          })
+    },
+    async copyConfiguration(item) {
       await this.$axios.$get(`/spec/${this.spec.id}/configuration/${item.id}/copy`)
       await this.loadSpec()
     },
@@ -167,12 +197,13 @@ export default {
       await this.$axios.$delete(`/spec/${this.id}/configurations/${id}/remove`, this.checkedArray)
       await this.loadSpec()
     },
-    async addToSpec() {
+    async addToSpec(item) {
       //await this.$axios.$put(`/configuration/${this.configuration.id}/to-spec`, this.checkedArray)
-      await this.$axios.$put(`/spec/${this.id}/configurations/add`, this.checkedArray)
-      await this.loadSpec()
-      this.checked = []
-      this.showAddConfiguration = false
+      const conf = await this.$axios.$put(`/spec/${this.id}/chassis/${item.id}/add`)
+      await this.$router.push('/configurations/' + conf.id)
+      //await this.loadSpec()
+      //this.checked = []
+      //this.showAddConfiguration = false
     },
     async loadSpec() {
       this.spec = await this.$axios.$get('/spec/' + this.id)

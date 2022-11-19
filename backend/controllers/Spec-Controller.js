@@ -190,22 +190,22 @@ module.exports = function (app) {
 
     })
 
-    app.put('/api/spec/:_id/configurations/add', passport.isLogged, async (req, res) => {
+    app.put('/api/spec/:_id/chassis/:chassis/add', passport.isLogged, async (req, res) => {
         try {
             const {user} = res.locals;
-            const {_id} = req.params;
+            const {_id, chassis} = req.params;
             const spec = await db.spec.findOne({_id, user});
+
             if (!spec) res.sendStatus(404)
-            const configurations = []
-            for (const _id of req.body) {
-                const conf = await db.configuration.findOne({_id, user}).populate(db.configuration.population);
-                if (conf) {
-                    configurations.push(conf.id)
-                }
-            }
-            spec.configurations.push(...configurations);
+            const configuration = await db.configuration.create({
+                chassis,
+                user,
+                name: 'Конфигурация от ' + moment().format('YYYY-MM-DD HH:mm')
+            })
+            await configuration.populate(db.configuration.population);
+            spec.configurations.push(configuration.id);
             await spec.save();
-            res.sendStatus(200)
+            return res.send(configuration)
         } catch (e) {
             app.locals.errorLogger(e, res)
         }

@@ -2,11 +2,11 @@
   <div>
     <Tabs :items="tabs" :onChange="tabChanged"/>
     <div class="list">
-      <div class="chassis" v-for="item of items" @click="createConfiguration(item)">
-        <img :src="`/upload/${item.partNumber}.jpg`" />
-        <strong>{{item.partNumber}} </strong>
+      <div class="chassis" v-for="item of chassis" @click="createConfiguration(item)">
+        <img :src="`/upload/${item.partNumber}.jpg`"/>
+        <strong>{{ item.partNumber }} </strong>
         <br/>
-        <small>{{item.params}}</small>
+        <small>{{ item.params }}</small>
       </div>
     </div>
   </div>
@@ -16,38 +16,43 @@
 
 export default {
   name: "configurator-start",
-  data(){
+  data() {
     return {
-      tab:0,
-      tabs:[
-        {category:'G2'},
-        {category:'G3'},
-        {category:'G2R'},
-        {category:'AMD'},
-        {category:'JBOD'},
+      tab: {category: 'G2'},
+      tabs: [
+        {category: 'G2'},
+        {category: 'G3'},
+        {category: 'G2R'},
+        {category: 'AMD'},
+        {category: 'JBOD'},
       ],
-      items:[],
+      items: [],
 
     }
   },
   created() {
     this.loadChassis(this.tabs[0])
   },
-  methods:{
-    tabChanged(tab){
+  computed: {
+    chassis() {
+      console.log(this.tab)
+      return this.items.filter(c => c.platform === this.tab.category)
+    }
+  },
+  methods: {
+    tabChanged(tab) {
       console.log(tab)
       this.tab = tab
-      if(!this.isTabConfigurations){
+      if (!this.isTabConfigurations) {
         this.loadChassis(tab)
       }
-
     },
-    async loadChassis(tab){
-      this.items = await this.$axios.$get('/configurator/chassis/' + tab.category)
+    async loadChassis(tab) {
+      this.items = await this.$axios.$get('/configuration/chassis')
     },
-    createConfiguration(e){
-      this.$axios.$get('/configuration/create/chassis/'+ e.id)
-          .then(res=> {
+    createConfiguration(e) {
+      this.$axios.$get('/configuration/create/chassis/' + e.id)
+          .then(res => {
             this.$router.push('/configurations/' + res.id)
           })
     }
@@ -59,6 +64,7 @@ export default {
 .list
   display: flex
   flex-wrap: wrap
+
   .chassis
     margin: 12px
     padding: 5px
@@ -67,6 +73,7 @@ export default {
     width: 250px
     text-align: center
     cursor: pointer
+
     img
       margin: auto
       display: block

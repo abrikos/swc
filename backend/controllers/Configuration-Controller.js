@@ -4,6 +4,12 @@ const mongoose = require('mongoose')
 
 module.exports = function (app) {
     const {db} = app.locals;
+    app.get('/api/configuration/chassis', async (req, res) => {
+        const list = await db.chassis.find();
+        res.send(list)
+    })
+
+
     app.get('/api/configuration/my', passport.isLogged, async (req, res) => {
         try {
             const {user} = res.locals;
