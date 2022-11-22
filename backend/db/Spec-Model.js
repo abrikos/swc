@@ -7,6 +7,7 @@ const name = 'spec';
 
 const schema = new Schema({
         name: {type: String},
+        shared: {type: mongoose.Schema.Types.ObjectId, ref: 'user'},
         user: {type: mongoose.Schema.Types.ObjectId, ref: 'user'},
         configurations: [{type: mongoose.Schema.Types.ObjectId, ref: 'configuration'}],
     },

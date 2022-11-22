@@ -30,7 +30,7 @@
 import chassis from "~/pages/configurations/chassis";
 
 export default {
-  name: "chassis-list",
+  name: "admin-chassis-list",
   data() {
     return {
       selected: null,

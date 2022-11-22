@@ -1,21 +1,16 @@
 <template>
   <div>
     <Tabs :items="tabs" :onChange="tabChanged"/>
-    <div class="list">
-      <div class="chassis" v-for="item of chassis" @click="createConfiguration(item)">
-        <img :src="`/upload/${item.partNumber}.jpg`"/>
-        <strong>{{ item.partNumber }} </strong>
-        <br/>
-        <small>{{ item.params }}</small>
-      </div>
-    </div>
+    <ChassisList :platform="tab.category" :onClick="createConfiguration"/>
   </div>
 </template>
 
 <script>
 
+import ChassisList from "~/components/ChassisList";
 export default {
   name: "configurator-start",
+  components: {ChassisList},
   data() {
     return {
       tab: {category: 'G2'},
@@ -30,25 +25,9 @@ export default {
 
     }
   },
-  created() {
-    this.loadChassis(this.tabs[0])
-  },
-  computed: {
-    chassis() {
-      console.log(this.tab)
-      return this.items.filter(c => c.platform === this.tab.category)
-    }
-  },
   methods: {
     tabChanged(tab) {
-      console.log(tab)
       this.tab = tab
-      if (!this.isTabConfigurations) {
-        this.loadChassis(tab)
-      }
-    },
-    async loadChassis(tab) {
-      this.items = await this.$axios.$get('/configuration/chassis')
     },
     createConfiguration(e) {
       this.$axios.$get('/configuration/create/chassis/' + e.id)
@@ -61,21 +40,4 @@ export default {
 </script>
 
 <style scoped lang="sass">
-.list
-  display: flex
-  flex-wrap: wrap
-
-  .chassis
-    margin: 12px
-    padding: 5px
-    border: 1px solid silver
-    box-shadow: 4px 4px 8px 0px rgba(34, 60, 80, 0.2)
-    width: 250px
-    text-align: center
-    cursor: pointer
-
-    img
-      margin: auto
-      display: block
-      width: 80%
 </style>

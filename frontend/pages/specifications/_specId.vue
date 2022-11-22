@@ -14,7 +14,7 @@
           <v-icon size="50" color="#aa2238">mdi-microsoft-excel</v-icon>
         </a>
         &nbsp;
-        <v-btn icon color="primary">
+        <v-btn icon color="primary" title="Поделиться" @click="showDialog='share'">
           <img src="/icons/share.png"/>
         </v-btn>
         &nbsp;
@@ -28,13 +28,11 @@
       </v-col>
     </v-row>
     <br/>
-    <table v-if="!showAddConfiguration">
+    <table v-if="!showDialog">
       <thead>
       <tr>
         <td>
-          <v-btn v-if="!showAddConfiguration" @click="showAddConfiguration=true" color="primary"
-          >
-            <!--            <v-icon size="50">mdi-plus-circle</v-icon>-->
+          <v-btn v-if="!showDialog" @click="showDialog='addConfig'" color="primary"          >
             Добавить конфигурацию
           </v-btn>
         </td>
@@ -99,59 +97,21 @@
       </tr>
       </tbody>
     </table>
-    <div v-if="showAddConfiguration">
-      <hr/>
-      <h3>Добавить конфигурацию</h3>
-      <v-row>
-        <v-col sm="1">
-          <v-list>
-            <v-subheader>Платформа</v-subheader>
-            <v-list-item-group v-model="platformSelected">
-              <v-list-item v-for="p of platforms" :key="p">
-                <v-list-item-content>
-                  <v-list-item-title v-text="p"/>
-                </v-list-item-content>
-              </v-list-item>
-            </v-list-item-group>
-          </v-list>
-        </v-col>
-        <v-col>
-          <v-list>
-            <v-subheader>Шасси</v-subheader>
-            <v-list-item-group>
-              <v-list-item v-for="p of chassis.filter(c=>c.platform === platforms[platformSelected])" :key="p.id"
-                           @click="addToSpec(p)">
-                <v-list-item-icon>
-                  <img :src="`/upload/${p.partNumber}.jpg`" height="20px"/>
-                </v-list-item-icon>
-                <v-list-item-content>
-                  <v-list-item-title v-text="p.partNumber"></v-list-item-title>
-                </v-list-item-content>
-              </v-list-item>
-            </v-list-item-group>
-          </v-list>
-        </v-col>
-      </v-row>
-      <v-btn @click="showAddConfiguration=false">Отмена</v-btn>
-    </div>
-    <div v-if="!showAddConfiguration">
-      <div v-for="config of spec.configurations" :key="config.id" class="configuration">
-        <div class="config-header">
-
-        </div>
-
-      </div>
-    </div>
+    <ConfigCreateForSpec v-if="showDialog==='addConfig'" :spec="spec"/>
+    <SpecShare v-if="showDialog==='share'" :spec="spec"/>
+    <v-btn @click="showDialog=false" v-if="showDialog==='share'" >Закрыть</v-btn>
   </div>
 </template>
 
 <script>
 import ConfigurationCount from "~/components/ConfigurationCount";
 import SpecNameEdit from "~/components/SpecNameEdit";
+import ConfigCreateForSpec from "~/components/ConfigCreateForSpec";
+import SpecShare from "~/components/SpecShare";
 
 export default {
   name: "_spec-view",
-  components: {SpecNameEdit, ConfigurationCount},
+  components: {SpecShare, ConfigCreateForSpec, SpecNameEdit, ConfigurationCount},
   data() {
     return {
       chassis: [],
@@ -160,20 +120,15 @@ export default {
       nameChangedConf: false,
       nameEditConf: false,
       checked: {},
-      showAddConfiguration: false,
+      showDialog: false,
       spec: null,
       configurations: [],
-      platformSelected: 0,
-      platforms: [
-        'G2',
-        'G3',
-        'G2R',
-        'AMD',
-        'JBOD',
-      ],
     }
   },
   computed: {
+    share(){
+      this.showDialog = 'share'
+    },
     checkedArray() {
       return Object.keys(this.checked).filter(k => this.checked[k])
     },
@@ -186,12 +141,8 @@ export default {
   },
   created() {
     this.loadSpec()
-    this.loadChassis()
   },
   methods: {
-    async loadChassis() {
-      this.chassis = await this.$axios.$get('/configuration/chassis')
-    },
     createConfiguration(e) {
       this.$axios.$get('/configuration/create/chassis/' + e.id)
           .then(res => {

@@ -3,6 +3,7 @@
     <h1>
       Спецификации
     </h1>
+    <Tabs :items="tabs" :onChange="tabChanged"/>
     <v-data-table
         :items="specsFiltered"
         :headers="headers"
@@ -86,6 +87,11 @@ export default {
   components: {SpecClipboardCopy},
   data() {
     return {
+      tabs:[
+          {category:'Мои', id:'my'},
+          {category:'Расшаренные', id:'shared'},
+      ],
+      tab:{category:'Мои', id:'my'},
       pagination: {
         descending: true,
         page: 1,
@@ -102,28 +108,40 @@ export default {
       specs: [],
       checked: [],
       showNameField: false,
-      headers: [
-        {text: '', value: 'checkIt', width: '30px'},
-        {text: 'Дата', value: 'date', width: '150px'},
-        {text: 'Название', value: 'name'},
-        {text: 'Сумма', value: 'price', align: 'right'},
-        {text: 'Конфигураций', value: 'count', width: '250px', align: 'center'},
-        {text: '', value: 'controls', sortable: false}
-      ],
+
     }
   },
   created() {
     this.loadSpecs()
   },
   computed: {
+    headers(){
+      const headers = [
+        {text: '', value: 'checkIt', width: '30px'},
+        {text: 'Дата', value: 'date', width: '150px'},
+        {text: 'Название', value: 'name'},
+        {text: 'Сумма', value: 'price', align: 'right'},
+        {text: 'Конфигураций', value: 'count', width: '250px', align: 'center'},
+        {text: '', value: 'controls', sortable: false}
+      ]
+      if(this.tab.id==='shared')
+        headers.push({text: 'От кого', value: 'shared.email'},)
+      return headers
+    },
     specsFiltered() {
-      return this.specs.filter(s => s.name.toLowerCase().match(this.nameSearch.toLowerCase()) && s.date.match(this.dateSearch.toLowerCase()))
+      return this.specs
+          .filter(s => this.tab.id==='my' ? !s.shared : s.shared)
+          .filter(s => s.name.toLowerCase().match(this.nameSearch.toLowerCase()) && s.date.match(this.dateSearch.toLowerCase()))
     },
     checkedArray() {
       return Object.keys(this.checked).filter(k => this.checked[k])
     }
   },
   methods: {
+    tabChanged(tab){
+      this.tab = tab;
+      console.log(tab)
+    },
     async renameSpec(item) {
       await this.$axios.$put(`/spec/${item.id}/rename`, item)
     },

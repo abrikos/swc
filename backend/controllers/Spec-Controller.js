@@ -5,6 +5,10 @@ const fs = require('fs')
 const mongoose = require("mongoose");
 module.exports = function (app) {
     const {db} = app.locals;
+    const population = [
+        {path: 'configurations', populate: db.configuration.population},
+        {path: 'shared', select: {email: 1}}
+    ]
 
     const specToXls = (spec) => {
         const rows = [];
@@ -88,7 +92,7 @@ module.exports = function (app) {
             })
     */
     if (0) db.spec.findById('637620fa5fd86f390582947e')
-        .populate({path: 'configurations', populate: db.configuration.population})
+        .populate(population)
         .then(spec => {
             const data = specToXls(spec)
             fs.writeFile("test.xls", data, 'base64', function (err) {
@@ -98,6 +102,39 @@ module.exports = function (app) {
                 //console.log(items);
             })
         })
+
+    app.post('/api/spec/:_id/share', passport.isLogged, async (req, res) => {
+        try {
+            const {user} = res.locals;
+            const {_id} = req.params;
+            const emails = req.body;
+            const spec = await db.spec.findOne({_id, user}).populate(population);
+            if (!spec) res.sendStatus(404)
+            const users = await db.user.find({email: {$in: emails}})
+            const found = []
+            for (const u of users) {
+                found.push(u.email)
+                spec._id = mongoose.Types.ObjectId();
+                spec.user = u
+                spec.shared = user
+                spec.isNew = true;
+                const newConfigs = []
+                for (const conf of spec.configurations) {
+                    conf._id = mongoose.Types.ObjectId();
+                    conf.user = u
+                    conf.isNew = true;
+                    await conf.save()
+                    newConfigs.push(conf._id)
+                }
+                spec.configurations = newConfigs
+                console.log(spec)
+                await spec.save()
+            }
+            res.send(found)
+        } catch (e) {
+            app.locals.errorLogger(e, res)
+        }
+    })
 
     app.get('/api/spec/:_id/configuration/:configurationId/copy', passport.isLogged, async (req, res) => {
         try {
@@ -122,7 +159,7 @@ module.exports = function (app) {
     app.get('/api/spec/:_id/excel', passport.isLogged, async (req, res) => {
         const {user} = res.locals;
         const {_id, configurationId} = req.params;
-        const spec = await db.spec.findOne({_id, user}).populate({path: 'configurations', populate: db.configuration.population});
+        const spec = await db.spec.findOne({_id, user}).populate(population);
         if (!spec) res.sendStatus(404)
         res.setHeader('Content-Type', 'application/vnd.openxmlformats');
         res.setHeader("Content-Disposition", "attachment; filename=" + encodeURIComponent(spec.name) + ".xlsx");
@@ -133,7 +170,7 @@ module.exports = function (app) {
         const {user} = res.locals;
         const item = await db.spec.find({user})
             .sort({createdAt: 'desc'})
-            .populate({path: 'configurations', populate: db.configuration.population});
+            .populate(population);
         res.send(item)
     })
 
@@ -233,7 +270,7 @@ module.exports = function (app) {
         try {
             const {user} = res.locals;
             const {_id} = req.params
-            const spec = await db.spec.findOne({_id, user}).populate({path: 'configurations', populate: db.configuration.population});
+            const spec = await db.spec.findOne({_id, user}).populate(population);
             res.send(spec)
         } catch (e) {
             app.locals.errorLogger(e, res)
@@ -243,7 +280,7 @@ module.exports = function (app) {
     app.post('/api/spec/delete', passport.isLogged, async (req, res) => {
         try {
             const {user} = res.locals;
-            const specs = await db.spec.find({_id: {$in: req.body}, user}).populate({path: 'configurations', populate: db.configuration.population});
+            const specs = await db.spec.find({_id: {$in: req.body}, user}).populate(population);
             for (const spec of specs) {
                 await spec.delete()
             }
