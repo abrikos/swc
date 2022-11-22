@@ -80,7 +80,9 @@ export default function ({app}, inject) {
                     return modules > 12 ? [0, 2] : [0, 1, 2]
                 }
             case 'Memory':
-                return configuration.chassis.platform === 'G3' ? [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32] : [0, 2, 4, 6, 8, 10, 12]
+                return configuration.chassis.platform === 'G3' ?
+                    [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32] :
+                    [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24]
                 /*const memCount = configuration.parts.filter(p => p.component.category === 'CPU').reduce((a, b) => a + b.count, 0);
                 if (configuration.chassis.platform === 'G3') {
                     return memCount === 1 ? [0, 2, 4, 6, 8, 10, 12, 14, 16] : [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32]
