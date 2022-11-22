@@ -38,11 +38,7 @@
       </template>
       <template v-slot:item.controls="{item}">
         <div @click.stop>
-          <v-btn icon title="В буфер" @click="copyClipBoard(item)" height="50" color="primary">
-            <!--            <v-icon size="50">mdi-clipboard-text-multiple-outline</v-icon>-->
-            <img src="/icons/copy.png"/>
-          </v-btn>
-          &nbsp; &nbsp;
+          <SpecClipboardCopy :spec="item"/>
           <a class="v-btn" :href="`/api/spec/${item.id}/excel`" @click.stop title="В Excel">
             <v-icon size="50" color="#aa2238">mdi-microsoft-excel</v-icon>
           </a>
@@ -84,8 +80,10 @@
 
 <script>
 
+import SpecClipboardCopy from "~/components/SpecClipboardCopy";
 export default {
   name: "SpecsList",
+  components: {SpecClipboardCopy},
   data() {
     return {
       pagination: {
@@ -129,28 +127,7 @@ export default {
     async renameSpec(item) {
       await this.$axios.$put(`/spec/${item.id}/rename`, item)
     },
-    copyClipBoard(spec) {
-      const textArea = document.createElement("textarea");
-      spec.configurations.forEach(conf => {
-        textArea.value += conf.chassis.partNumber + '\t'
-            + conf.count + '\t'
-            + conf.chassis.params + '\t'
-            + conf.price + '\t'
-            + conf.priceTotal
-            + '\n';
-      })
-      document.body.appendChild(textArea);
-      textArea.focus();
-      textArea.select();
-      try {
-        const successful = document.execCommand('copy');
-        const msg = successful ? 'successful' : 'unsuccessful';
-        console.log('Copying text command was ' + msg);
-      } catch (err) {
-        console.log('Oops, unable to copy');
-      }
-      document.body.removeChild(textArea);
-    },
+
     dialogClose() {
       this.loadSpecs()
       this.dialogSpec = null

@@ -23,7 +23,7 @@ module.exports = function (app) {
             let confName = [conf.chassis.params]
             for (const part of conf.partsSorted) {
                 rowHeights.push({hpx: 15})
-                confName.push(part.component.description)
+                confName.push(part.component.description + '*' + part.count)
                 partRows.push([
                     {v: part.component.partNumber, s: {alignment: {horizontal: 'right'}, ...partStyle}},
                     {v: part.count, t: 'n', s: {alignment: {horizontal: 'center'}, ...partStyle}},

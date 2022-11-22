@@ -5,7 +5,7 @@
     <table class="cart">
       <thead>
       <th>Категория</th>
-      <th>Наименование</th>
+      <th>PartNumber</th>
       <th>Количество</th>
       <th>Цена</th>
       <th>Сумма</th>
@@ -16,22 +16,22 @@
         <td colspan="2">Платформа
           {{ configuration.chassis.partNumber }}
         </td>
-        <td>
+        <td  align="center">
           1
         </td>
-        <td>
+        <td align="right">
           {{ configuration.chassis.price }}
         </td>
-        <td>
+        <td align="right">
           {{ configuration.chassis.price }}
         </td>
       </tr>
       <tr v-for="(item, i) of configuration.partsSorted" :key="i">
         <td>{{ item.component.category }} {{ item.component.type }}</td>
         <td>{{ item.component.partNumber }}</td>
-        <td>{{ item.count }}</td>
-        <td>{{ item.component.price }}</td>
-        <td>{{ item.price }}</td>
+        <td align="center">{{ item.count }}</td>
+        <td align="right">{{ item.component.price }}</td>
+        <td align="right">{{ item.price }}</td>
         <td>
           <v-btn icon x-small color="red" @click="remove(item)">
             <v-icon>mdi-close</v-icon>

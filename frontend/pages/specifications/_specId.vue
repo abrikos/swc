@@ -1,20 +1,14 @@
 <template>
   <div v-if="spec">
-    <v-row justify="center" align="center">
+    <v-row justify="center" align="center" style="border-bottom: 1px solid silver">
       <v-col>
-        <h2>{{ spec.name }} </h2>
+        <h2>
+          <SpecNameEdit :spec="spec"> {{ spec.name }}</SpecNameEdit>
+        </h2>
       </v-col>
-      <v-col sm="2">Сумма: {{ spec.price }}</v-col>
       <v-col sm="4" align="right">
-        <v-btn v-if="!showAddConfiguration" @click="showAddConfiguration=true" color="primary"
-               title="Добавить конфигурацию" icon>
-          <v-icon size="50">mdi-plus-circle</v-icon>
-        </v-btn>
         &nbsp;
-        <v-btn icon @click="$copyToClipBoard(spec)" color="primary">
-          <!--          <v-icon size="50">mdi-clipboard-text-multiple-outline</v-icon>-->
-          <img src="/icons/copy.png"/>
-        </v-btn>
+        <SpecClipboardCopy :spec="spec"/>
         &nbsp;
         <a :href="`/api/spec/${id}/excel`" class="v-btn">
           <v-icon size="50" color="#aa2238">mdi-microsoft-excel</v-icon>
@@ -33,15 +27,78 @@
         </v-btn>
       </v-col>
     </v-row>
-    <v-text-field
-        v-model="spec.name"
-        outlined
-        :append-icon="nameChanged? 'mdi-check' : ''"
-        @keyup="nameChanged = true"
-        @click:append="renameSpec(spec); nameChanged = false"
-        @keyup.enter="renameSpec(spec); nameChanged = false"
-        hide-details
-    />
+    <br/>
+    <table v-if="!showAddConfiguration">
+      <thead>
+      <tr>
+        <td>
+          <v-btn v-if="!showAddConfiguration" @click="showAddConfiguration=true" color="primary"
+          >
+            <!--            <v-icon size="50">mdi-plus-circle</v-icon>-->
+            Добавить конфигурацию
+          </v-btn>
+        </td>
+        <td>Итого, $: {{ spec.price }}</td>
+        <td width="70">Кол-во</td>
+        <td width="70">Цена</td>
+        <td width="70">Сумма</td>
+      </tr>
+      </thead>
+      <tbody v-for="config of spec.configurations" :key="config.id">
+      <tr>
+        <td colspan="5">
+          <router-link :to="'/configurations/' + config.id" v-if="nameEditConf!==config.id">
+            {{ config.name }}
+          </router-link>
+          <v-btn icon v-if="!nameEditConf" @click="nameEditConf=config.id">
+            <v-icon>mdi-pencil</v-icon>
+          </v-btn>
+          <v-text-field
+              v-if="nameEditConf===config.id"
+              v-model="config.name"
+              outlined
+              :append-icon="nameChangedConf === config.id ? `mdi-check` : ''"
+              @click:append="renameConfig(config)"
+              @keyup.enter="renameConfig(config)"
+              @keyup="nameChangedConf=config.id"
+              hide-details
+          />
+        </td>
+      </tr>
+      <tr>
+        <td colspan="2">
+          <v-row align="center">
+            <v-col align="center" sm="2">
+              <strong>{{ config.chassis.partNumber }}</strong>
+              <br/>
+              <v-btn icon @click="removeFromSpec(config.id)" color="red">
+                <img src="/icons/delete.png"/>
+              </v-btn>
+              <v-btn icon @click="copyConfiguration(config)" color="primary">
+                <img src="/icons/copyFiles.png"/>
+              </v-btn>
+            </v-col>
+            <v-col>
+              {{ config.chassis.descFull }}.
+              <span style="color:red" v-for="(error,i) of $validator(config).errors" :key="i">
+                {{ error }}.
+              </span>
+            </v-col>
+          </v-row>
+        </td>
+        <td>
+          <ConfigurationCount :item="config" :onChange="loadSpec"/>
+        </td>
+        <td align="right">{{ config.price }}</td>
+        <td align="right">{{ config.priceTotal }}</td>
+      </tr>
+      <tr>
+        <td colspan="5">
+          <hr/>
+        </td>
+      </tr>
+      </tbody>
+    </table>
     <div v-if="showAddConfiguration">
       <hr/>
       <h3>Добавить конфигурацию</h3>
@@ -62,7 +119,8 @@
           <v-list>
             <v-subheader>Шасси</v-subheader>
             <v-list-item-group>
-              <v-list-item v-for="p of chassis.filter(c=>c.platform === platforms[platformSelected])" :key="p.id" @click="addToSpec(p)">
+              <v-list-item v-for="p of chassis.filter(c=>c.platform === platforms[platformSelected])" :key="p.id"
+                           @click="addToSpec(p)">
                 <v-list-item-icon>
                   <img :src="`/upload/${p.partNumber}.jpg`" height="20px"/>
                 </v-list-item-icon>
@@ -80,47 +138,8 @@
       <div v-for="config of spec.configurations" :key="config.id" class="configuration">
         <div class="config-header">
 
-          <v-row align="center">
-            <v-col sm="8">
-              <v-text-field
-                  v-model="config.name"
-                  outlined
-                  :append-icon="nameChangedConf === config.id ? `mdi-check` : ''"
-                  @click:append="renameConfig(config)"
-                  @keyup.enter="renameConfig(config)"
-                  @keyup="nameChangedConf=config.id"
-                  hide-details
-              />
-            </v-col>
-            <v-col>
-              <router-link :to="'/configurations/' + config.id" class="v-btn">
-                <v-icon>mdi-eye</v-icon>
-              </router-link>
-            </v-col>
-          </v-row>
         </div>
-        <v-row align="center">
-          <v-col align="center" sm="2">
-            <strong>{{ config.chassis.partNumber }}</strong>
-            <br/>
-            <v-btn icon @click="removeFromSpec(config.id)" color="red">
-              <img src="/icons/delete.png"/>
-            </v-btn>
-            &nbsp;&nbsp;
-            <v-btn icon @click="copyConfiguration(config)" color="primary">
-              <img src="/icons/copyFiles.png"/>
-            </v-btn>
-          </v-col>
-          <v-col>{{ config.chassis.descFull }}</v-col>
-          <v-col sm="1">Кол-во:
-            <ConfigurationCount :item="config" :onChange="loadSpec"/>
-          </v-col>
-          <v-col sm="1">Цена: {{ config.price }}</v-col>
-          <v-col sm="1">Сумма: {{ config.priceTotal }}</v-col>
-        </v-row>
-        <v-alert border="top" color="red lighten-2" dark v-for="(error,i) of $validator(config).errors" :key="i">
-          {{ error }}
-        </v-alert>
+
       </div>
     </div>
   </div>
@@ -128,15 +147,18 @@
 
 <script>
 import ConfigurationCount from "~/components/ConfigurationCount";
+import SpecNameEdit from "~/components/SpecNameEdit";
 
 export default {
   name: "_spec-view",
-  components: {ConfigurationCount},
+  components: {SpecNameEdit, ConfigurationCount},
   data() {
     return {
       chassis: [],
       nameChanged: false,
+      nameEdit: false,
       nameChangedConf: false,
+      nameEditConf: false,
       checked: {},
       showAddConfiguration: false,
       spec: null,
@@ -183,6 +205,7 @@ export default {
     async renameConfig(item) {
       await this.$axios.$put(`/configuration/${item.id}/field/name`, item)
       this.nameChangedConf = false
+      this.nameEditConf = false
     },
     async removeSpec(item) {
       if (window.confirm(`Удалить спецификацию "${item.name}"?`)) {
@@ -190,9 +213,7 @@ export default {
         await this.loadSpecs()
       }
     },
-    async renameSpec(item) {
-      await this.$axios.$put(`/spec/${item.id}/rename`, item)
-    },
+
     async removeFromSpec(id) {
       await this.$axios.$delete(`/spec/${this.id}/configurations/${id}/remove`, this.checkedArray)
       await this.loadSpec()
@@ -217,8 +238,11 @@ export default {
 h2
   margin: 9px 0 9px 0
 
+table
+  td
+    border-color: red
+
 .config-header
-  background-color: #ccc
   padding: 10px
 
   a
@@ -231,8 +255,4 @@ h2
   text-align: right
   font-weight: bold
 
-table
-  td
-    border: 1px solid silver
-    padding: 5px
 </style>

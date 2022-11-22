@@ -1,7 +1,8 @@
 <template>
   <div v-if="configuration">
     <h1 style="display: flex; justify-content: center; align-items: center; justify-content: space-between">
-      {{ configuration.name || configuration.chassis.partNumber }}
+
+      <ConfNameEdit :conf="configuration">{{ configuration.name || configuration.chassis.partNumber }}</ConfNameEdit>
       <v-btn @click.stop="deleteConfiguration" icon color="red" x-small title="Удалить">
         <img src="/icons/delete.png"/>
       </v-btn>
@@ -36,20 +37,14 @@
         </v-data-table>
       </v-col>
       <v-col sm="5">
-        <v-text-field
-            v-model="configuration.name"
-            outlined
-            :append-icon="nameChanged? 'mdi-check' : ''"
-            @keyup="nameChanged = true"
-            @click:append="changeField('name', configuration); nameChanged = false"
-            @keyup.enter="changeField('name', configuration); nameChanged = false"
-        />
         {{ configuration.chassis.platform }} - {{ configuration.chassis.params }}
         <Basket :configuration="configuration" :reload="loadConfiguration"/>
         <br/>
         В составе спецификаций: <br/>
         <div v-for="spec of specs" :key="spec.id">
-          <router-link :to="'/specifications/'+spec.id">{{ spec.name }}</router-link>
+          <SpecNameEdit :spec="spec">
+            <router-link :to="'/specifications/'+spec.id">{{ spec.name }}</router-link>
+          </SpecNameEdit>
         </div>
         <v-alert border="top" color="red lighten-2" dark v-for="(error,i) of validator.errors" :key="i">
           {{ error }}
@@ -64,10 +59,12 @@
 <script>
 import Tabs from "~/components/Tabs";
 import Basket from "~/components/Basket";
+import SpecNameEdit from "~/components/SpecNameEdit";
+import ConfNameEdit from "~/components/ConfNameEdit";
 
 export default {
   name: "configurator-parts",
-  components: {Basket, Tabs},
+  components: {ConfNameEdit, SpecNameEdit, Basket, Tabs},
   data() {
     return {
       nameChanged: false,
@@ -100,7 +97,6 @@ export default {
       return this.$componentCount(this.configuration, this.tab)
     },
     componentsCurrent() {
-      console.log('zzzzzzzz', JSON.stringify(this.tab))
       return this.$components(this.configuration, this.componentsAll, this.tab)
     },
     componentsCurrentFiltered() {
