@@ -32,7 +32,6 @@
       </v-list>-->
     </v-col>
   </v-row>
-  <v-btn @click="showDialog=false">Отмена</v-btn>
 </div>
 </template>
 

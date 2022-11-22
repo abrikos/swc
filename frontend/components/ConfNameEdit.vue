@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="width: 80%">
     <span v-if="!edited" @click="edited=true">
       <slot/>
       <v-btn icon v-if="!edited" @click="edited=true">
@@ -7,6 +7,7 @@
       </v-btn>
     </span>
     <v-text-field
+        autofocus
         v-if="edited"
         v-model="conf.name"
         outlined

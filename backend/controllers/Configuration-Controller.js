@@ -69,7 +69,7 @@ module.exports = function (app) {
                 },
                 {category: 'Power'},
             ] : [{category: 'Cable'}]
-            const components = await db.component.find()
+            const components = await db.component.find().sort({partNumber:1})
             const specs = (await db.spec.find()).filter(s=>s.configurations.includes(configurationId));
             res.send({configuration, tabs, components, specs})
         } catch (e) {

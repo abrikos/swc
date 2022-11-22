@@ -89,7 +89,7 @@ export default {
     return {
       tabs:[
           {category:'Мои', id:'my'},
-          {category:'Расшаренные', id:'shared'},
+          {category:'Общие', id:'shared'},
       ],
       tab:{category:'Мои', id:'my'},
       pagination: {

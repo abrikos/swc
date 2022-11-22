@@ -45,22 +45,11 @@
       <tbody v-for="config of spec.configurations" :key="config.id">
       <tr>
         <td colspan="5">
-          <router-link :to="'/configurations/' + config.id" v-if="nameEditConf!==config.id">
-            {{ config.name }}
-          </router-link>
-          <v-btn icon v-if="!nameEditConf" @click="nameEditConf=config.id">
-            <v-icon>mdi-pencil</v-icon>
-          </v-btn>
-          <v-text-field
-              v-if="nameEditConf===config.id"
-              v-model="config.name"
-              outlined
-              :append-icon="nameChangedConf === config.id ? `mdi-check` : ''"
-              @click:append="renameConfig(config)"
-              @keyup.enter="renameConfig(config)"
-              @keyup="nameChangedConf=config.id"
-              hide-details
-          />
+          <ConfNameEdit :conf="config">
+            <router-link :to="'/configurations/' + config.id" v-if="nameEditConf!==config.id">
+              {{ config.name }}
+            </router-link>
+          </ConfNameEdit>
         </td>
       </tr>
       <tr>
@@ -99,7 +88,7 @@
     </table>
     <ConfigCreateForSpec v-if="showDialog==='addConfig'" :spec="spec"/>
     <SpecShare v-if="showDialog==='share'" :spec="spec"/>
-    <v-btn @click="showDialog=false" v-if="showDialog==='share'" >Закрыть</v-btn>
+    <v-btn @click="showDialog=false" v-if="showDialog" >Закрыть</v-btn>
   </div>
 </template>
 

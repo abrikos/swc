@@ -7,6 +7,7 @@
       </v-btn>
     </span>
     <v-text-field
+        autofocus
         v-if="edited"
         v-model="spec.name"
         outlined

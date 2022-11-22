@@ -1,8 +1,8 @@
 <template>
   <div v-if="configuration">
     <h1 style="display: flex; justify-content: center; align-items: center; justify-content: space-between">
-
       <ConfNameEdit :conf="configuration">{{ configuration.name || configuration.chassis.partNumber }}</ConfNameEdit>
+      <small>{{ configuration.chassis.platform }} - {{ configuration.chassis.params }}</small>
       <v-btn @click.stop="deleteConfiguration" icon color="red" x-small title="Удалить">
         <img src="/icons/delete.png"/>
       </v-btn>
@@ -26,26 +26,30 @@
                       :value="calcCount(item)"
                       hide-details/>
           </template>
-          <template v-slot:header.description>
-            <v-text-field
-                hide-details
-                label="Фильтр описания"
-                outlined flat dense class="table-filter"
-                v-model="filter"
-            />
+          <template v-slot:header="props">
+            <tr>
+              <td></td>
+              <td>
+                <v-text-field
+                    hide-details
+                    label="Фильтр описания"
+                    outlined flat dense class="table-filter"
+                    v-model="filter"
+                />
+              </td>
+            </tr>
           </template>
         </v-data-table>
       </v-col>
       <v-col sm="5">
-        {{ configuration.chassis.platform }} - {{ configuration.chassis.params }}
-        <Basket :configuration="configuration" :reload="loadConfiguration"/>
-        <br/>
         В составе спецификаций: <br/>
         <div v-for="spec of specs" :key="spec.id">
           <SpecNameEdit :spec="spec">
             <router-link :to="'/specifications/'+spec.id">{{ spec.name }}</router-link>
           </SpecNameEdit>
         </div>
+        <Basket :configuration="configuration" :reload="loadConfiguration"/>
+        <br/>
         <v-alert border="top" color="red lighten-2" dark v-for="(error,i) of validator.errors" :key="i">
           {{ error }}
         </v-alert>
@@ -79,8 +83,8 @@ export default {
       configuration: null,
       headers: [
         {text: 'Партномер', value: 'partNumber', width: '20%'},
-        {text: 'Описание', value: 'description', width: '50%', sortable: false},
-        {text: 'Цена', value: 'price', width: '10%'},
+        {text: 'Описание', value: 'description', width: '50%'},
+        {text: 'Цена', value: 'price', width: '10%', sortable: false},
         {text: '', value: 'count', width: '20%', sortable: false}
       ],
       tabs: []
