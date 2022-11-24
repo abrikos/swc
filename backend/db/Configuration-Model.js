@@ -104,9 +104,19 @@ schema.virtual('power')
         return this.parts.filter(p => p.component.category === 'Power').reduce((a, b) => a + b.component.power, 0)
     })
 
+schema.virtual('riserAvailable')
+    .get(function () {
+        return this.chassis.units * 2 - this.riserCount;
+    })
+
 schema.virtual('riserX16Count')
     .get(function () {
         return this.parts.filter(p => p.component.riserPorts === 16).reduce((a, b) => a + b.count, 0)
+    })
+
+schema.virtual('riserCount')
+    .get(function () {
+        return this.parts.filter(p => p.component.category === 'Riser').reduce((a, b) => a + b.count, 0)
     })
 
 schema.virtual('parts', {

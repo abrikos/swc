@@ -2,7 +2,6 @@
   <div v-if="configuration">
     <h1 style="display: flex; justify-content: center; align-items: center; justify-content: space-between">
       <ConfNameEdit :conf="configuration">{{ configuration.name || configuration.chassis.partNumber }}</ConfNameEdit>
-      <small>{{ configuration.chassis.platform }} - {{ configuration.chassis.params }}</small>
       <v-btn @click.stop="deleteConfiguration" icon color="red" x-small title="Удалить">
         <img src="/icons/delete.png"/>
       </v-btn>
@@ -42,6 +41,8 @@
         </v-data-table>
       </v-col>
       <v-col sm="5">
+        <small>{{ configuration.chassis.platform }} - {{ configuration.chassis.units }}U - {{ configuration.chassis.params }}</small>
+        <br/>
         В составе спецификаций: <br/>
         <div v-for="spec of specs" :key="spec.id">
           <SpecNameEdit :spec="spec">

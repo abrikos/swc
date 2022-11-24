@@ -38,7 +38,7 @@ module.exports = function (app) {
             const {user} = res.locals;
             const {configurationId} = req.params;
             const configuration = await db.configuration.findOne({_id: configurationId, user}).populate(db.configuration.population);
-            if(!configuration) res.sendStatus(404)
+            if (!configuration) res.sendStatus(404)
             const tabs = !['JBOD'].includes(configuration.chassis.platform) ? [
                 //{id: 'base', label: 'Основа'},
 
@@ -69,8 +69,8 @@ module.exports = function (app) {
                 },
                 {category: 'Power'},
             ] : [{category: 'Cable'}]
-            const components = await db.component.find().sort({partNumber:1})
-            const specs = (await db.spec.find()).filter(s=>s.configurations.includes(configurationId));
+            const components = await db.component.find().sort({partNumber: 1})
+            const specs = (await db.spec.find()).filter(s => s.configurations.includes(configurationId));
             res.send({configuration, tabs, components, specs})
         } catch (e) {
             app.locals.errorLogger(e, res)
@@ -80,17 +80,21 @@ module.exports = function (app) {
     //db.spec.find().then(c=>console.log(c))
 
 
-
     app.get('/api/configuration/create/chassis/:chassis', passport.isLogged, async (req, res) => {
         try {
             const {user} = res.locals;
+            const {chassis} = req.params;
             const configuration = await db.configuration.create({
-                chassis: req.params.chassis,
+                chassis,
                 user,
                 name: 'Конфигурация от ' + moment().format('YYYY-MM-DD HH:mm')
             })
-            const spec = await db.spec.create({name: 'Спецификация от ' + moment().format('YYYY-MM-DD HH:mm'), user, configurations: [configuration]});
             await configuration.populate(db.configuration.population);
+            const partNumber = configuration.chassis.units === 1 ? 'x16riser1U' : '3x8riser2U'
+            const component = await db.component.findOne({partNumber})
+            await db.part.create({component, configuration, count: 1})
+            await db.spec.create({name: 'Спецификация от ' + moment().format('YYYY-MM-DD HH:mm'), user, configurations: [configuration]});
+
             res.send(configuration)
         } catch (e) {
             app.locals.errorLogger(e, res)
@@ -119,7 +123,7 @@ module.exports = function (app) {
             const configuration = await db.configuration.findById(configurationId).populate(db.configuration.population);
             if (!configuration.user.equals(user.id)) throw {error: 403, message: 'Access denied'}
             const component = await db.component.findById(componentId);
-            if (!component) throw {message: 'Wrong component'}
+            if (!component) throw {error: 406, message: 'Wrong component'}
             if (count)
                 await db.part.updateOne({component, configuration}, {count}, {upsert: true})
             else

@@ -60,8 +60,15 @@ export default function ({app}, inject) {
         if (!configuration.fcCount && !configuration.raidCount && configuration.diskCount > 12) {
             result.errors.push(`Для платформы сколичеством дисков более 12 необходим RAID или HBA`)
         }
+        if (configuration.cpuCount < 2 && configuration.riserCount) {
+            const cpuNeeded = Math.ceil(configuration.riserCount / configuration.chassis.units)
+            result.errors.push(`Для выбранного количество райзеров (${configuration.riserCount}) недостаточно процессоров. Минимум: ${cpuNeeded}`)
+        }
+        if (configuration.riserAvailable < 0) {
+            result.errors.push(`ОШИБКА В КОЛИЧЕСТВЕ (select): райзеров установлено больше чем возможно ${configuration.riserCount}`)
+        }
 
-        const rearBaysNeeded = [0,0,1,2,2];
+        const rearBaysNeeded = [0, 0, 1, 2, 2];
         if (configuration.rearBayCount < rearBaysNeeded[configuration.nvmeCount]) {
             result.errors.push(`Для выбранных SSD U.2 NVMe (${configuration.nvmeCount})  необходимо ${rearBaysNeeded[configuration.nvmeCount]} Rear bay (${configuration.rearBayCount})`)
         }
@@ -83,12 +90,14 @@ export default function ({app}, inject) {
                 return configuration.chassis.platform === 'G3' ?
                     [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32] :
                     [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24]
-                /*const memCount = configuration.parts.filter(p => p.component.category === 'CPU').reduce((a, b) => a + b.count, 0);
-                if (configuration.chassis.platform === 'G3') {
-                    return memCount === 1 ? [0, 2, 4, 6, 8, 10, 12, 14, 16] : [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32]
-                } else {
-                    return memCount === 1 ? [0, 2, 4, 6, 8, 10, 12] : [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24]
-                }*/
+            /*const memCount = configuration.parts.filter(p => p.component.category === 'CPU').reduce((a, b) => a + b.count, 0);
+            if (configuration.chassis.platform === 'G3') {
+                return memCount === 1 ? [0, 2, 4, 6, 8, 10, 12, 14, 16] : [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32]
+            } else {
+                return memCount === 1 ? [0, 2, 4, 6, 8, 10, 12] : [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24]
+            }*/
+            case 'Riser':
+                return Array.from(Array(configuration.chassis.units * 2 + 1).keys());
             case 'Power':
                 return [0, 1]
         }

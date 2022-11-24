@@ -30,7 +30,7 @@ schema.virtual('date')
 schema.virtual('discs')
     .get(function () {
         const match = this.params.match(/(\d+)\*.*?FF/)
-        return  match[1] * 1;
+        return match[1] * 1;
     })
 
 schema.virtual('discsOnlySmall')
@@ -40,7 +40,7 @@ schema.virtual('discsOnlySmall')
 
 schema.virtual('cpu')
     .get(function () {
-        if(this.platform !== 'JBOD') {
+        if (this.platform !== 'JBOD') {
             return this.platforms === 'AMD' ? 'AMD' : 'Intel';
         }
     })
@@ -48,6 +48,12 @@ schema.virtual('cpu')
 schema.virtual('isSFF')
     .get(function () {
         return this.disksFormFactor === 'SFF'
+    })
+
+schema.virtual('units')
+    .get(function () {
+        const match = this.descFull.match(/(\d)U/)
+        return match[1] * 1
     })
 
 
