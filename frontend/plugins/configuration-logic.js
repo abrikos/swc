@@ -97,7 +97,7 @@ export default function ({app}, inject) {
                 return memCount === 1 ? [0, 2, 4, 6, 8, 10, 12] : [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24]
             }*/
             case 'Riser':
-                return Array.from(Array(configuration.chassis.units * 2 + 1).keys());
+                return Array.from(Array(configuration.chassis.units * 2 + 1 - configuration.rearBayCount).keys());
             case 'Power':
                 return [0, 1]
         }
@@ -107,7 +107,8 @@ export default function ({app}, inject) {
             case 'SSD m.2':
                 return [0, 1, 2]
             case 'Rear bay':
-                return [0, 1, 2]
+                return Array.from(Array(configuration.chassis.units * 2 + 1 - configuration.riserCount).keys());
+                //return [0, 1, 2]
             case 'LAN OCP 3.0':
                 return [0, 1]
             case 'SSD U.2 NVMe':
