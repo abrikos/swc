@@ -15,15 +15,20 @@
     >
       <template v-slot:header="props">
         <tr>
-          <th></th>
-          <th>
+          <td/>
+          <td>
             <v-text-field outlined placeholder="Фильтр по дате" v-model="dateSearch" dense hide-details
                           style="margin: 0 5px"/>
-          </th>
-          <th>
+          </td>
+          <td>
             <v-text-field outlined placeholder="Фильтр по названию" v-model="nameSearch" dense hide-details
                           style="margin: 0 5px"/>
-          </th>
+          </td>
+          <td/>
+          <td/>
+          <td v-if="tab.id==='shared'">
+            <v-text-field outlined placeholder="Фильтр по e-mail" v-model="emailSearch" dense hide-details/>
+          </td>
         </tr>
       </template>
       <template v-slot:no-data>
@@ -102,6 +107,7 @@ export default {
       },
       dateSearch: '',
       nameSearch: '',
+      emailSearch: '',
       dialogSpec: null,
       newSpecEdited: false,
       newSpec: '',
@@ -122,16 +128,18 @@ export default {
         {text: 'Название', value: 'name'},
         {text: 'Сумма', value: 'price', align: 'right'},
         {text: 'Конфигураций', value: 'count', width: '250px', align: 'center'},
-        {text: '', value: 'controls', sortable: false}
       ]
       if(this.tab.id==='shared')
         headers.push({text: 'От кого', value: 'shared.email'},)
+      headers.push({text: '', value: 'controls', sortable: false, width: '180px'})
       return headers
     },
     specsFiltered() {
       return this.specs
-          .filter(s => this.tab.id==='my' ? !s.shared : s.shared)
-          .filter(s => s.name.toLowerCase().match(this.nameSearch.toLowerCase()) && s.date.match(this.dateSearch.toLowerCase()))
+          .filter(s => this.tab.id==='my' ? !s.shared : s.shared && s.shared.email.match(this.emailSearch.toLowerCase()))
+          .filter(s => s.name.toLowerCase().match(this.nameSearch.toLowerCase())
+              && s.date.match(this.dateSearch.toLowerCase())
+          )
     },
     checkedArray() {
       return Object.keys(this.checked).filter(k => this.checked[k])
