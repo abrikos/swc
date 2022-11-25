@@ -96,7 +96,6 @@ module.exports = function (app) {
         try {
             const user = await db.user.findById(req.body.id)
             const admins = await db.user.find({isAdmin: true})
-            console.log(admins.length, user.isAdmin)
             if (admins.length <= 2 && user.isAdmin) throw {error: 406, message: 'Невозможно снять привилегии т.к. количество оставшихся админов 2'}
             user.isAdmin = !user.isAdmin
             await user.save()

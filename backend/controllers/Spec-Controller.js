@@ -38,7 +38,6 @@ module.exports = function (app) {
             }
             const styleConfCount = JSON.parse(JSON.stringify(confStyle))
             styleConfCount.alignment.horizontal = 'center'
-            console.log(confStyle)
             const confRow = [
                 {v: conf.chassis.partNumber, s: confStyle},
                 {v: conf.count, t: 'n', s: styleConfCount},
@@ -127,7 +126,6 @@ module.exports = function (app) {
                     newConfigs.push(conf._id)
                 }
                 spec.configurations = newConfigs
-                console.log(spec)
                 await spec.save()
             }
             res.send(found)
