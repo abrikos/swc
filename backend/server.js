@@ -22,7 +22,7 @@ const portWeb = process.env.API_PORT || 4000;
 
 //app.set("view engine", "ejs");
 
-function logger(e, res){
+function errorLogger(e, res){
   console.log(e)
   try {
     throw Error('')
@@ -38,11 +38,11 @@ function logger(e, res){
 
 app.use(function(req,res, next) {
   res.locals.db = db;
-  res.locals.errorLogger = logger;
+  res.locals.errorLogger = errorLogger;
   next();
 });
 app.locals.db = db;
-app.locals.errorLogger = logger
+app.locals.errorLogger = errorLogger
 controllers(app);
 
 app.use(function (req, res) {

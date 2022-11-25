@@ -33,12 +33,13 @@ module.exports = function (app) {
         }
     })
 
+
     app.get('/api/configuration/:configurationId', passport.isLogged, async (req, res) => {
         try {
             const {user} = res.locals;
             const {configurationId} = req.params;
             const configuration = await db.configuration.findOne({_id: configurationId, user}).populate(db.configuration.population);
-            if (!configuration) res.sendStatus(404)
+            if (!configuration) return res.sendStatus(404)
             const tabs = !['JBOD'].includes(configuration.chassis.platform) ? [
                 //{id: 'base', label: 'Основа'},
 

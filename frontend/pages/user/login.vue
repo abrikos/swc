@@ -59,8 +59,7 @@ export default {
   },
   methods: {
     async submit() {
-      const x = await this.$auth.login({data:this.login})
-      console.log(x)
+      await this.$auth.login({data:this.login}).catch(e=>console.log('Login problem', e))
       if(this.$store.getters.getLoggedUser)
         await this.$router.push(this.$store.getters.getLoginRedirect)
     }

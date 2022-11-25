@@ -56,6 +56,7 @@ async function isLogged(req, res, next) {
     try {
         const found = await methods.getUser(req, res);
         if (!found) throw({error: 401, message: 'Must be logged user'})
+        if (found.blocked) throw({error: 406, message: 'Пользователь заблокирован'})
         res.locals.user = found;
         return next()
     } catch (e) {

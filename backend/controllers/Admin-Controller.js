@@ -29,7 +29,7 @@ module.exports = function (app) {
 
 
     app.get('/api/admin/users', passport.isAdmin, async (req, res) => {
-        const users = await db.user.find().sort({logged:-1})
+        const users = await db.user.find().sort({logged: -1})
         res.send(users)
     })
 
@@ -84,10 +84,17 @@ module.exports = function (app) {
     })
 
     app.post('/api/admin/switch-role', passport.isAdmin, async (req, res) => {
-        const user = await db.user.findById(req.body.id)
-        user.isAdmin = !user.isAdmin
-        await user.save()
-        res.sendStatus(200)
+        try {
+            const user = await db.user.findById(req.body.id)
+            const admins = await db.user.find({isAdmin: true})
+            console.log(admins.length, user.isAdmin)
+            if (admins.length <= 2 && user.isAdmin) throw {error: 406, message: 'Невозможно снять привилегии т.к. количество оставшихся админов 2'}
+                user.isAdmin = !user.isAdmin
+            await user.save()
+            res.sendStatus(200)
+        } catch (e) {
+            app.locals.errorLogger(e, res)
+        }
     })
 
     //db.chassis.find().then(c=>console.log(c.map(cc=>cc.form)))
@@ -107,7 +114,7 @@ module.exports = function (app) {
     })
 
     async function parseXLS(file, deleteAll) {
-        if(deleteAll){
+        if (deleteAll) {
             await db.component.deleteMany({})
             await db.chassis.deleteMany({})
             await db.configuration.deleteMany({})
@@ -155,7 +162,7 @@ module.exports = function (app) {
                 }
             }
             return {chassis, components}
-        }catch (e) {
+        } catch (e) {
             console.error(e)
         }
     }

@@ -24,6 +24,18 @@
           Удалить
         </v-btn>
       </template>
+      <template v-slot:header="props">
+        <tr>
+          <td>
+            <v-text-field
+                hide-details
+                label="Фильтр описания"
+                outlined flat dense class="table-filter"
+                v-model="filter"
+            />
+          </td>
+        </tr>
+      </template>
     </v-data-table>
   </div>
 </template>
@@ -33,7 +45,8 @@ export default {
   name: "users",
   data() {
     return {
-      users: [],
+      filter:'',
+      usersFound: [],
       headers: [
         {text: 'e-mail', value: 'email'},
         {text: 'Зарегистрирован', value: 'date'},
@@ -42,13 +55,18 @@ export default {
       ]
     }
   },
+  computed:{
+    users(){
+      return this.usersFound.filter(u=>u.email ? u.email.match(this.filter) : true)
+    }
+  },
   created() {
     this.reloadList()
   },
   methods: {
-    reloadList() {
-      this.$axios.$get('/admin/users')
-          .then(res => this.users = res)
+    async reloadList() {
+      this.usersFound = await this.$axios.$get('/admin/users')
+
     },
     handleClick(e) {
       console.log(e)
