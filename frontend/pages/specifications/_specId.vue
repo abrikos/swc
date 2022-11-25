@@ -155,7 +155,7 @@ export default {
     async removeSpec(item) {
       if (window.confirm(`Удалить спецификацию "${item.name}"?`)) {
         await this.$axios.$post('/spec/delete', [item.id])
-        await this.loadSpecs()
+        this.$router.push('/specifications/list')
       }
     },
 
