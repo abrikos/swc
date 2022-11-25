@@ -27,6 +27,8 @@ module.exports = function (app) {
 
     app.get('/api/auth/user', passport.isLogged, async (req, res) => {
         const {user} = res.locals;
+        user.logged = moment().unix();
+        await user.save();
         res.send(passport.adaptUser(user))
     })
 

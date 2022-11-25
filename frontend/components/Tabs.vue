@@ -61,7 +61,7 @@ export default {
 .tabs-small
   display: none
   @media (max-width: 1023px)
-    display: flex
+    display: block
 
 .tabs-large
   @media (max-width: 1023px)

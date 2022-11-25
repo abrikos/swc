@@ -29,8 +29,21 @@ module.exports = function (app) {
 
 
     app.get('/api/admin/users', passport.isAdmin, async (req, res) => {
-        const users = await db.user.find()
+        const users = await db.user.find().sort({logged:-1})
         res.send(users)
+    })
+
+    app.get('/api/admin/user/:id/block', passport.isAdmin, async (req, res) => {
+        const user = await db.user.findById(req.params.id)
+        user.blocked = !user.blocked
+        await user.save()
+        res.sendStatus(200)
+    })
+
+    app.get('/api/admin/user/:id/delete', passport.isAdmin, async (req, res) => {
+        const user = await db.user.findById(req.params.id)
+        await user.delete()
+        res.sendStatus(200)
     })
 
     app.get('/api/admin/chassis', passport.isAdmin, async (req, res) => {
