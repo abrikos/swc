@@ -41,7 +41,7 @@ schema.virtual('discsOnlySmall')
 schema.virtual('cpu')
     .get(function () {
         if (this.platform !== 'JBOD') {
-            return this.platforms === 'AMD' ? 'AMD' : 'Intel';
+            return this.platform === 'AMD' ? 'AMD' : 'Intel';
         }
     })
 

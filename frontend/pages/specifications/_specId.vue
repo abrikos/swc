@@ -45,11 +45,20 @@
       <tbody v-for="config of spec.configurations" :key="config.id">
       <tr>
         <td colspan="5">
-          <ConfNameEdit :conf="config">
-            <router-link :to="'/configurations/' + config.id" v-if="nameEditConf!==config.id">
-              {{ config.name }}
-            </router-link>
-          </ConfNameEdit>
+          <v-row>
+            <v-col sm="1" v-if="$validator(config).errors.length">
+              <v-btn icon color="warning" title="В конфигурации есть ошибки" :to="'/configurations/' + config.id" >
+                <v-icon >mdi-alert-decagram</v-icon>
+              </v-btn>
+            </v-col>
+            <v-col>
+              <ConfNameEdit :conf="config">
+                <router-link :to="'/configurations/' + config.id" v-if="nameEditConf!==config.id">
+                  {{ config.name }}
+                </router-link>
+              </ConfNameEdit>
+            </v-col>
+          </v-row>
         </td>
       </tr>
       <tr>
@@ -67,9 +76,6 @@
             </v-col>
             <v-col>
               {{ config.chassis.descFull }}.
-              <span style="color:red" v-for="(error,i) of $validator(config).errors" :key="i">
-                {{ error }}.
-              </span>
             </v-col>
           </v-row>
         </td>

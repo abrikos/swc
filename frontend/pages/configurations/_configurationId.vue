@@ -45,7 +45,7 @@
           {{ configuration.chassis.params }}</small>
         <br/>
         <div v-if="specs.length">
-          В составе спецификаций:
+<!--          В составе спецификаций:-->
           <div v-for="spec of specs" :key="spec.id">
             <SpecNameEdit :spec="spec">
               <router-link :to="'/specifications/'+spec.id">{{ spec.name }}</router-link>
