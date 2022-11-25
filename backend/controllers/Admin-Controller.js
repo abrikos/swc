@@ -14,7 +14,7 @@ module.exports = function (app) {
         const where = {$and: [{email: {$ne: process.env.ADMIN_EMAIL}}, {blocked: false}, {logged: {$lt: blockFromDate}}]}
         db.user.updateMany(where, {blocked: true})
             .then(console.log)
-    }, 3600 * 24)
+    }, 3600 * 1000 * 24)
 
     async function initAdmin() {
         //await db.user.deleteMany().then(console.log)
