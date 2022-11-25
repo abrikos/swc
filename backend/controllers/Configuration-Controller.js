@@ -94,9 +94,20 @@ module.exports = function (app) {
             const partNumber = configuration.chassis.units === 1 ? 'x16riser1U' : '3x8riser2U'
             const component = await db.component.findOne({partNumber})
             await db.part.create({component, configuration, count: 1})
-            await db.spec.create({name: 'Спецификация от ' + moment().format('YYYY-MM-DD HH:mm'), user, configurations: [configuration]});
-
             res.send(configuration)
+        } catch (e) {
+            app.locals.errorLogger(e, res)
+        }
+    })
+
+    app.get('/api/configuration/:_id/spec/attach', passport.isLogged, async (req, res) => {
+        try {
+            const {user} = res.locals;
+            const {_id} = req.params;
+            const configuration = await db.configuration.findOne({_id, user}).populate(db.configuration.population);
+            if (!configuration) return res.sendStatus(404)
+            await db.spec.create({name: 'Спецификация от ' + moment().format('YYYY-MM-DD HH:mm'), user, configurations: [configuration]});
+            res.sendStatus(200)
         } catch (e) {
             app.locals.errorLogger(e, res)
         }
@@ -116,13 +127,13 @@ module.exports = function (app) {
         }
     })
 
-    app.put('/api/configuration/:configurationId/component/:componentId', passport.isLogged, async (req, res) => {
+    app.put('/api/configuration/:_id/component/:componentId', passport.isLogged, async (req, res) => {
         try {
             const {user} = res.locals;
-            const {componentId, configurationId} = req.params;
+            const {componentId, _id} = req.params;
             const {count} = req.body;
-            const configuration = await db.configuration.findById(configurationId).populate(db.configuration.population);
-            if (!configuration.user.equals(user.id)) throw {error: 403, message: 'Access denied'}
+            const configuration = await db.configuration.findOne({_id, user}).populate(db.configuration.population);
+            if (!configuration) return res.sendStatus(404)
             const component = await db.component.findById(componentId);
             if (!component) throw {error: 406, message: 'Wrong component'}
             if (count)

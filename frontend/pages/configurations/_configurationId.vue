@@ -41,13 +41,21 @@
         </v-data-table>
       </v-col>
       <v-col sm="5">
-        <small>{{ configuration.chassis.platform }} - {{ configuration.chassis.units }}U - {{ configuration.chassis.params }}</small>
+        <small>{{ configuration.chassis.platform }} - {{ configuration.chassis.units }}U -
+          {{ configuration.chassis.params }}</small>
         <br/>
-        В составе спецификаций: <br/>
-        <div v-for="spec of specs" :key="spec.id">
-          <SpecNameEdit :spec="spec">
-            <router-link :to="'/specifications/'+spec.id">{{ spec.name }}</router-link>
-          </SpecNameEdit>
+        <div v-if="specs.length">
+          В составе спецификаций:
+          <div v-for="spec of specs" :key="spec.id">
+            <SpecNameEdit :spec="spec">
+              <router-link :to="'/specifications/'+spec.id">{{ spec.name }}</router-link>
+            </SpecNameEdit>
+          </div>
+        </div>
+        <div v-if="!specs.length">
+          <v-btn @click="attachSpec" color="primary">
+            Добавить в спецификацию
+          </v-btn>
         </div>
         <Basket :configuration="configuration" :reload="loadConfiguration"/>
         <br/>
@@ -77,10 +85,9 @@ export default {
       tab: 0,
       maxCount: 64,
       isHovering: false,
+      canLeave: false,
       componentsAll: [],
       specs: [],
-      //componentsCurrent: [],
-      //componentsCurrentFiltered: [],
       configuration: null,
       headers: [
         {text: 'Партномер', value: 'partNumber', width: '20%'},
@@ -109,19 +116,34 @@ export default {
       return this.componentsCurrent.filter(c => c.description.toLowerCase().match(filter))
     }
   },
+  beforeRouteLeave(to, from, next) {
+    if (!this.configuration.spec) {
+      if(this.canLeave) return next()
+      if (window.confirm('Все данные будут утеряны. Продолжить?')) {
+        this.$axios.$delete(`/configuration/${this.configuration.id}`);
+        next()
+      }else {
+        next(false)
+      }
+    } else {
+      next()
+    }
+  },
   created() {
     if (!this.id) return this.$router.push('/specifications/list')
     this.loadConfiguration()
   },
   methods: {
-    async deleteConfiguration() {
+    deleteConfiguration() {
       if (window.confirm(`Удалить конфигурацию "${this.configuration.name}"?`)) {
-        await this.$axios.$delete(`/configuration/${this.configuration.id}`)
+        this.$axios.$delete(`/configuration/${this.configuration.id}`)
+        this.canLeave = true;
         this.$router.push('/specifications/list')
       }
     },
-    async changeField(field, item) {
-      await this.$axios.$put(`/configuration/${item.id}/field/${field}`, item)
+    async attachSpec() {
+      await this.$axios.$get(`/configuration/${this.configuration.id}/spec/attach`)
+      await this.loadConfiguration()
     },
     calcCount(item) {
       const part = this.configuration.parts.find(p => p.component.id === item.id)
@@ -141,7 +163,7 @@ export default {
       this.componentsAll = res.components
       this.specs = res.specs
       this.tabs = res.tabs
-      if(!this.tab) this.tab = res.tabs[0]
+      if (!this.tab) this.tab = res.tabs[0]
     },
     async addPart(count, item) {
       await this.$axios.$put(`/configuration/${this.id}/component/${item.id}`, {count})
