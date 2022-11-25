@@ -18,10 +18,6 @@
           <img src="/icons/share.png"/>
         </v-btn>
         &nbsp;
-        <v-btn icon color="primary">
-          <img src="/icons/command.png"/>
-        </v-btn>
-        &nbsp;
         <v-btn icon @click="removeSpec(spec)" color="red">
           <img src="/icons/delete.png"/>
         </v-btn>
@@ -93,7 +89,7 @@
       </tbody>
     </table>
     <ConfigCreateForSpec v-if="showDialog==='addConfig'" :spec="spec"/>
-    <SpecShare v-if="showDialog==='share'" :spec="spec"/>
+    <SpecShare v-if="showDialog==='share'" :spec="spec" @closeDialog="closeDialog"/>
     <v-btn @click="showDialog=false" v-if="showDialog" >Закрыть</v-btn>
   </div>
 </template>
@@ -138,6 +134,9 @@ export default {
     this.loadSpec()
   },
   methods: {
+    closeDialog(variable) {
+      this.showDialog = variable
+    },
     createConfiguration(e) {
       this.$axios.$get('/configuration/create/chassis/' + e.id)
           .then(res => {

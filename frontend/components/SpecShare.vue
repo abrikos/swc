@@ -21,7 +21,7 @@
 <script>
 export default {
   name: "SpecShare",
-  props: ['spec'],
+  props: ['spec', 'showDialog'],
   data() {
     return {
       sent: [],
@@ -36,6 +36,7 @@ export default {
   methods: {
     async share() {
       this.sent = await this.$axios.$post(`/spec/${this.spec.id}/share`, this.emails)
+      this.$emit('closeDialog', false)
     }
   }
 }
