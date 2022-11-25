@@ -15,7 +15,19 @@
     >
       <template v-slot:header="props">
         <tr>
-          <td/>
+          <td>
+            <v-btn
+                icon
+                v-if="checkedArray.length"
+                color="red"
+                dark
+                class="ma-2"
+                @click="deleteMany"
+                title="Удалить выбранные"
+            >
+              <v-icon>mdi-delete</v-icon>
+            </v-btn>
+          </td>
           <td>
             <v-text-field outlined placeholder="Фильтр по дате" v-model="dateSearch" dense hide-details
                           style="margin: 0 5px"/>
