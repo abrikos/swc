@@ -22,7 +22,7 @@ const schema = new Schema({
             match: [/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, 'Please fill a valid email address']
         },
         logged: Number,
-        blocked: Boolean,
+        blocked: {type:Boolean, default: false},
         passwordHash: {type: String},
         resetCode: {type: String},
     },
@@ -46,7 +46,6 @@ schema.virtual('password')
         this.passwordHash = md5(value)
     })
 
-console.log(moment.unix(1669357636).format('YYYY-MM-DD HH:mm'))
 schema.virtual('date')
     .get(function () {
         return moment(this.createdAt).format('YYYY-MM-DD HH:mm');

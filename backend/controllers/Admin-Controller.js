@@ -4,8 +4,17 @@ const csv = require('csv-parser')
 const clc = require("cli-color");
 const XLSX = require('xlsx');
 const sharp = require('sharp');
+const moment = require("moment");
 module.exports = function (app) {
     const {db} = app.locals;
+
+    setInterval(async ()=>{
+        const days = 30
+        const blockFromDate = moment().unix() - 3600 * 24 * days
+        const where = {$and:[{blocked:false}, {logged: {$lt: blockFromDate}}]}
+        db.user.updateMany(where, {blocked:true})
+            .then(console.log)
+    }, 5000)
 
     async function initAdmin() {
         //await db.user.deleteMany().then(console.log)
