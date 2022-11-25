@@ -24,13 +24,13 @@
           </template>
           <v-list dense>
             <v-list-item to="/admin/users">
-              <v-list-item-title>Users</v-list-item-title>
+              <v-list-item-title>Список пользователей</v-list-item-title>
             </v-list-item>
-            <v-list-item to="/admin/upload">
-              <v-list-item-title>Upload components</v-list-item-title>
+            <v-list-item to="/admin/import">
+              <v-list-item-title>Импорт данных</v-list-item-title>
             </v-list-item>
             <v-list-item to="/admin/chassis-list">
-              <v-list-item-title>Chassis</v-list-item-title>
+              <v-list-item-title>Шасси</v-list-item-title>
             </v-list-item>
           </v-list>
         </v-menu>
