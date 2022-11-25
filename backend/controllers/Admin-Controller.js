@@ -8,13 +8,13 @@ const moment = require("moment");
 module.exports = function (app) {
     const {db} = app.locals;
 
-    setInterval(async ()=>{
+    setInterval(async () => {
         const days = 30
         const blockFromDate = moment().unix() - 3600 * 24 * days
-        const where = {$and:[{blocked:false}, {logged: {$lt: blockFromDate}}]}
-        db.user.updateMany(where, {blocked:true})
+        const where = {$and: [{email: {$ne: process.env.ADMIN_EMAIL}}, {blocked: false}, {logged: {$lt: blockFromDate}}]}
+        db.user.updateMany(where, {blocked: true})
             .then(console.log)
-    }, 5000)
+    }, 3600 * 24)
 
     async function initAdmin() {
         //await db.user.deleteMany().then(console.log)
@@ -98,7 +98,7 @@ module.exports = function (app) {
             const admins = await db.user.find({isAdmin: true})
             console.log(admins.length, user.isAdmin)
             if (admins.length <= 2 && user.isAdmin) throw {error: 406, message: 'Невозможно снять привилегии т.к. количество оставшихся админов 2'}
-                user.isAdmin = !user.isAdmin
+            user.isAdmin = !user.isAdmin
             await user.save()
             res.sendStatus(200)
         } catch (e) {
