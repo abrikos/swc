@@ -30,16 +30,13 @@
         </td>
       </tr>
       <tr v-for="(item, i) of configuration.partsSorted" :key="i">
-        <td>{{ item.component.category }} {{ item.component.type }}</td>
-        <td>{{ item.component.partNumber }}</td>
+        <td><v-btn icon x-small color="red" @click="remove(item)">
+          <v-icon>mdi-close</v-icon>
+        </v-btn> {{ item.component.category }} {{ item.component.type }}</td>
+        <td align="center">{{ item.component.partNumber }}</td>
         <td align="center">{{ item.count }}</td>
         <td align="right">{{ item.component.price }}</td>
         <td align="right">{{ item.price }}</td>
-        <td>
-          <v-btn icon x-small color="red" @click="remove(item)">
-            <v-icon>mdi-close</v-icon>
-          </v-btn>
-        </td>
       </tr>
       <tr v-if="configuration.service">
         <td colspan="4">
