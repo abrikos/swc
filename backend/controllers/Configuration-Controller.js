@@ -84,9 +84,11 @@ module.exports = function (app) {
     app.get('/api/configuration/create/chassis/:chassis', passport.isLogged, async (req, res) => {
         try {
             const {user} = res.locals;
-            const {chassis} = req.params;
+            const chassis = await db.chassis.findById(req.params.chassis).populate('services');
+            const service = chassis.services.find(s=>s.level==='BAS' && s.period===3)
             const configuration = await db.configuration.create({
                 chassis,
+                service,
                 user,
                 name: 'Конфигурация от ' + moment().format('YYYY-MM-DD HH:mm')
             })
