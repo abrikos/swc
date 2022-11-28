@@ -46,6 +46,9 @@ module.exports = function (app) {
                 {v: conf.priceTotal, t: 'n', s: confStyle}
             ]
             rows.push(confRow)
+            if(conf.service){
+                rows.push([{},{},{v:conf.service.name}])
+            }
             rows.push(...partRows)
         }
 
