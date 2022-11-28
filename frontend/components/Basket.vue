@@ -1,6 +1,9 @@
 <template>
   <v-card v-if="configuration">
-    <v-card-title>Корзина</v-card-title>
+    <v-card-title>
+      <v-col>Корзина</v-col>
+      <v-col>${{ configuration.price }}</v-col>
+    </v-card-title>
 
     <table class="cart">
       <thead>
@@ -26,20 +29,6 @@
           {{ configuration.chassis.price }}
         </td>
       </tr>
-      <tr v-if="configuration.service">
-        <td colspan="5">
-          {{ configuration.service.name }}
-          <br/>
-          Коэффициент
-          {{ configuration.service.coefficient.toFixed(2) }}
-        </td>
-<!--        <td>
-          <v-btn icon x-small color="red" @click="removeService()">
-            <v-icon>mdi-close</v-icon>
-          </v-btn>
-        </td>-->
-
-      </tr>
       <tr v-for="(item, i) of configuration.partsSorted" :key="i">
         <td>{{ item.component.category }} {{ item.component.type }}</td>
         <td>{{ item.component.partNumber }}</td>
@@ -52,9 +41,19 @@
           </v-btn>
         </td>
       </tr>
-      <tr class="result">
-        <td colspan="5">Итого: {{ configuration.price }}</td>
-        <td></td>
+      <tr v-if="configuration.service">
+        <td colspan="4">
+          {{ configuration.service.name }}
+        </td>
+        <td align="right">
+          {{configuration.priceService}}
+        </td>
+        <!--        <td>
+                  <v-btn icon x-small color="red" @click="removeService()">
+                    <v-icon>mdi-close</v-icon>
+                  </v-btn>
+                </td>-->
+
       </tr>
       </tbody>
     </table>

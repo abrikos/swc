@@ -46,8 +46,14 @@ module.exports = function (app) {
                 {v: conf.priceTotal, t: 'n', s: confStyle}
             ]
             rows.push(confRow)
-            if(conf.service){
-                rows.push([{},{},{v:conf.service.name}])
+            if (conf.service) {
+                rows.push([
+                    {v: conf.service.article},
+                    {v: conf.count, t: 'n', s: styleConfCount},
+                    {v: conf.service.name},
+                    {v: conf.priceService, t: 'n'},
+                    {v: conf.priceService * conf.count, t: 'n'}
+                ])
             }
             rows.push(...partRows)
         }
@@ -56,7 +62,7 @@ module.exports = function (app) {
 
         //if(!ws["!merges"]) ws["!merges"] = [];
         //ws["!merges"].push(XLSX.utils.decode_range("A1:E1"))
-        XLSX.utils.sheet_add_aoa(ws, [["PartNumber", "К-во", "Название", "Стоимость, $", "Цена, $"]], {origin: "A1"});
+        XLSX.utils.sheet_add_aoa(ws, [["PartNumber", "К-во", "Название", "Цена, $", "Стоимость, $"]], {origin: "A1"});
         const headStyle = {
             alignment: {
                 vertical: 'center'

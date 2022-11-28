@@ -9,7 +9,7 @@
         :value="s.id"
     />
     </v-radio-group>
-    <v-btn v-if="service" @click="service=null; setService()" color="red">Удалить сервис</v-btn>
+<!--    <v-btn v-if="service" @click="service=null; setService()" color="red">Удалить сервис</v-btn>-->
   </div>
 </template>
 

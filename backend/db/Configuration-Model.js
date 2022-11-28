@@ -42,21 +42,28 @@ schema.virtual('date')
     })
 
 
-schema.virtual('price')
+schema.virtual('priceService')
+    .get(function (){
+        return (this.priceComponents * (this.service ? this.service.coefficient : 0)).toFixed()
+    })
+
+schema.virtual('priceComponents')
     .get(function () {
         let sum = this.chassis?.price || 0
         for (const item of this.parts) {
             sum += item.price
         }
-        if (this.service) {
-            sum = (sum * this.service.coefficient).toFixed(2)
-        }
         return sum;
+    })
+
+schema.virtual('price')
+    .get(function () {
+        return this.priceComponents * 1 + this.priceService * 1
     })
 
 schema.virtual('priceTotal')
     .get(function () {
-        return this.price * this.count
+        return (this.price ) * this.count
     })
 
 schema.virtual('memCount')
