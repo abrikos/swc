@@ -112,7 +112,7 @@ module.exports = function (app) {
 
     app.post('/api/admin/upload-list', passport.isAdmin, async (req, res) => {
         try {
-            const stat = await parseXLS(req.files.file.tempFilePath);
+            const stat = await parseComponentXLS(req.files.file.tempFilePath);
             fs.unlink(req.files.file.tempFilePath, () => {
             })
             res.send(stat)
@@ -121,7 +121,38 @@ module.exports = function (app) {
         }
     })
 
-    async function parseXLS(file, deleteAll) {
+    //db.configuration.findById('63843875b69e143f309c27c0').populate(db.configuration.population).then(i=> {        console.log(i.parts)    })
+    parseServiceXLS('./service.xlsb')
+    async function parseServiceXLS(file, deleteAll){
+        const workbook = XLSX.readFile(file);
+        const sheet_name_list = workbook.SheetNames;
+        const items = XLSX.utils.sheet_to_json(workbook.Sheets[sheet_name_list[0]])
+        for(const item of items){
+            const data ={
+                partNumber: item.__EMPTY,
+                article: item.__EMPTY_1,
+                name: item.__EMPTY_2,
+                price: item.__EMPTY_3,
+                priceNet: item.__EMPTY_4,
+                discount1: item.__EMPTY_5,
+                discount2: item.__EMPTY_6,
+                level: item.__EMPTY_7,
+                period: item.__EMPTY_8.replace('Y',''),
+                coefficient: item.__EMPTY_9,
+            }
+            try {
+                const x = await db.service.updateOne({article: data.article}, data, {upsert: true})
+            }catch (e) {
+            }
+        }
+        //const added = await db.service.find({partNumber:'QSRV-160402'})
+        //console.log(added)
+        //const ch = await db.chassis.findOne().populate('services')
+        //console.log(ch.services.length)
+
+    }
+
+    async function parseComponentXLS(file, deleteAll) {
         if (deleteAll) {
             await db.component.deleteMany({})
             await db.chassis.deleteMany({})
@@ -158,6 +189,7 @@ module.exports = function (app) {
                     descFull: item.DescFull?.trim(),
                     platforms,
                 }
+                if(!fields.partNumber) continue
                 if (!fields.descFull) fields.descFull = fields.params
                 if (fields.category === 'Chassis') {
                     chassis++
@@ -175,7 +207,7 @@ module.exports = function (app) {
         }
     }
 
-    //parseXLS('export.xlsb.xlsx', 0)
+    //parseComponentXLS('export.xlsb.xlsx', 1)
     //db.component.find().then(console.log)
     function chassisData(data) {
         data.platform = data.platforms.join(',')

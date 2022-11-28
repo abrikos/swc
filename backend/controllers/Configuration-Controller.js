@@ -78,7 +78,7 @@ module.exports = function (app) {
         }
     })
 
-    //db.chassis.findOne({partNumber:'QSRV-260802A'}).then(c=>console.log(c))
+    //db.configuration.findById('63843dbc56f13d27a40a17f9').populate(db.configuration.population)        .then(c=>console.log(c.chassis))
 
 
     app.get('/api/configuration/create/chassis/:chassis', passport.isLogged, async (req, res) => {

@@ -37,18 +37,18 @@ schema.virtual('basketOrder')
 
 schema.virtual('isSFF')
     .get(function () {
-        return !!this.params.match('SFF')
+        return !!this.params?.match('SFF')
     })
 
 schema.virtual('power')
     .get(function () {
-        const match = this.params.match(/PSU (\d)\*(\d+)W/)
+        const match = this.params?.match(/PSU (\d)\*(\d+)W/)
         return match && match[1] * match[2];
     })
 
 schema.virtual('riserPorts')
     .get(function () {
-        const match = this.params.match('x16')
+        const match = this.params?.match('x16')
         return this.category === 'Riser' ? match ? 16 : 8 : 0;
     })
 

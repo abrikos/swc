@@ -58,6 +58,7 @@
           </v-btn>
         </div>
         <Basket :configuration="configuration" :reload="loadConfiguration"/>
+        <ConfigurationServices :configuration="configuration" :reload="loadConfiguration"/>
         <br/>
         <v-alert border="top" color="red lighten-2" dark v-for="(error,i) of validator.errors" :key="i">
           {{ error }}
@@ -74,10 +75,11 @@ import Tabs from "~/components/Tabs";
 import Basket from "~/components/Basket";
 import SpecNameEdit from "~/components/SpecNameEdit";
 import ConfNameEdit from "~/components/ConfNameEdit";
+import ConfigurationServices from "~/components/ConfigurationServices";
 
 export default {
   name: "configurator-parts",
-  components: {ConfNameEdit, SpecNameEdit, Basket, Tabs},
+  components: {ConfigurationServices, ConfNameEdit, SpecNameEdit, Basket, Tabs},
   data() {
     return {
       nameChanged: false,
@@ -117,7 +119,8 @@ export default {
     }
   },
   beforeRouteLeave(to, from, next) {
-    if (!this.configuration.spec) {
+    console.log('zzzzzzzzz', this.specs)
+    if (!this.specs.length) {
       if(this.canLeave) return next()
       if (window.confirm('Все данные будут утеряны. Продолжить?')) {
         this.$axios.$delete(`/configuration/${this.configuration.id}`);

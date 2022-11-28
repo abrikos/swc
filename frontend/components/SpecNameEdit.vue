@@ -1,7 +1,8 @@
 <template>
   <div>
+    <slot/>
     <span v-if="!edited" @click="edited=true">
-      <slot/>
+
       <v-btn icon v-if="!edited" @click="edited=true">
         <v-icon>mdi-pencil</v-icon>
       </v-btn>
@@ -23,16 +24,16 @@
 <script>
 export default {
   name: "SpecNameEdit",
-  props:['spec'],
-  data(){
+  props: ['spec'],
+  data() {
     return {
       edited: false,
       changed: false
     }
   },
-  methods:{
+  methods: {
     async renameSpec() {
-      if(!this.changed) return this.edited = false
+      if (!this.changed) return this.edited = false
       await this.$axios.$put(`/spec/${this.spec.id}/rename`, this.spec)
       this.changed = false
       this.edited = false

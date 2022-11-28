@@ -16,7 +16,7 @@
         <td colspan="2">Платформа
           {{ configuration.chassis.partNumber }}
         </td>
-        <td  align="center">
+        <td align="center">
           1
         </td>
         <td align="right">
@@ -25,6 +25,20 @@
         <td align="right">
           {{ configuration.chassis.price }}
         </td>
+      </tr>
+      <tr v-if="configuration.service">
+        <td colspan="5">
+          {{ configuration.service.name }}
+          <br/>
+          Коэффициент
+          {{ configuration.service.coefficient.toFixed(2) }}
+        </td>
+<!--        <td>
+          <v-btn icon x-small color="red" @click="removeService()">
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+        </td>-->
+
       </tr>
       <tr v-for="(item, i) of configuration.partsSorted" :key="i">
         <td>{{ item.component.category }} {{ item.component.type }}</td>
@@ -55,6 +69,10 @@ export default {
     remove(item) {
       this.$axios.$delete(`/configuration/part/${item.id}`)
           .then(this.reload)
+    },
+    async removeService() {
+      await this.$axios.$put(`/configuration/${this.configuration.id}/field/service`, {service: null})
+      await this.reload()
     }
   }
 }

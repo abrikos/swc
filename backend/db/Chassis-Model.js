@@ -56,6 +56,12 @@ schema.virtual('units')
         return match[1] * 1
     })
 
+schema.virtual('services', {
+    ref: 'service',
+    localField: 'partNumber',
+    foreignField: 'partNumber'
+})
+
 
 module.exports = mongoose.model(name, schema)
 

@@ -8,6 +8,7 @@ const schema = new Schema({
         count: {type: Number, default: 1, min: 0},
         user: {type: mongoose.Schema.Types.ObjectId, ref: 'user'},
         chassis: {type: mongoose.Schema.Types.ObjectId, ref: 'chassis'},
+        service: {type: mongoose.Schema.Types.ObjectId, ref: 'service'},
         draft: {type: Boolean, default: true}
     },
     {
@@ -20,7 +21,8 @@ const schema = new Schema({
 
 schema.statics.population = [
     {path: 'parts', populate: {path: 'component'}},
-    {path: 'chassis'},
+    {path: 'chassis', populate: {path: 'services', options: {sort: {'level': 1, 'period':-1}}}},
+    {path: 'service'}
 ]
 
 schema.virtual('partsSorted')
@@ -45,6 +47,9 @@ schema.virtual('price')
         let sum = this.chassis?.price || 0
         for (const item of this.parts) {
             sum += item.price
+        }
+        if (this.service) {
+            sum = (sum * this.service.coefficient).toFixed(2)
         }
         return sum;
     })
