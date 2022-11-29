@@ -9,7 +9,9 @@
     <v-row>
       <v-col sm="7">
         <Tabs :withIcons="true" :items="tabs" :onChange="tabChanged"/>
+        <ConfigurationServices :configuration="configuration" :reload="loadConfiguration" v-if="tab.category==='Services'"/>
         <v-data-table
+            v-if="tab.category !=='Services'"
             :headers="headers"
             :items="componentsCurrentFiltered"
             :items-per-page="15"
@@ -58,7 +60,7 @@
           </v-btn>
         </div>
         <Basket :configuration="configuration" :reload="loadConfiguration"/>
-        <ConfigurationServices :configuration="configuration" :reload="loadConfiguration"/>
+
         <br/>
         <v-alert border="top" color="red lighten-2" dark v-for="(error,i) of validator.errors" :key="i">
           {{ error }}
@@ -166,6 +168,7 @@ export default {
       this.componentsAll = res.components
       this.specs = res.specs
       this.tabs = res.tabs
+      this.tabs.push({category: 'Services'})
       if (!this.tab) this.tab = res.tabs[0]
     },
     async addPart(count, item) {

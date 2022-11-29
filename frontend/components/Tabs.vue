@@ -60,11 +60,11 @@ export default {
 <style scoped lang="sass">
 .tabs-small
   display: none
-  @media (max-width: 1023px)
+  @media (max-width: 1263px)
     display: block
 
 .tabs-large
-  @media (max-width: 1023px)
+  @media (max-width: 1263px)
     display: none
 
 .tabs
