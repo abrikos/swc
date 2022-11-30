@@ -25,11 +25,11 @@ export default function ({app}, inject) {
                 default:
                     return true
             }
-        }).map(c=>{
-            if(configuration.cpuCount && c.category === 'CPU'){
+        }).map(c => {
+            if (configuration.cpuCount && c.category === 'CPU') {
                 c.countDisabled = true
             }
-            if(configuration.memCount && c.category === 'Memory' && c.memorySize !== configuration.memModuleSize){
+            if (configuration.memCount && c.category === 'Memory' && c.memorySize !== configuration.memModuleSize) {
                 c.countDisabled = true
             }
             return c
@@ -44,7 +44,7 @@ export default function ({app}, inject) {
             result.errors.push(`Необходимо выбрать CPU`)
         }
 
-        if(configuration.memCount > configuration.memMaxCount){
+        if (configuration.memCount > configuration.memMaxCount) {
             result.errors.push(`Выбранное количество модулей памяти (${configuration.memCount}) превышает максимальное (${configuration.memMaxCount})`)
         } else if ((configuration.cpuCount || configuration.memCount) && configuration.cpuCount < 2 && configuration.memCount > (configuration.chassis.platform === 'G3' ? 16 : 12)) {
             result.errors.push(`Для выбранного количества модулей памяти (${configuration.memCount}) недостаточно процессоров (${configuration.cpuCount})`)
@@ -88,23 +88,15 @@ export default function ({app}, inject) {
         switch (tab.category) {
             case 'CPU':
                 return [0, 1, 2]
-                /*const modules = configuration.memCount;
-                if (!modules) return [0, 1, 2]
-                if (configuration.chassis.platform === 'G3') {
-                    return modules > 16 ? [0, 2] : [0, 1, 2]
-                } else {
-                    return modules > 12 ? [0, 2] : [0, 1, 2]
-                }*/
-            case 'Memory':
-                return configuration.chassis.platform === 'G3' ?
-                    [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32] :
-                    [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24]
-            /*const memCount = configuration.parts.filter(p => p.component.category === 'CPU').reduce((a, b) => a + b.count, 0);
+            /*const modules = configuration.memCount;
+            if (!modules) return [0, 1, 2]
             if (configuration.chassis.platform === 'G3') {
-                return memCount === 1 ? [0, 2, 4, 6, 8, 10, 12, 14, 16] : [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32]
+                return modules > 16 ? [0, 2] : [0, 1, 2]
             } else {
-                return memCount === 1 ? [0, 2, 4, 6, 8, 10, 12] : [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24]
+                return modules > 12 ? [0, 2] : [0, 1, 2]
             }*/
+            case 'Memory':
+                return Array.from(Array(configuration.memMaxCount + 2).keys()).filter(i => !(i % 2))
             case 'Riser':
                 //if(configuration.riserMaxCount <= 0) return [0]
                 return Array.from(Array(configuration.chassis.units * 2 + 1 - configuration.rearBayCount).keys());
@@ -118,7 +110,7 @@ export default function ({app}, inject) {
                 return [0, 1, 2]
             case 'Rear bay':
                 return Array.from(Array(configuration.chassis.units * 2 + 1 - configuration.riserCount).keys());
-                //return [0, 1, 2]
+            //return [0, 1, 2]
             case 'LAN OCP 3.0':
                 return [0, 1]
             case 'SSD U.2 NVMe':
