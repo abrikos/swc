@@ -40,6 +40,12 @@ schema.virtual('isSFF')
         return !!this.params?.match('SFF')
     })
 
+schema.virtual('memorySize')
+    .get(function () {
+        const match = this.params?.match(/(\d+)GB/)
+        return match && match[1];
+    })
+
 schema.virtual('power')
     .get(function () {
         const match = this.params?.match(/PSU (\d)\*(\d+)W/)

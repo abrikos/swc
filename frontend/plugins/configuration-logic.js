@@ -25,6 +25,14 @@ export default function ({app}, inject) {
                 default:
                     return true
             }
+        }).map(c=>{
+            if(configuration.cpuCount && c.category === 'CPU'){
+                c.countDisabled = true
+            }
+            if(configuration.memCount && c.category === 'Memory' && c.memorySize !== configuration.memModuleSize){
+                c.countDisabled = true
+            }
+            return c
         })
     })
 
@@ -35,7 +43,10 @@ export default function ({app}, inject) {
         if (!configuration.cpuCount && configuration.memCount) {
             result.errors.push(`Необходимо выбрать CPU`)
         }
-        if ((configuration.cpuCount || configuration.memCount) && configuration.cpuCount < 2 && configuration.memCount > (configuration.chassis.platform === 'G3' ? 16 : 12)) {
+
+        if(configuration.memCount > configuration.memMaxCount){
+            result.errors.push(`Выбранное количество модулей памяти (${configuration.memCount}) превышает максимальное (${configuration.memMaxCount})`)
+        } else if ((configuration.cpuCount || configuration.memCount) && configuration.cpuCount < 2 && configuration.memCount > (configuration.chassis.platform === 'G3' ? 16 : 12)) {
             result.errors.push(`Для выбранного количества модулей памяти (${configuration.memCount}) недостаточно процессоров (${configuration.cpuCount})`)
         }
         if (configuration.gpuCount && !configuration.lanCount && !configuration.riserX16Count) {
@@ -65,7 +76,6 @@ export default function ({app}, inject) {
         if (configuration.riserMaxCount < configuration.riserCount) {
             result.errors.push(`Количество выбранных райзеров (${configuration.riserCount}) больше чем возможно установить (${configuration.riserMaxCount})`)
         }
-
         const rearBaysNeeded = [0, 0, 1, 2, 2];
         if (configuration.rearBayCount < rearBaysNeeded[configuration.nvmeCount]) {
             result.errors.push(`Для выбранных SSD U.2 NVMe (${configuration.nvmeCount})  необходимо ${rearBaysNeeded[configuration.nvmeCount]} Rear bay (${configuration.rearBayCount})`)
@@ -77,13 +87,14 @@ export default function ({app}, inject) {
     inject('componentCount', (configuration, tab) => {
         switch (tab.category) {
             case 'CPU':
-                const modules = configuration.memCount;
+                return [0, 1, 2]
+                /*const modules = configuration.memCount;
                 if (!modules) return [0, 1, 2]
                 if (configuration.chassis.platform === 'G3') {
                     return modules > 16 ? [0, 2] : [0, 1, 2]
                 } else {
                     return modules > 12 ? [0, 2] : [0, 1, 2]
-                }
+                }*/
             case 'Memory':
                 return configuration.chassis.platform === 'G3' ?
                     [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32] :

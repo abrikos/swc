@@ -71,6 +71,17 @@ schema.virtual('memCount')
         return this.parts.filter(p => p.component.category === 'Memory').reduce((a, b) => a + b.count, 0)
     })
 
+schema.virtual('memModuleSize')
+    .get(function () {
+        const module = this.parts.find(p => p.component.category === 'Memory')
+        if(module) return module.component.memorySize
+    })
+
+schema.virtual('memMaxCount')
+    .get(function () {
+        return this.chassis.platform === 'G3' ? 32 : 24
+    })
+
 schema.virtual('cpuCount')
     .get(function () {
         return this.parts.filter(p => p.component.category === 'CPU').reduce((a, b) => a + b.count, 0)
@@ -78,7 +89,7 @@ schema.virtual('cpuCount')
 
 schema.virtual('pcieCount')
     .get(function () {
-        return this.parts.filter(p => p.component.category === 'PCI-E').reduce((a, b) => a + b.count, 0)
+        return this.parts.filter(p => p.component.category === 'PCI-E' && p.component.type !== 'LAN OCP 3.0').reduce((a, b) => a + b.count, 0)
     })
 
 schema.virtual('gpuCount')

@@ -9,7 +9,8 @@
     <v-row>
       <v-col sm="7">
         <Tabs :withIcons="true" :items="tabs" :onChange="tabChanged"/>
-        <ConfigurationServices :configuration="configuration" :reload="loadConfiguration" v-if="tab.category==='Services'"/>
+        <ConfigurationServices :configuration="configuration" :reload="loadConfiguration"
+                               v-if="tab.category==='Services'"/>
         <v-data-table
             v-if="tab.category !=='Services'"
             :headers="headers"
@@ -17,7 +18,7 @@
             :items-per-page="15"
             class="row-pointer"
             style="cursor: pointer"
-            :item-class="itemRowBackground"
+            :item-class="itemRowClassName"
         >
           <template v-slot:no-data>
             Ни чего не найдено
@@ -47,7 +48,7 @@
           {{ configuration.chassis.params }}</small>
         <br/>
         <div v-if="specs.length">
-<!--          В составе спецификаций:-->
+          <!--          В составе спецификаций:-->
           <div v-for="spec of specs" :key="spec.id">
             <SpecNameEdit :spec="spec">
               <router-link :to="'/specifications/'+spec.id">{{ spec.name }}</router-link>
@@ -122,11 +123,11 @@ export default {
   },
   beforeRouteLeave(to, from, next) {
     if (!this.specs.length) {
-      if(this.canLeave) return next()
+      if (this.canLeave) return next()
       if (window.confirm('Все данные будут утеряны. Продолжить?')) {
         this.$axios.$delete(`/configuration/${this.configuration.id}`);
         next()
-      }else {
+      } else {
         next(false)
       }
     } else {
@@ -153,8 +154,11 @@ export default {
       const part = this.configuration.parts.find(p => p.component.id === item.id)
       return part ? part.count : 0
     },
-    itemRowBackground(item) {
-      return this.configuration.parts.map(p => p.component.id).includes(item.id) ? 'inBasket' : this.configuration.cpuCount ? item.category === 'CPU' ? 'count-disabled' : '' : ''
+    itemRowClassName(item) {
+      return this.configuration.parts.map(p => p.component.id).includes(item.id) ?
+          'inBasket'
+          :
+          item.countDisabled ? 'count-disabled' : ''
     },
     tabChanged(tab) {
       console.log('tab selected', JSON.stringify(tab))
