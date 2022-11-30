@@ -155,7 +155,6 @@ module.exports = function (app) {
             const {configurationId, field} = req.params;
             const configuration = await db.configuration.findOne({_id: configurationId, user}).populate(db.configuration.population);
             if (!configuration) throw {message: 'Wrong configuration'}
-            console.log(req.body[field])
             configuration[field] = req.body[field]
             await configuration.save()
             res.sendStatus(200)
