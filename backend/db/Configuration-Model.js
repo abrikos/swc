@@ -76,11 +76,6 @@ schema.virtual('cpuCount')
         return this.parts.filter(p => p.component.category === 'CPU').reduce((a, b) => a + b.count, 0)
     })
 
-schema.virtual('pcieSlotAvailable')
-    .get(function () {
-        return this.parts.filter(p => p.component.category === 'Riser').reduce((a, b) => a + b.component.riserSlots * b.count, 0)
-    })
-
 schema.virtual('pcieCount')
     .get(function () {
         return this.parts.filter(p => p.component.category === 'PCI-E').reduce((a, b) => a + b.count, 0)
@@ -126,9 +121,19 @@ schema.virtual('power')
         return this.parts.filter(p => p.component.category === 'Power').reduce((a, b) => a + b.component.power, 0)
     })
 
-schema.virtual('riserAvailable')
+schema.virtual('pcieMaxCount')
     .get(function () {
-        return this.chassis.units * 2 - this.riserCount;
+        return this.parts.filter(p => p.component.category === 'Riser').reduce((a, b) => a + b.component.riserSlots * b.count, 0)
+    })
+
+schema.virtual('riserMaxCount')
+    .get(function () {
+        return this.chassis.units * 2;
+    })
+
+schema.virtual('cpuMaxCount')
+    .get(function () {
+        return 2;
     })
 
 schema.virtual('riserX16Count')

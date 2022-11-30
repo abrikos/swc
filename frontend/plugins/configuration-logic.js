@@ -29,10 +29,6 @@ export default function ({app}, inject) {
     })
 
     inject('validator', (configuration) => {
-        return validator(configuration)
-    })
-
-    function validator(configuration) {
         const result = {
             errors: [],
         };
@@ -61,14 +57,13 @@ export default function ({app}, inject) {
             result.errors.push(`Для платформы сколичеством дисков более 12 необходим RAID или HBA`)
         }
         if (configuration.cpuCount < 2 && configuration.riserCount) {
-            const cpuNeeded = Math.ceil(configuration.riserCount / configuration.chassis.units)
-            result.errors.push(`Для выбранного количество райзеров (${configuration.riserCount}) недостаточно процессоров. Минимум: ${cpuNeeded}`)
+            result.errors.push(`Для выбранного количество райзеров (${configuration.riserCount}) недостаточно процессоров (${configuration.cpuCount})`)
         }
-        if (configuration.pcieCount > configuration.pcieSlotAvailable) {
-            result.errors.push(`Недостаточно PCI-E слотов (${configuration.pcieSlotAvailable}) для выбранного количества PCI-E устройств: ${configuration.pcieCount}`)
+        if (configuration.pcieCount > configuration.pcieMaxCount) {
+            result.errors.push(`Недостаточно PCI-E слотов (${configuration.pcieMaxCount}) для выбранного количества PCI-E устройств: ${configuration.pcieCount}`)
         }
-        if (configuration.riserAvailable < 0) {
-            result.errors.push(`ОШИБКА В КОЛИЧЕСТВЕ (select): райзеров установлено больше чем возможно ${configuration.riserCount}`)
+        if (configuration.riserMaxCount < configuration.riserCount) {
+            result.errors.push(`Количество выбранных райзеров (${configuration.riserCount}) больше чем возможно установить (${configuration.riserMaxCount})`)
         }
 
         const rearBaysNeeded = [0, 0, 1, 2, 2];
@@ -77,7 +72,7 @@ export default function ({app}, inject) {
         }
 
         return result
-    }
+    })
 
     inject('componentCount', (configuration, tab) => {
         switch (tab.category) {
@@ -100,6 +95,7 @@ export default function ({app}, inject) {
                 return memCount === 1 ? [0, 2, 4, 6, 8, 10, 12] : [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24]
             }*/
             case 'Riser':
+                //if(configuration.riserMaxCount <= 0) return [0]
                 return Array.from(Array(configuration.chassis.units * 2 + 1 - configuration.rearBayCount).keys());
             case 'Power':
                 return [0, 1]

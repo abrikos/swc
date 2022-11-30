@@ -121,7 +121,6 @@ export default {
     }
   },
   beforeRouteLeave(to, from, next) {
-    console.log('zzzzzzzzz', this.specs)
     if (!this.specs.length) {
       if(this.canLeave) return next()
       if (window.confirm('Все данные будут утеряны. Продолжить?')) {
