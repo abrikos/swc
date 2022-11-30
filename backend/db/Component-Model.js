@@ -52,6 +52,12 @@ schema.virtual('riserPorts')
         return this.category === 'Riser' ? match ? 16 : 8 : 0;
     })
 
+schema.virtual('riserSlots')
+    .get(function () {
+        const match = this.params?.split(/x\d/)
+        return match.length - 1;
+    })
+
 schema.virtual('description')
     .get(function () {
         return this.descFull || this.descShort;

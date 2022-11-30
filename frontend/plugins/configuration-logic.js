@@ -64,6 +64,9 @@ export default function ({app}, inject) {
             const cpuNeeded = Math.ceil(configuration.riserCount / configuration.chassis.units)
             result.errors.push(`Для выбранного количество райзеров (${configuration.riserCount}) недостаточно процессоров. Минимум: ${cpuNeeded}`)
         }
+        if (configuration.pcieCount > configuration.pcieSlotAvailable) {
+            result.errors.push(`Недостаточно PCI-E слотов (${configuration.pcieSlotAvailable}) для выбранного количества PCI-E устройств: ${configuration.pcieCount}`)
+        }
         if (configuration.riserAvailable < 0) {
             result.errors.push(`ОШИБКА В КОЛИЧЕСТВЕ (select): райзеров установлено больше чем возможно ${configuration.riserCount}`)
         }

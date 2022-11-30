@@ -76,6 +76,16 @@ schema.virtual('cpuCount')
         return this.parts.filter(p => p.component.category === 'CPU').reduce((a, b) => a + b.count, 0)
     })
 
+schema.virtual('pcieSlotAvailable')
+    .get(function () {
+        return this.parts.filter(p => p.component.category === 'Riser').reduce((a, b) => a + b.component.riserSlots * b.count, 0)
+    })
+
+schema.virtual('pcieCount')
+    .get(function () {
+        return this.parts.filter(p => p.component.category === 'PCI-E').reduce((a, b) => a + b.count, 0)
+    })
+
 schema.virtual('gpuCount')
     .get(function () {
         return this.parts.filter(p => p.component.type === 'GPU').reduce((a, b) => a + b.count, 0)
