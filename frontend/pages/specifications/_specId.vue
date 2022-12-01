@@ -78,8 +78,8 @@
         <td>
           <ConfigurationCount :item="config" :onChange="loadSpec"/>
         </td>
-        <td align="right">{{ config.price }}</td>
-        <td align="right">{{ config.priceTotal }}</td>
+        <td align="right">{{ config.price.toFixed() }}</td>
+        <td align="right">{{ config.priceTotal.toFixed() }}</td>
       </tr>
       <tr>
         <td colspan="5">
