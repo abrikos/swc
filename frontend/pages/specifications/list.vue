@@ -43,6 +43,9 @@
           </td>
         </tr>
       </template>
+      <template v-slot:item.price="{item}">
+        {{item.price.toFixed(2)}}
+      </template>
       <template v-slot:no-data>
         Ни чего не найдено
       </template>
