@@ -28,6 +28,9 @@
                       :value="calcCount(item)"
                       hide-details/>
           </template>
+          <template v-slot:item.price="{item}">
+            {{item.price.toFixed(2)}}
+          </template>
           <template v-slot:header="props">
             <tr>
               <td></td>
