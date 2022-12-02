@@ -137,6 +137,11 @@ schema.virtual('power')
         return this.parts.filter(p => p.component.category === 'Power').reduce((a, b) => a + b.component.power, 0)
     })
 
+schema.virtual('powerCount')
+    .get(function () {
+        return this.parts.filter(p => p.component.category === 'Power').reduce((a, b) => a + b.count, 0)
+    })
+
 schema.virtual('pcieMaxCount')
     .get(function () {
         return this.parts.filter(p => p.component.category === 'Riser').reduce((a, b) => a + b.component.riserSlots * b.count, 0)

@@ -31,7 +31,10 @@ export default function ({app}, inject) {
             if (configuration.cpuCount && c.category === 'CPU') {
                 c.countDisabled = true
             }
-            if (configuration.memCount && c.category === 'Memory' && c.memorySize !== configuration.memModuleSize) {
+            if (configuration.memCount && c.category === 'Memory') {
+                c.countDisabled = true
+            }
+            if (configuration.powerCount && c.category === 'Power') {
                 c.countDisabled = true
             }
             return c
