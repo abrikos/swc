@@ -32,7 +32,7 @@
             Добавить конфигурацию
           </v-btn>
         </td>
-        <td>Итого, $: {{ spec.price }}</td>
+        <td>Итого, $: {{ spec.price.toFixed(2) }}</td>
         <td width="70">Кол-во</td>
         <td width="70">Цена</td>
         <td width="70">Сумма</td>

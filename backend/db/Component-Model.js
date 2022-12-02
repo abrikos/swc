@@ -12,7 +12,8 @@ const schema = new Schema({
         partNumber: {type: String, unique: true},
         descShort: String,
         descFull: String,
-        price: Number
+        deleted: Boolean,
+        price: {type:Number, default:0}
     },
     {
         timestamps: {createdAt: 'createdAt'},
@@ -44,6 +45,12 @@ schema.virtual('memorySize')
     .get(function () {
         const match = this.params?.match(/(\d+)GB/)
         return match && match[1];
+    })
+
+schema.virtual('lanSpeed')
+    .get(function () {
+        const match = this.params?.match(/(\d+)G/)
+        return match && match[1] * 1;
     })
 
 schema.virtual('power')

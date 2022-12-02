@@ -12,7 +12,7 @@ const schema = new Schema({
         descShort: String,
         descFull: String,
         params: String,
-        price: Number
+        price: {type:Number, default:0}
     },
     {
         timestamps: {createdAt: 'createdAt'},

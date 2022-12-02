@@ -2,7 +2,7 @@
   <v-card v-if="configuration">
     <v-card-title>
       <v-col>Корзина</v-col>
-      <v-col>${{ configuration.price }}</v-col>
+      <v-col>${{ configuration.price.toFixed(2) }}</v-col>
     </v-card-title>
 
     <table class="cart">
@@ -23,10 +23,10 @@
           1
         </td>
         <td align="right">
-          {{ configuration.chassis.price }}
+          {{ configuration.chassis.price.toFixed(2) }}
         </td>
         <td align="right">
-          {{ configuration.chassis.price }}
+          {{ configuration.chassis.price.toFixed(2) }}
         </td>
       </tr>
       <tr v-for="(item, i) of configuration.partsSorted" :key="i">
@@ -35,15 +35,15 @@
         </v-btn> {{ item.component.category }} {{ item.component.type }}</td>
         <td align="center">{{ item.component.partNumber }}</td>
         <td align="center">{{ item.count }}</td>
-        <td align="right">{{ item.component.price }}</td>
-        <td align="right">{{ item.price }}</td>
+        <td align="right">{{ item.component.price.toFixed(2) }}</td>
+        <td align="right">{{ item.price.toFixed(2) }}</td>
       </tr>
       <tr v-if="configuration.service">
         <td colspan="4">
           {{ configuration.service.name }}
         </td>
         <td align="right">
-          {{configuration.priceService}}
+          {{configuration.priceService.toFixed(2)}}
         </td>
         <!--        <td>
                   <v-btn icon x-small color="red" @click="removeService()">

@@ -44,7 +44,7 @@ schema.virtual('date')
 
 schema.virtual('priceService')
     .get(function (){
-        return (this.priceComponents * (this.service ? this.service.coefficient : 0)).toFixed()
+        return (this.priceComponents * (this.service ? this.service.coefficient : 0))
     })
 
 schema.virtual('priceComponents')
@@ -100,6 +100,11 @@ schema.virtual('gpuCount')
 schema.virtual('lanCount')
     .get(function () {
         return this.parts.filter(p => p.component.type === 'LAN').reduce((a, b) => a + b.count, 0)
+    })
+
+schema.virtual('lanCount100')
+    .get(function () {
+        return this.parts.filter(p => p.component.type === 'LAN' && p.component.lanSpeed===100).reduce((a, b) => a + b.count, 0)
     })
 
 schema.virtual('raidCount')

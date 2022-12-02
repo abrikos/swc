@@ -151,12 +151,14 @@ module.exports = function (app) {
 
     }
 
+    //db.component.find({partNumber:'QSC-QSFP0.1G100E-850'}).then(console.log);
+
     async function parseComponentXLS(file, deleteAll) {
         if (deleteAll) {
-            await db.component.deleteMany({})
+            /*await db.component.deleteMany({})
             await db.chassis.deleteMany({})
             await db.configuration.deleteMany({})
-            await db.spec.deleteMany({})
+            await db.spec.deleteMany({})*/
         }
         try {
             const platformNames = [
@@ -172,6 +174,11 @@ module.exports = function (app) {
             const items = XLSX.utils.sheet_to_json(workbook.Sheets[sheet_name_list[0]])
             let chassis = 0;
             let components = 0;
+            const pnArray = items.map(i=>i.PN?.trim())
+            const notExist = await db.component.find({partNumber:{$nin:pnArray}})
+            await db.part.deleteMany({component:{$in:notExist.map(c=>c._id)}})
+            await db.component.deleteMany({_id:{$in:notExist.map(c=>c._id)}})
+            console.log(notExist.map(c=>c.partNumber))
             for (const item of items) {
                 const platforms = []
                 for (const key of Object.keys(item)) {

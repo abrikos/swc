@@ -12,7 +12,9 @@ export default function ({app}, inject) {
             :
             components.filter(c => c.category === tab.category)
 
-        return componentsByType.filter(c => {
+        return componentsByType
+            .filter(c=>!c.deleted)
+            .filter(c => {
             switch (tab.category) {
                 case 'CPU':
                     return configuration.chassis.cpu === c.type && c.platforms.includes(configuration.chassis.platform)
@@ -52,8 +54,9 @@ export default function ({app}, inject) {
         if (configuration.gpuCount && !configuration.lanCount && !configuration.riserX16Count) {
             result.errors.push(`При выборе GPU необходим Riser x16`)
         }
-        if (!configuration.gpuCount && configuration.lanCount && !configuration.riserX16Count) {
-            result.errors.push(`При выборе LAN необходим Riser x16`)
+        console.log(configuration.gpuCount , configuration.lanCount100 ,configuration.riserX16Count)
+        if (!configuration.gpuCount && configuration.lanCount100 && !configuration.riserX16Count) {
+            result.errors.push(`При выборе LAN 100Gb необходим Riser x16`)
         }
         if (configuration.gpuCount && configuration.lanCount && configuration.riserX16Count < configuration.gpuCount + configuration.lanCount) {
             result.errors.push(`При выборе LAN и GPU необходимо ${configuration.gpuCount + configuration.lanCount} Riser x16.`)
