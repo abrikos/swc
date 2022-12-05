@@ -69,7 +69,18 @@ module.exports = function (app) {
                     ]
                 },
                 {category: 'Power'},
-            ] : [{category: 'Cable'}]
+            ] : [{
+                category: 'Storage',
+                children: [
+                    {type: 'RAID'},
+                    {type: 'HDD'},
+                    {type: 'SSD 2.5'},
+                    {type: 'SSD m.2'},
+                    {type: 'SSD U.2 NVMe'},
+                    {type: 'Rear bay'},
+
+                ]
+            },{category: 'Cable'}]
             const components = await db.component.find().sort({partNumber: 1})
             const specs = (await db.spec.find()).filter(s => s.configurations.includes(configurationId));
             res.send({configuration, tabs, components, specs})

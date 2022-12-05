@@ -16,6 +16,10 @@ module.exports = function (app) {
             .then(console.log)
     }, 3600 * 1000 * 24)
 
+    setInterval(()=>{
+        db.part.deleteMany({component:null}).then(()=>{})
+    }, 10000)
+
     async function initAdmin() {
         //await db.user.deleteMany().then(console.log)
         if (!(process.env.ADMIN_EMAIL && process.env.ADMIN_PASSW)) {

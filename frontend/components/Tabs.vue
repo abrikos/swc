@@ -16,7 +16,7 @@
       </div>
       <div class="sub-tab">
         <div v-for="(item, i) of tab.children" :key="i" @click="subTabClick(item)"
-             :class="item.type === subTab.type? 'active':''">{{ item.type }}
+             :class="item.type === subTab?.type? 'active':''">{{ item.type }}
         </div>
       </div>
     </div>
@@ -28,10 +28,9 @@ export default {
   name: "Tabs",
   props: ['onChange', 'items', 'withIcons'],
   data() {
-
     return {
       tab: this.items[0],
-      subTab: null,
+      subTab: this.items[0] && this.items[0].children && this.items[0].children[0],
       isHovering: false
     }
   },
