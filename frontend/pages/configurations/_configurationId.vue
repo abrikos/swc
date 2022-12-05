@@ -175,7 +175,12 @@ export default {
       this.specs = res.specs
       this.tabs = res.tabs
       this.tabs.push({category: 'Services'})
-      if (!this.tab) this.tab = res.tabs[0]
+      if (!this.tab) {
+        this.tab = res.tabs[0]
+        if(this.tab.children){
+          this.tab = this.tab.children[0]
+        }
+      }
     },
     async addPart(count, item) {
       await this.$axios.$put(`/configuration/${this.id}/component/${item.id}`, {count})

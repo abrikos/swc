@@ -45,42 +45,43 @@ export default function ({app}, inject) {
         const result = {
             errors: [],
         };
-        if (!configuration.cpuCount && configuration.memCount) {
-            result.errors.push(`Необходимо выбрать CPU`)
-        }
+        if(configuration.chassis.platform !== 'JBOD') {
+            if (!configuration.cpuCount && configuration.memCount) {
+                result.errors.push(`Необходимо выбрать CPU`)
+            }
 
-        if (configuration.memCount > configuration.memMaxCount) {
-            result.errors.push(`Выбранное количество модулей памяти (${configuration.memCount}) превышает максимальное (${configuration.memMaxCount})`)
-        } else if ((configuration.cpuCount || configuration.memCount) && configuration.cpuCount < 2 && configuration.memCount > (configuration.chassis.platform === 'G3' ? 16 : 12)) {
-            result.errors.push(`Для выбранного количества модулей памяти (${configuration.memCount}) недостаточно процессоров (${configuration.cpuCount})`)
-        }
-        if (configuration.gpuCount && !configuration.lanCount && !configuration.riserX16Count) {
-            result.errors.push(`При выборе GPU необходим Riser x16`)
-        }
-        console.log(configuration.gpuCount , configuration.lanCount100 ,configuration.riserX16Count)
-        if (!configuration.gpuCount && configuration.lanCount100 && !configuration.riserX16Count) {
-            result.errors.push(`При выборе LAN 100Gb необходим Riser x16`)
-        }
-        if (configuration.gpuCount && configuration.lanCount && configuration.riserX16Count < configuration.gpuCount + configuration.lanCount) {
-            result.errors.push(`При выборе LAN и GPU необходимо ${configuration.gpuCount + configuration.lanCount} Riser x16.`)
-        }
-        if (configuration.gpuCount === 1 && configuration.power < 1300) {
-            result.errors.push(`При установке 1 GPU необходимо питанее не менее 1300W. Текущее: ${configuration.power}`)
-        }
-        if (configuration.gpuCount > 1 && configuration.power < 1600) {
-            result.errors.push(`При установке 2 и более GPU необходимо питанее не менее 1600W. Текущее: ${configuration.power}`)
+            if (configuration.memCount > configuration.memMaxCount) {
+                result.errors.push(`Выбранное количество модулей памяти (${configuration.memCount}) превышает максимальное (${configuration.memMaxCount})`)
+            } else if ((configuration.cpuCount || configuration.memCount) && configuration.cpuCount < 2 && configuration.memCount > (configuration.chassis.platform === 'G3' ? 16 : 12)) {
+                result.errors.push(`Для выбранного количества модулей памяти (${configuration.memCount}) недостаточно процессоров (${configuration.cpuCount})`)
+            }
+            if (configuration.gpuCount && !configuration.lanCount && !configuration.riserX16Count) {
+                result.errors.push(`При выборе GPU необходим Riser x16`)
+            }
+            if (!configuration.gpuCount && configuration.lanCount100 && !configuration.riserX16Count) {
+                result.errors.push(`При выборе LAN 100Gb необходим Riser x16`)
+            }
+            if (configuration.gpuCount && configuration.lanCount && configuration.riserX16Count < configuration.gpuCount + configuration.lanCount) {
+                result.errors.push(`При выборе LAN и GPU необходимо ${configuration.gpuCount + configuration.lanCount} Riser x16.`)
+            }
+            if (configuration.gpuCount === 1 && configuration.power < 1300) {
+                result.errors.push(`При установке 1 GPU необходимо питанее не менее 1300W. Текущее: ${configuration.power}`)
+            }
+            if (configuration.gpuCount > 1 && configuration.power < 1600) {
+                result.errors.push(`При установке 2 и более GPU необходимо питанее не менее 1600W. Текущее: ${configuration.power}`)
+            }
+            if (configuration.cpuCount < 2 && configuration.riserCount) {
+                result.errors.push(`Для выбранного количество райзеров (${configuration.riserCount}) недостаточно процессоров (${configuration.cpuCount})`)
+            }
+            if (configuration.pcieCount > configuration.pcieMaxCount) {
+                result.errors.push(`Недостаточно PCI-E слотов (${configuration.pcieMaxCount}) для выбранного количества PCI-E устройств: ${configuration.pcieCount}`)
+            }
+            if (configuration.riserMaxCount < configuration.riserCount) {
+                result.errors.push(`Количество выбранных райзеров (${configuration.riserCount}) больше чем возможно установить (${configuration.riserMaxCount})`)
+            }
         }
         if (!configuration.fcCount && !configuration.raidCount && configuration.diskCount > 12) {
             result.errors.push(`Для платформы сколичеством дисков более 12 необходим RAID или HBA`)
-        }
-        if (configuration.cpuCount < 2 && configuration.riserCount) {
-            result.errors.push(`Для выбранного количество райзеров (${configuration.riserCount}) недостаточно процессоров (${configuration.cpuCount})`)
-        }
-        if (configuration.pcieCount > configuration.pcieMaxCount) {
-            result.errors.push(`Недостаточно PCI-E слотов (${configuration.pcieMaxCount}) для выбранного количества PCI-E устройств: ${configuration.pcieCount}`)
-        }
-        if (configuration.riserMaxCount < configuration.riserCount) {
-            result.errors.push(`Количество выбранных райзеров (${configuration.riserCount}) больше чем возможно установить (${configuration.riserMaxCount})`)
         }
         const rearBaysNeeded = [0, 0, 1, 2, 2];
         if (configuration.rearBayCount < rearBaysNeeded[configuration.nvmeCount]) {
