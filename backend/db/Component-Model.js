@@ -71,6 +71,15 @@ schema.virtual('riserSlots')
         return match.length - 1;
     })
 
+schema.virtual('riserUnit')
+    .get(function () {
+        const match = this.params?.match(/(\d)U/)
+        console.log(match)
+        return match ? match[1] * 1 : 0;
+    })
+
+
+
 schema.virtual('description')
     .get(function () {
         return this.descFull || this.descShort;

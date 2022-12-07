@@ -24,6 +24,9 @@ export default function ({app}, inject) {
                     if (gpus > 1) return c.power >= 1600
                 case 'Storage':
                     if (configuration.chassis.isSFF && c.type === 'HDD') return c.isSFF
+                case 'Riser':
+                    console.log(configuration.chassis.units , c.riserUnit)
+                    if (configuration.chassis.units > c.riserUnit) return false
                 default:
                     return true
             }
