@@ -74,7 +74,6 @@ schema.virtual('riserSlots')
 schema.virtual('riserUnit')
     .get(function () {
         const match = this.params?.match(/(\d)U/)
-        console.log(match)
         return match ? match[1] * 1 : 0;
     })
 
