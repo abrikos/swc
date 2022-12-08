@@ -1,17 +1,11 @@
 export default function ({app}, inject) {
 
     inject('components', (configuration, components, tab) => {
-        let gpus = 0;
-        for (const part of configuration.parts) {
-            if (part.component.type === 'GPU') {
-                gpus += part.count
-            }
-        }
         const componentsByType = tab.type ?
             components.filter(c => c.type === tab.type)
             :
             components.filter(c => c.category === tab.category)
-
+        console.log(JSON.stringify(tab))
         return componentsByType
             .filter(c=>!c.deleted)
             .filter(c => {
@@ -20,16 +14,21 @@ export default function ({app}, inject) {
                     return configuration.chassis.cpu === c.type && c.platforms.includes(configuration.chassis.platform)
                 case 'Power':
                     if (c.partNumber === 'PSU065R' && configuration.chassis.platform !== 'G2R') return false
-                    if (gpus > 0) return c.power >= 1300
-                    if (gpus > 1) return c.power >= 1600
+                    if (configuration.gpuCount >= 0) return c.power >= 1300
+                    if (configuration.gpuCount >= 1) return c.power >= 1600
                 case 'Storage':
                     if (configuration.chassis.isSFF && c.type === 'HDD') return c.isSFF
                 case 'Riser':
                     console.log(configuration.chassis.units , c.riserUnit)
                     if (configuration.chassis.units > c.riserUnit) return false
-                default:
-                    return true
             }
+            switch (tab.type){
+                case 'Rear bay':
+                    if (configuration.isRearBayNeeded) {
+                        return c.partNumber === 'rbaySFFU2'
+                    }
+            }
+            return true
         }).map(c => {
             if (configuration.cpuCount && c.category === 'CPU') {
                 c.countDisabled = true
@@ -86,9 +85,8 @@ export default function ({app}, inject) {
         if (!configuration.fcCount && !configuration.raidCount && configuration.diskCount > 12) {
             result.errors.push(`Для платформы сколичеством дисков более 12 необходим RAID или HBA`)
         }
-        const rearBaysNeeded = [0, 0, 1, 2, 2];
-        if (configuration.rearBayCount < rearBaysNeeded[configuration.nvmeCount]) {
-            result.errors.push(`Для выбранных SSD U.2 NVMe (${configuration.nvmeCount})  необходимо ${rearBaysNeeded[configuration.nvmeCount]} Rear bay (${configuration.rearBayCount})`)
+        if (configuration.isRearBayNeeded) {
+            result.errors.push(`Для выбранных SSD U.2 NVMe (${configuration.nvmeCount})  необходимо ${rearBaysNeeded[configuration.nvmeCount]} Rear bay PN rbaySFFU2 (${configuration.rearBayCount})`)
         }
 
         return result

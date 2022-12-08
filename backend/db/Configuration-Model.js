@@ -66,6 +66,12 @@ schema.virtual('priceTotal')
         return (this.price ) * this.count
     })
 
+schema.virtual('isRearBayNeeded')
+    .get(function () {
+        const rearBaysNeeded = [0, 0, 1, 2, 2];
+        return this.rearBayCount < rearBaysNeeded[this.nvmeCount]
+    })
+
 schema.virtual('memCount')
     .get(function () {
         return this.parts.filter(p => p.component.category === 'Memory').reduce((a, b) => a + b.count, 0)

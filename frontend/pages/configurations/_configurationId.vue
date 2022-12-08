@@ -47,8 +47,7 @@
         </v-data-table>
       </v-col>
       <v-col sm="5">
-        <small>{{ configuration.chassis.platform }} - {{ configuration.chassis.units }}U -
-          {{ configuration.chassis.params }}</small>
+        <small>{{ configuration.chassis.descFull }}</small>
         <br/>
         <div v-if="specs.length">
           <!--          В составе спецификаций:-->

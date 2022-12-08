@@ -4,7 +4,7 @@ const name = 'service';
 
 const schema = new Schema({
         partNumber: String,
-        article: String,
+        article: {type:String, require: true, unique: true},
         name: String,
         price: {type:Number, default:0},
         priceNet: {type:Number, default:0},

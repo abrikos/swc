@@ -9,10 +9,9 @@ const schema = new Schema({
         category: String,
         type: String,
         params: String,
-        partNumber: {type: String, unique: true},
+        partNumber: {type: String, unique: true, require: true},
         descShort: String,
         descFull: String,
-        deleted: Boolean,
         price: {type:Number, default:0}
     },
     {

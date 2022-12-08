@@ -24,10 +24,10 @@ module.exports = function (app) {
         for (const conf of spec.configurations) {
             rowHeights.push({hpx: 50})
             const partRows = []
-            let confName = []
+            let confName = [conf.chassis.descFull]
             for (const part of conf.partsSorted) {
                 rowHeights.push({hpx: 15})
-                confName.push(part.count+'*'+part.component.description)
+                confName.push(part.count+'* '+part.component.description)
                 partRows.push([
                     {v: part.component.partNumber, s: {alignment: {horizontal: 'right'}, ...partStyle}},
                     {v: part.count, t: 'n', s: {alignment: {horizontal: 'center'}, ...partStyle}},
@@ -91,6 +91,8 @@ module.exports = function (app) {
         const excelBuffer = XLSX.write(wb, {bookType: 'xlsx', type: 'array'});
         return Buffer.from(excelBuffer)
     }
+
+    //db.chassis.find({partNumber:'210GSFP+m'}).then(console.log)
     /*
         db.spec.findOne()
             .sort({createdAt: - 1})

@@ -113,7 +113,7 @@ module.exports = function (app) {
     //db.chassis.find().then(console.log)
 
 
-    app.post('/api/admin/upload-list', passport.isAdmin, async (req, res) => {
+    app.post('/api/admin/upload-components', passport.isAdmin, async (req, res) => {
         try {
             const stat = await parseComponentXLS(req.files.file.tempFilePath);
             fs.unlink(req.files.file.tempFilePath, () => {
@@ -124,12 +124,24 @@ module.exports = function (app) {
         }
     })
 
+    app.post('/api/admin/upload-services', passport.isAdmin, async (req, res) => {
+        try {
+            const stat = await parseServiceXLS(req.files.file.tempFilePath);
+            fs.unlink(req.files.file.tempFilePath, () => {
+            })
+            res.send(stat)
+        } catch (e) {
+            app.locals.errorLogger(e, res)
+        }
+    })
+
     //db.configuration.findById('63843875b69e143f309c27c0').populate(db.configuration.population).then(i=> {        console.log(i.parts)    })
-    parseServiceXLS('./service.xlsb')
-    async function parseServiceXLS(file, deleteAll){
+    //parseServiceXLS('./service.xlsb')
+    async function parseServiceXLS(file){
         const workbook = XLSX.readFile(file);
         const sheet_name_list = workbook.SheetNames;
         const items = XLSX.utils.sheet_to_json(workbook.Sheets[sheet_name_list[0]])
+        let services = 0;
         for(const item of items){
             const data ={
                 partNumber: item.__EMPTY,
@@ -144,10 +156,12 @@ module.exports = function (app) {
                 coefficient: item.__EMPTY_9,
             }
             try {
-                const x = await db.service.updateOne({article: data.article}, data, {upsert: true})
+                await db.service.updateOne({article: data.article}, data, {upsert: true})
+                services++;
             }catch (e) {
             }
         }
+        return {services}
         //const added = await db.service.find({partNumber:'QSRV-160402'})
         //console.log(added)
         //const ch = await db.chassis.findOne().populate('services')
