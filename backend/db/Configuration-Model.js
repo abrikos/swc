@@ -68,13 +68,73 @@ schema.virtual('priceTotal')
 
 schema.virtual('isRearBayNeeded')
     .get(function () {
-        const rearBaysNeeded = [0, 0, 1, 2, 2];
-        return this.rearBayCount < rearBaysNeeded[this.nvmeCount]
+        return this.rearBayCount < this.rearBaysNeeded
+    })
+
+schema.virtual('rearBayNeeded')
+    .get(function () {
+        const needs =  [0, 0, 1, 2, 2];
+        return needs[[this.nvmeCount]]
     })
 
 schema.virtual('memCount')
     .get(function () {
         return this.parts.filter(p => p.component.category === 'Memory').reduce((a, b) => a + b.count, 0)
+    })
+
+schema.virtual('raidTrimodeCount')
+    .get(function () {
+        return this.parts.filter(p => p.component.partNumber==='94008IR').reduce((a, b) => a + b.count, 0)
+    })
+
+schema.virtual('raidTrimode8iCount')
+    .get(function () {
+        return this.parts.filter(p => p.component.type==='RAID' && p.component.partNumber.match('8I')).reduce((a, b) => a + b.count, 0)
+    })
+
+schema.virtual('raidTrimode16iCount')
+    .get(function () {
+        return this.parts.filter(p => p.component.type==='RAID' && p.component.partNumber.match('16I')).reduce((a, b) => a + b.count, 0)
+    })
+
+schema.virtual('sasCount')
+    .get(function () {
+        return this.parts.filter(p => p.component.type==='RAID' && p.component.description.match('SAS')).reduce((a, b) => a + b.count, 0)
+    })
+
+schema.virtual('cable8643Count')
+    .get(function () {
+        return this.parts.filter(p => p.component.type==='Cable' && p.component.partNumber.match('8643')).reduce((a, b) => a + b.count, 0)
+    })
+
+schema.virtual('cableSataCount')
+    .get(function () {
+        return this.parts.filter(p => p.component.type==='Cable' && p.component.partNumber==='SATA-SATA').reduce((a, b) => a + b.count, 0)
+    })
+
+schema.virtual('hbaCount')
+    .get(function () {
+        return this.parts.filter(p => p.component.type==='RAID' && p.component.partNumber.match('HBA')).reduce((a, b) => a + b.count, 0)
+    })
+
+schema.virtual('raid93Count')
+    .get(function () {
+        return this.parts.filter(p => p.component.type==='RAID' && p.component.partNumber.match('93')).reduce((a, b) => a + b.count, 0)
+    })
+
+schema.virtual('cacheModule93Count')
+    .get(function () {
+        return this.parts.filter(p => p.component.type==='RAID' && p.component.partNumber==='CVM02').reduce((a, b) => a + b.count, 0)
+    })
+
+schema.virtual('raid94Count')
+    .get(function () {
+        return this.parts.filter(p => p.component.type==='RAID' && p.component.partNumber.match(/94|95/)).reduce((a, b) => a + b.count, 0)
+    })
+
+schema.virtual('cacheModule94Count')
+    .get(function () {
+        return this.parts.filter(p => p.component.type==='RAID' && p.component.partNumber==='CVPM05').reduce((a, b) => a + b.count, 0)
     })
 
 schema.virtual('memModuleSize')
@@ -108,9 +168,39 @@ schema.virtual('lanCount')
         return this.parts.filter(p => p.component.type === 'LAN').reduce((a, b) => a + b.count, 0)
     })
 
+schema.virtual('lanPortsCount')
+    .get(function () {
+        return this.parts.filter(p => p.component.type === 'LAN').reduce((a, b) => a + b.component.lanPorts, 0)
+    })
+
 schema.virtual('lanCount100')
     .get(function () {
         return this.parts.filter(p => p.component.type === 'LAN' && p.component.lanSpeed===100).reduce((a, b) => a + b.count, 0)
+    })
+
+schema.virtual('sfpCount')
+    .get(function () {
+        return this.parts.filter(p => p.component.type === 'Transceiver' && p.component.description.match('SFP')).reduce((a, b) => a + b.count, 0)
+    })
+
+schema.virtual('cableCount')
+    .get(function () {
+        return this.parts.filter(p => p.component.type === 'Transceiver' && p.component.partNumber.match('CAB')).reduce((a, b) => a + b.count, 0)
+    })
+
+schema.virtual('transceiverCount')
+    .get(function () {
+        return this.parts.filter(p => p.component.type === 'Transceiver').reduce((a, b) => a + b.count, 0)
+    })
+
+schema.virtual('cable4U2Count')
+    .get(function () {
+        return this.parts.filter(p => p.component.partNumber === '1*SFF-8643 - 1*SFF-8643').reduce((a, b) => a + b.count, 0)
+    })
+
+schema.virtual('ssdU2Count')
+    .get(function () {
+        return this.parts.filter(p => p.component.type === 'SSD U.2 NVMe').reduce((a, b) => a + b.count, 0)
     })
 
 schema.virtual('raidCount')
@@ -156,6 +246,11 @@ schema.virtual('pcieMaxCount')
 schema.virtual('riserMaxCount')
     .get(function () {
         return this.chassis.units * 2;
+    })
+
+schema.virtual('risersAvailable')
+    .get(function () {
+        return this.riserMaxCount - this.rearBayCount;
     })
 
 schema.virtual('cpuMaxCount')

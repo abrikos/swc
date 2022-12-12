@@ -17,9 +17,10 @@ export default function ({app}, inject) {
                     if (configuration.gpuCount >= 0) return c.power >= 1300
                     if (configuration.gpuCount >= 1) return c.power >= 1600
                 case 'Storage':
+                    if(configuration.chassis.partNumber === 'QSRV-2524') return c.isSAS && c.isSFF
+                    if(configuration.chassis.partNumber === 'QSRV-4524') return c.isSAS && (c.isSFF || c.isLFF)
                     if (configuration.chassis.isSFF && c.type === 'HDD') return c.isSFF
                 case 'Riser':
-                    console.log(configuration.chassis.units , c.riserUnit)
                     if (configuration.chassis.units > c.riserUnit) return false
             }
             switch (tab.type){
@@ -81,13 +82,72 @@ export default function ({app}, inject) {
             if (configuration.riserMaxCount < configuration.riserCount) {
                 result.errors.push(`Количество выбранных райзеров (${configuration.riserCount}) больше чем возможно установить (${configuration.riserMaxCount})`)
             }
+            if (configuration.lanPortsCount < configuration.transceiverCount) {
+                result.errors.push(`Количество SFP модулей и DAC кабелей больше чем портов на сетевых картах`)
+            }
+            if(['QSRV-261202R_Active_BP_wth_4_U2', 'QSRV-262402R_active_BP_wth_4_U2']
+                .map(c=>c.toLowerCase())
+                .includes(configuration.chassis.partNumber.toLowerCase())){
+                if(configuration.ssdU2Count < configuration.rearBayCount * 2)
+                    result.errors.push(`На каждые 2 шт SSD U.2 NVMe (${configuration.ssdU2Count}) необходимо 1 rear bay ${configuration.rearBayCount}`)
+                if(configuration.ssdU2Count > 4)
+                    result.errors.push(`Превышено допустимое (4) количество SSD U.2 NVMe ${configuration.ssdU2Count}`)
+                if(!configuration.raidTrimodeCount)
+                    result.errors.push(`Необходимо подключение контроллера Trimode`)
+                if(configuration.cable8643Count < 5){
+                    result.errors.push(`Необходимы кабели для подключения 8643 на 8643 ${5 - configuration.cable8643Count} штук`)
+                }
+            }
+            if(['QSRV-361602R_Active_BP', 'QSRV-463602R', 'QSRV-261202R_Active_BP', 'QSRV-262402R_active_BP']
+                    .map(c=>c.toLowerCase())
+                    .includes(configuration.chassis.partNumber.toLowerCase())
+                ){
+                if(!!configuration.sasCount)
+                    result.errors.push(`Необходимо подключение контроллера SAS HBA или SAS RAID`)
+                const maxCount = 'QSRV-463602R' === configuration.chassis.partnumber ? 4 :2
+                if(configuration.cable8643Count < maxCount){
+                    result.errors.push(`Необходимы кабели для подключения 8643 на 8643 ${maxCount - configuration.cable8643Count} штук`)
+                }
+            }
+            if(['QSRV-261202R', 'QSRV-260802R', 'QSRV-160402R', 'QSRV-160404R', 'QSRV-160802R', 'QSRV-160804R']
+                    .map(c=>c.toLowerCase())
+                    .includes(configuration.chassis.partNumber.toLowerCase())
+                ){
+                if(configuration.diskCount > configuration.cableSataCount)
+                    result.errors.push(`Необходимы кабели SATA-SATA (${configuration.diskCount - configuration.cableSataCount})`)
+                if(configuration.raidCount * 4 > configuration.cable8643Count){
+                    result.errors.push(`Необходимы кабели для подключения 8643 на 8643 ${configuration.raidCount * 4 - configuration.cable8643Count} штук`)
+                }
+            }
         }
         if (!configuration.fcCount && !configuration.raidCount && configuration.diskCount > 12) {
             result.errors.push(`Для платформы сколичеством дисков более 12 необходим RAID или HBA`)
         }
-        if (configuration.isRearBayNeeded) {
-            result.errors.push(`Для выбранных SSD U.2 NVMe (${configuration.nvmeCount})  необходимо ${rearBaysNeeded[configuration.nvmeCount]} Rear bay PN rbaySFFU2 (${configuration.rearBayCount})`)
+        if (configuration.riserCount + configuration.rearBayCount > 4) {
+            result.errors.push(`Сумма райзеров (${configuration.riserCount}) и корзин (${configuration.rearBayCount}) не может быть более 4`)
         }
+        if (!configuration.riserCount && configuration.hbaCount) {
+            result.errors.push(`HBA контроллер требует одного слота x8 на райзере`)
+        }
+        if (configuration.isRearBayNeeded) {
+            result.errors.push(`Для выбранных SSD U.2 NVMe (${configuration.nvmeCount})  необходимо ${configuration.rearBaysNeeded} Rear bay PN rbaySFFU2 (${configuration.rearBayCount})`)
+        }
+
+        if(configuration.raid93Count && !configuration.cacheModule93Count){
+            result.errors.push(`93хх серия RAID совместима только с Модуль защиты кэша для RAID 93xx (PN CVM02)`)
+
+        }
+
+        if(configuration.raid94Count && !configuration.cacheModule94Count){
+            result.errors.push(`94хх-95xx серия RAID совместима только с Модуль защиты кэша для RAID 94xx-955xx (PN CVPM05)`)
+        }
+        if((configuration.raid94Count + configuration.raid93Count) && configuration.raidTrimodeCount){
+            result.errors.push(`RAID контроллер Trimode 9440 Raid 8i (1,0,10,5,6,50,60) (PN 94008IR) не совместим с модулями защиты. Модули защиты к нему добавлять не нельзя`)
+        }
+        if(configuration.cable4U2Count < configuration.ssdU2Count){
+            result.errors.push(`С каждым диском U.2 NVMe (${configuration.ssdU2Count}) должен быть добавлен кабель (PN 1*SFF-8643 - 1*SFF-8643) (${configuration.cable4U2Count})`)
+        }
+
 
         return result
     })
@@ -107,7 +167,7 @@ export default function ({app}, inject) {
                 return Array.from(Array(configuration.memMaxCount + 2).keys()).filter(i => !(i % 2))
             case 'Riser':
                 //if(configuration.riserMaxCount <= 0) return [0]
-                return Array.from(Array(configuration.chassis.units * 2 + 1 - configuration.rearBayCount).keys());
+                return Array.from(Array(configuration.risersAvailable +  1).keys());
             case 'Power':
                 return [0, 1]
         }
@@ -122,7 +182,9 @@ export default function ({app}, inject) {
             case 'LAN OCP 3.0':
                 return [0, 1]
             case 'SSD U.2 NVMe':
-                return [0, 1, 2, 3, 4]
+                const trimode8Adds = configuration.raidTrimode8iCount * 2
+                const trimode16Adds = configuration.raidTrimode16iCount * 4
+                return Array.from(Array(5 + trimode8Adds + trimode16Adds).keys());
             case 'HDD':
             case 'SSD 2.5':
                 return Array.from(Array(configuration.chassis.discs + 1).keys());

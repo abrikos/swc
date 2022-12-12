@@ -33,7 +33,6 @@ module.exports = function (app) {
         }
     })
 
-
     app.get('/api/configuration/:configurationId', passport.isLogged, async (req, res) => {
         try {
             const {user} = res.locals;
@@ -54,6 +53,7 @@ module.exports = function (app) {
                         {type: 'SSD m.2'},
                         {type: 'SSD U.2 NVMe'},
                         {type: 'Rear bay'},
+                        {type: 'Cable'},
 
                     ]
                 },

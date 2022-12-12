@@ -40,6 +40,16 @@ schema.virtual('isSFF')
         return !!this.params?.match('SFF')
     })
 
+schema.virtual('isSAS')
+    .get(function () {
+        return !!this.params?.match('SAS')
+    })
+
+schema.virtual('isLFF')
+    .get(function () {
+        return !!this.params?.match('LFF')
+    })
+
 schema.virtual('memorySize')
     .get(function () {
         const match = this.params?.match(/(\d+)GB/)
@@ -49,6 +59,11 @@ schema.virtual('memorySize')
 schema.virtual('lanSpeed')
     .get(function () {
         const match = this.params?.match(/(\d+)G/)
+        return match && match[1] * 1;
+    })
+schema.virtual('lanPorts')
+    .get(function () {
+        const match = this.params?.match(/(\d+)-port/)
         return match && match[1] * 1;
     })
 

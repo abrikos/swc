@@ -196,7 +196,6 @@ module.exports = function (app) {
             const notExist = await db.component.find({partNumber:{$nin:pnArray}})
             await db.part.deleteMany({component:{$in:notExist.map(c=>c._id)}})
             await db.component.deleteMany({_id:{$in:notExist.map(c=>c._id)}})
-            console.log(notExist.map(c=>c.partNumber))
             for (const item of items) {
                 const platforms = []
                 for (const key of Object.keys(item)) {
@@ -213,6 +212,7 @@ module.exports = function (app) {
                     descFull: item.DescFull?.trim(),
                     platforms,
                 }
+
                 if(!fields.partNumber) continue
                 if (!fields.descFull) fields.descFull = fields.params
                 if (fields.category === 'Chassis') {
@@ -222,7 +222,8 @@ module.exports = function (app) {
                 } else {
                     components++
                     const data = componentData(fields)
-                    await db.component.updateOne({partNumber: data.partNumber}, data, {upsert: true})
+                    const x  = await db.component.updateOne({partNumber: data.partNumber}, data, {upsert: true})
+                    if(fields.partNumber==='4 SATA - 1*SFF-8643') console.log(data)
                 }
             }
             return {chassis, components}
@@ -231,6 +232,7 @@ module.exports = function (app) {
         }
     }
 
+    db.component.find({partNumber:'4 SATA - 1*SFF-8643'}).then(console.log)
     //parseComponentXLS('export.xlsb.xlsx', 1)
     //db.component.find().then(console.log)
     function chassisData(data) {
