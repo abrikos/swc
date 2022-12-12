@@ -2,7 +2,7 @@
   <div class="list">
     <div class="chassis" v-for="item of chassis" @click="click(item)">
       <img :src="`/upload/${item.partNumber}.jpg`"/>
-      <strong>{{ item.partNumber }} </strong>
+      <strong>{{ item.partNumber.replace(/_/g, ' ') }} </strong>
       <br/>
       <small>{{ item.params }}</small>
     </div>

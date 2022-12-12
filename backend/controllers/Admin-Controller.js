@@ -232,7 +232,7 @@ module.exports = function (app) {
         }
     }
 
-    db.component.find({partNumber:'4 SATA - 1*SFF-8643'}).then(console.log)
+    //db.component.find({partNumber:'4 SATA - 1*SFF-8643'}).then(console.log)
     //parseComponentXLS('export.xlsb.xlsx', 1)
     //db.component.find().then(console.log)
     function chassisData(data) {
