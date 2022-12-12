@@ -144,16 +144,16 @@ module.exports = function (app) {
         let services = 0;
         for(const item of items){
             const data ={
-                partNumber: item.__EMPTY,
-                article: item.__EMPTY_1,
-                name: item.__EMPTY_2,
-                price: item.__EMPTY_3,
-                priceNet: item.__EMPTY_4,
-                discount1: item.__EMPTY_5,
-                discount2: item.__EMPTY_6,
-                level: item.__EMPTY_7,
-                period: item.__EMPTY_8.replace('Y',''),
-                coefficient: item.__EMPTY_9,
+                partNumber: item['Артикул продукта'],
+                article: item['Артикул сервиса'],
+                name: item['Наименование сервиса'],
+                price: item['Цена'],
+                priceNet: item['Цена_NET'],
+                discount1: item['Скидка_1'],
+                discount2: item['Скидка_2'],
+                level: item['Уровень сервиса'],
+                period: item['Срок'].replace('Y',''),
+                coefficient: item['Коэф'],
             }
             try {
                 await db.service.updateOne({article: data.article}, data, {upsert: true})
@@ -207,6 +207,7 @@ module.exports = function (app) {
                     type: item.Type?.trim(),
                     price: item['цена GPL'],
                     category: item.Family?.trim(),
+                    name: item.Name?.trim(),
                     params: item.Description?.trim(),
                     partNumber: item.PN?.trim(),
                     descFull: item.DescFull?.trim(),

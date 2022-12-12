@@ -24,7 +24,7 @@ module.exports = function (app) {
         for (const conf of spec.configurations) {
             rowHeights.push({hpx: 50})
             const partRows = []
-            let confName = [conf.chassis.descFull]
+            let confName = [conf.chassis.name]
             for (const part of conf.partsSorted) {
                 rowHeights.push({hpx: 15})
                 confName.push(part.count+'* '+part.component.description)
@@ -92,7 +92,7 @@ module.exports = function (app) {
         return Buffer.from(excelBuffer)
     }
 
-    //db.chassis.find({partNumber:'210GSFP+m'}).then(console.log)
+    //db.chassis.findOne().then(console.log)
     /*
         db.spec.findOne()
             .sort({createdAt: - 1})

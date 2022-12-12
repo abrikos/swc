@@ -158,6 +158,11 @@ schema.virtual('pcieCount')
         return this.parts.filter(p => p.component.category === 'PCI-E' && p.component.type !== 'LAN OCP 3.0').reduce((a, b) => a + b.count, 0)
     })
 
+schema.virtual('ocpCount')
+    .get(function () {
+        return this.parts.filter(p => p.component.type === 'LAN OCP 3.0').reduce((a, b) => a + b.count, 0)
+    })
+
 schema.virtual('gpuCount')
     .get(function () {
         return this.parts.filter(p => p.component.type === 'GPU').reduce((a, b) => a + b.count, 0)
@@ -205,7 +210,12 @@ schema.virtual('ssdU2Count')
 
 schema.virtual('raidCount')
     .get(function () {
-        return this.parts.filter(p => p.component.type === 'RAID').reduce((a, b) => a + b.count, 0)
+        return this.parts.filter(p => p.component.type === 'RAID' && !['CVM02', 'CVPM05'].includes( p.component.partNumber)).reduce((a, b) => a + b.count, 0)
+    })
+
+schema.virtual('cacheModuleCount')
+    .get(function () {
+        return this.parts.filter(p => p.component.type === 'RAID' && ['CVM02', 'CVPM05'].includes( p.component.partNumber)).reduce((a, b) => a + b.count, 0)
     })
 
 schema.virtual('fcCount')
