@@ -5,7 +5,6 @@ module.exports = function (app) {
     const {db} = app.locals;
     app.get('/api/build-date', (req, res) => {
         fs.stat(file, (err, stats) => {
-            console.log(err,stats)
             res.send(stats)
         })
     })
