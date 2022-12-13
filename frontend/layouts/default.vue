@@ -11,7 +11,7 @@
         <v-btn id to="/configurations/chassis" v-if="user">
           Выбор шасси
         </v-btn>
-<!--        <v-btn to="/configurations/list" v-if="user">Конфигурации</v-btn>-->
+        <!--        <v-btn to="/configurations/list" v-if="user">Конфигурации</v-btn>-->
         <v-btn to="/specifications/list" v-if="user">Спецификации</v-btn>
       </v-toolbar-items>
       <v-spacer></v-spacer>
@@ -50,6 +50,12 @@
         <v-breadcrumbs :items="breadcrumbs"></v-breadcrumbs>
         <nuxt/>
       </v-container>
+
+      <v-footer>
+        <small>
+          Build timestamp: {{ buildDate }}
+        </small>
+      </v-footer>
     </v-main>
     <SnackBar/>
   </v-app>
@@ -57,6 +63,13 @@
 
 <script>
 export default {
+
+  layout: 'default',
+  data() {
+    return {
+      buildDate: ''
+    }
+  },
   computed: {
     user() {
       return this.$store.getters.getLoggedUser
@@ -65,22 +78,26 @@ export default {
       const routes = {
         home: {text: 'Главная', to: '/'},
         //'configurations-list': {text: 'Конфигурации', to: '/configurations/list'},
-        'configurations-chassis':{text: 'Выбор шасси', to: '/configurations/chassis'},
+        'configurations-chassis': {text: 'Выбор шасси', to: '/configurations/chassis'},
         'specifications-list': {text: 'Спецификации', to: '/specifications/list'},
         'specifications-specId': {text: 'Просмотр спецификации', disabled: true, parent: 'specifications-list'},
-        'configurations-configurationId':{text: 'Просмотр конфигурации', disabled: true, parent:'specifications-list'},
-        'cabinet-settings':{text: 'Кабинет настройки'},
-        'user-login':{text: 'Вход'},
-        'user-signup':{text: 'Регистрация'},
-        'admin-users':{text: 'Редактирование пользователей'},
-        'admin-upload':{text: 'Загрузка базы', disabled: true},
-        'admin-chassis-list':{text: 'Загрузка изображений шасси'},
+        'configurations-configurationId': {
+          text: 'Просмотр конфигурации',
+          disabled: true,
+          parent: 'specifications-list'
+        },
+        'cabinet-settings': {text: 'Кабинет настройки'},
+        'user-login': {text: 'Вход'},
+        'user-signup': {text: 'Регистрация'},
+        'admin-users': {text: 'Редактирование пользователей'},
+        'admin-upload': {text: 'Загрузка базы', disabled: true},
+        'admin-chassis-list': {text: 'Загрузка изображений шасси'},
       }
       console.log(this.$route.name)
       const crumbs = [routes.home]
       const current = routes[this.$route.name]
-      if(!current) return crumbs
-      if(current.parent) crumbs.push(routes[current.parent])
+      if (!current) return crumbs
+      if (current.parent) crumbs.push(routes[current.parent])
       current.disabled = true;
       crumbs.push(current)
       return crumbs
@@ -99,17 +116,20 @@ export default {
   created() {
     //console.log('zzzzzzzzzzzz', this.$route.name, this.$route)
     //this.$vuetify.theme.isDark = JSON.parse(localStorage.getItem('themeDark'))
-    //this.$axios.$get('/build-date')        .then(res => this.buildDate = res.ctime)
+    this.$axios.$get('/build-date').then(res => this.buildDate = res.ctime)
   },
 
 }
 </script>
 
 <style lang="sass">
+.v-footer
+  justify-content: right
 .v-application
   .v-breadcrumbs
     li.v-breadcrumbs__divider
       color: gray
+
     a
       color: gray
 
@@ -140,9 +160,11 @@ export default {
 
 pointer
   cursor: pointer
+
 .v-btn
   img
     height: 50px
+
 h1
   border-bottom: 1px solid silver
   margin-bottom: 10px
