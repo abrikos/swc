@@ -87,7 +87,7 @@ schema.virtual('riserSlots')
 
 schema.virtual('riserUnit')
     .get(function () {
-        const match = this.params?.match(/(\d)U/)
+        const match = this.partNumber?.match(/(\d)U/)
         return match ? match[1] * 1 : 0;
     })
 

@@ -25,6 +25,7 @@ module.exports = function (app) {
             rowHeights.push({hpx: 50})
             const partRows = []
             let confName = [conf.chassis.name]
+            console.log(confName)
             for (const part of conf.partsSorted) {
                 rowHeights.push({hpx: 15})
                 confName.push(part.count+'* '+part.component.description)

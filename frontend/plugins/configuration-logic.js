@@ -21,9 +21,11 @@ export default function ({app}, inject) {
                         if (configuration.chassis.partNumber === 'QSRV-4524') return c.isSAS && (c.isSFF || c.isLFF)
                         if (configuration.chassis.isSFF && c.type === 'HDD') return c.isSFF
                     case 'Riser':
-                        if (configuration.chassis.units > c.riserUnit) return false
+                        if (configuration.chassis.units < c.riserUnit) return false
                 }
                 switch (tab.type) {
+                    case 'GPU':
+                        if(configuration.chassis.units === 1 && !['GFGT730', 'QUADROP620', 'TESLAT416'].includes(c.partNumber)) return false
                     case 'Rear bay':
                         if (configuration.isRearBayNeeded) {
                             return c.partNumber === 'rbaySFFU2'
@@ -131,14 +133,17 @@ export default function ({app}, inject) {
         if (configuration.cable4U2Count < configuration.ssdU2Count) {
             result.errors.push(`С каждым диском U.2 NVMe (${configuration.ssdU2Count}) должен быть добавлен кабель (PN 1*SFF-8643 - 1*SFF-8643) (${configuration.cable4U2Count})`)
         }
-
+        if (configuration.cable4U2Count < configuration.ssdU2Count) {
+            result.errors.push(`С каждым диском U.2 NVMe (${configuration.ssdU2Count}) должен быть добавлен кабель (PN 1*SFF-8643 - 1*SFF-8643) (${configuration.cable4U2Count})`)
+        }
+        if (configuration.ssdU2Count < configuration.rearBayCount * 2) {
+            result.errors.push(`На каждые 2 шт SSD U.2 NVMe (${configuration.ssdU2Count}) необходимо 1 rear bay ${configuration.rearBayCount}`)
+        }
 
         //G2R
         if (['QSRV-261202R_Active_BP_wth_4_U2', 'QSRV-262402R_active_BP_wth_4_U2']
             .map(c => c.toLowerCase())
             .includes(configuration.chassis.partNumber.toLowerCase())) {
-            if (configuration.ssdU2Count < configuration.rearBayCount * 2)
-                result.errors.push(`На каждые 2 шт SSD U.2 NVMe (${configuration.ssdU2Count}) необходимо 1 rear bay ${configuration.rearBayCount}`)
             if (configuration.ssdU2Count > 4)
                 result.errors.push(`Превышено допустимое (4) количество SSD U.2 NVMe ${configuration.ssdU2Count}`)
             if (!configuration.raidTrimodeCount)

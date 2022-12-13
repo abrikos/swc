@@ -124,7 +124,9 @@ export default {
     }
   },
   beforeRouteLeave(to, from, next) {
+    console.log('zzzzzzz', this.canLeave)
     if (!this.specs.length) {
+
       if (this.canLeave) return next()
       if (window.confirm('Все данные будут утеряны. Продолжить?')) {
         this.$axios.$delete(`/configuration/${this.configuration.id}`);

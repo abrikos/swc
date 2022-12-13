@@ -224,7 +224,6 @@ module.exports = function (app) {
                     components++
                     const data = componentData(fields)
                     const x  = await db.component.updateOne({partNumber: data.partNumber}, data, {upsert: true})
-                    if(fields.partNumber==='4 SATA - 1*SFF-8643') console.log(data)
                 }
             }
             return {chassis, components}
