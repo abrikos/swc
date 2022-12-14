@@ -13,7 +13,7 @@ const schema = new Schema({
         descFull: String,
         name: String,
         params: String,
-        price: {type:Number, default:0}
+        price: {type: Number, default: 0}
     },
     {
         timestamps: {createdAt: 'createdAt'},
@@ -28,13 +28,21 @@ schema.virtual('date')
         return moment(this.createdAt).format('YYYY-MM-DD HH:mm');
     })
 
-schema.virtual('discs')
+schema.virtual('parseDigits')
     .get(function () {
-        const match = this.params.match(/(\d+)\*.*?FF/)
-        return match[1] * 1;
+        const dig = this.partNumber.split('-')[1]
+        const match = this.platform === 'JBOD' ? dig.match(/(\d)(\d\d)/) : dig.match(/(\d)(\d)(\d\d)(\d\d)/)
+        const res = {units: match[1], cpu: match[2], disks: match[3] || match[2], ether: match[4]}
+        return res
     })
 
-schema.virtual('discsOnlySmall')
+schema.virtual('disks')
+    .get(function () {
+        //if(this.platform === 'JBOD')            console.log(this.partNumber, this.parseDigits.disks)
+        return this.parseDigits.disks * 1
+    })
+
+schema.virtual('disksOnlySmall')
     .get(function () {
         return this.type === 'SFF'
     })
@@ -53,8 +61,9 @@ schema.virtual('isSFF')
 
 schema.virtual('units')
     .get(function () {
-        const match = this.descFull.match(/(\d)U/)
-        return match[1] * 1
+        return this.parseDigits.units * 1
+        //const match = this.descFull.match(/(\d)U/)
+        //return match[1] * 1
     })
 
 schema.virtual('services', {

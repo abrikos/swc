@@ -29,7 +29,9 @@
                       hide-details/>
           </template>
           <template v-slot:item.price="{item}">
-            {{item.price?.toFixed(2)}}
+            <div style="text-align: right">
+              {{ item.price?.toFixed(2) }}
+            </div>
           </template>
           <template v-slot:header="props">
             <tr>
@@ -49,6 +51,20 @@
       <v-col sm="5">
         <small>{{ configuration.chassis.descFull }}</small>
         <br/>
+
+        <table style="width: 100%">
+          <tr>
+            <td>Потребление</td>
+            <td>Блок питания</td>
+            <td>Коэффициент</td>
+          </tr>
+          <tr>
+            <td>{{configuration.powerConsumption}}</td>
+            <td>{{configuration.power}}</td>
+            <td>{{(configuration.powerConsumption / configuration.power).toFixed(2)}}</td>
+          </tr>
+        </table>
+
         <div v-if="specs.length">
           <!--          В составе спецификаций:-->
           <div v-for="spec of specs" :key="spec.id">
@@ -62,12 +78,14 @@
             Добавить в спецификацию
           </v-btn>
         </div>
-        <Basket :configuration="configuration" :reload="loadConfiguration"/>
-
-        <br/>
         <v-alert border="top" color="red lighten-2" dark v-for="(error,i) of validator.errors" :key="i">
           {{ error }}
         </v-alert>
+        <br/>
+        <Basket :configuration="configuration" :reload="loadConfiguration"/>
+
+
+
         <!--        <img :src="`/chassis/${configuration.chassis.partNumber}.jpg`" />-->
       </v-col>
     </v-row>
@@ -178,7 +196,7 @@ export default {
       this.tabs.push({category: 'Services'})
       if (!this.tab) {
         this.tab = res.tabs[0]
-        if(this.tab.children){
+        if (this.tab.children) {
           this.tab = this.tab.children[0]
         }
       }

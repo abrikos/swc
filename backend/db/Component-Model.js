@@ -12,7 +12,10 @@ const schema = new Schema({
         partNumber: {type: String, unique: true, require: true},
         descShort: String,
         descFull: String,
-        price: {type:Number, default:0}
+        powerConsumption: {type:Number, default:0},
+        price: {type:Number, default:0},
+        unitMin: {type:Number, default:0},
+        unitFix: {type:Number, default:0}
     },
     {
         timestamps: {createdAt: 'createdAt'},

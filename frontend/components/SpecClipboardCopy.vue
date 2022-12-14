@@ -3,14 +3,15 @@
     <v-btn icon title="В буфер" @click="copyClipBoard" height="50" color="primary">
       <img src="/icons/copy.png"/>
     </v-btn>
-    <v-dialog v-model="dialog" persistent max-width="300">
+    <v-dialog v-model="dialog" persistent max-width="500">
       <v-card>
         <v-card-title>Команда</v-card-title>
         <v-card-text>
           <v-list>
-            <v-list-item>Мирошниченко Станислав</v-list-item>
-            <v-list-item>Филиппов Артём</v-list-item>
-            <v-list-item>????</v-list-item>
+            <v-list-item>Руководитель проекта - Мирошниченко Станислав</v-list-item>
+            <v-list-item>Разработчик - Филиппов Артём</v-list-item>
+            <v-list-item>Тех. консультант - Порошин Михаил</v-list-item>
+            <v-list-item>Дизайн - Романова Наталья</v-list-item>
           </v-list>
         </v-card-text>
         <v-card-actions>
@@ -34,7 +35,7 @@ export default {
   methods: {
     copyClipBoard() {
       this.counter++;
-      if(this.counter > 4){
+      if (this.counter > 4) {
         this.dialog = true;
         this.counter = 0;
       }

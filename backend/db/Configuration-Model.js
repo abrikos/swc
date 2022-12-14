@@ -121,7 +121,7 @@ schema.virtual('raid93Count')
     .get(function () {
         return this.parts.filter(p => p.component.type==='RAID'
             && p.component.partNumber.match('93')
-            && !['93008I8EHBA', '93008IHBA'].includes(p.component.partNumber)
+            && p.component.description.match(/(\d)GB/)
         ).reduce((a, b) => a + b.count, 0)
     })
 
@@ -132,7 +132,12 @@ schema.virtual('cacheModule93Count')
 
 schema.virtual('raid94Count')
     .get(function () {
-        return this.parts.filter(p => p.component.type==='RAID' && p.component.partNumber.match(/94|95/)).reduce((a, b) => a + b.count, 0)
+        return this.parts.filter(p =>
+            p.component.type==='RAID'
+            && p.component.partNumber.match(/94|95/)
+            && p.component.description.match(/(\d)GB/)
+        )
+            .reduce((a, b) => a + b.count, 0)
     })
 
 schema.virtual('cacheModule94Count')
@@ -236,9 +241,29 @@ schema.virtual('rearBayCount')
         return this.parts.filter(p => p.component.type === 'Rear bay').reduce((a, b) => a + b.count, 0)
     })
 
+schema.virtual('rearBaySFFCount')
+    .get(function () {
+        return this.parts.filter(p => p.component.type === 'Rear bay' && p.component.partNumber.match('SFF')).reduce((a, b) => a + b.count, 0)
+    })
+
+schema.virtual('rearBayLFFCount')
+    .get(function () {
+        return this.parts.filter(p => p.component.type === 'Rear bay' && p.component.partNumber.match('LFF')).reduce((a, b) => a + b.count, 0)
+    })
+
+schema.virtual('rearBayU2Count')
+    .get(function () {
+        return this.parts.filter(p => p.component.partNumber === 'rbaySFFU2').reduce((a, b) => a + b.count, 0)
+    })
+
 schema.virtual('diskCount')
     .get(function () {
         return this.parts.filter(p => ['HDD', 'SSD 2.5'].includes(p.component.type)).reduce((a, b) => a + b.count, 0)
+    })
+
+schema.virtual('powerConsumption')
+    .get(function () {
+        return this.parts.reduce((a, b) => a + b.component.powerConsumption, 0)
     })
 
 schema.virtual('power')
@@ -254,6 +279,21 @@ schema.virtual('powerCount')
 schema.virtual('pcieMaxCount')
     .get(function () {
         return this.parts.filter(p => p.component.category === 'Riser').reduce((a, b) => a + b.component.riserSlots * b.count, 0)
+    })
+
+schema.virtual('riserPort12Count')
+    .get(function () {
+        return this.parts.filter(p => p.component.category === 'Riser' && p.component.description.match('port 1/2')).reduce((a, b) => a + b.count, 0)
+    })
+
+schema.virtual('riserPort3Count')
+    .get(function () {
+        return this.parts.filter(p => p.component.category === 'Riser' && p.component.descFull.match('port 3')).reduce((a, b) => a + b.count, 0)
+    })
+
+schema.virtual('riserPort4Count')
+    .get(function () {
+        return this.parts.filter(p => p.component.category === 'Riser' && p.component.description.match('port 4')).reduce((a, b) => a + b.count, 0)
     })
 
 schema.virtual('riserMaxCount')

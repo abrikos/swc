@@ -215,10 +215,12 @@ module.exports = function (app) {
                     name: item.Name?.trim(),
                     params: item.Description?.trim(),
                     partNumber: item.PN?.trim(),
+                    powerConsumption: item.Power,
                     descFull: item.DescFull?.trim(),
+                    unitFix: item.UnitFixed,
+                    unitMin: item.UnitMin,
                     platforms,
                 }
-
                 if(!fields.partNumber) continue
                 if (!fields.descFull) fields.descFull = fields.params
                 if (fields.category === 'Chassis') {
