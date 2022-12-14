@@ -51,11 +51,11 @@
         <nuxt/>
       </v-container>
 
-<!--      <v-footer>
+      <v-footer>
         <small>
           Build timestamp: {{ buildDate }}
         </small>
-      </v-footer>-->
+      </v-footer>
     </v-main>
     <SnackBar/>
   </v-app>
