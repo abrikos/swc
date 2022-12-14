@@ -141,6 +141,11 @@ module.exports = function (app) {
         const workbook = XLSX.readFile(file);
         const sheet_name_list = workbook.SheetNames;
         const items = XLSX.utils.sheet_to_json(workbook.Sheets[sheet_name_list[0]])
+        const pnArray = items.map(i=>i['Артикул сервиса'])
+        const notExist = await db.service.find({article:{$nin:pnArray}})
+        const x = await db.service.deleteMany({_id:{$in:notExist.map(c=>c._id)}})
+        //await db.component.deleteMany({_id:{$in:notExist.map(c=>c._id)}})
+
         let services = 0;
         for(const item of items){
             const data ={

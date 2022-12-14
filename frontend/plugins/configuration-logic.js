@@ -36,6 +36,9 @@ export default function ({app}, inject) {
                 if (configuration.cpuCount && c.category === 'CPU') {
                     c.countDisabled = true
                 }
+                if (configuration.gpuCount && c.type === 'GPU') {
+                    c.countDisabled = true
+                }
                 if (configuration.memCount && c.category === 'Memory') {
                     c.countDisabled = true
                 }
@@ -74,14 +77,9 @@ export default function ({app}, inject) {
 
 
         //RISER
-        if (configuration.gpuCount && !configuration.riserX16Count) {
-            result.errors.push(`При выборе GPU необходим Riser x16`)
-        }
-        if (configuration.lanCount100 && !configuration.riserX16Count) {
-            result.errors.push(`При выборе LAN 100Gb необходим Riser x16`)
-        }
-        if (configuration.gpuCount && configuration.lanCount && (configuration.riserX16Count < configuration.gpuCount + configuration.lanCount)) {
-            result.errors.push(`При выборе LAN и GPU необходимо ${configuration.gpuCount + configuration.lanCount} Riser x16.`)
+        const needed = configuration.gpuCount + configuration.lanCount - configuration.riserX16Count
+        if (needed > 0) {
+            result.errors.push(`Необходимо добавить ${needed} штук Riser x16.`)
         }
         const limit = configuration.chassis.units === 1 ? 1 : 2
         if ((configuration.cpuCount < limit) && configuration.riserCount > limit) {
