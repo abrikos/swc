@@ -119,7 +119,10 @@ schema.virtual('hbaCount')
 
 schema.virtual('raid93Count')
     .get(function () {
-        return this.parts.filter(p => p.component.type==='RAID' && p.component.partNumber.match('93')).reduce((a, b) => a + b.count, 0)
+        return this.parts.filter(p => p.component.type==='RAID'
+            && p.component.partNumber.match('93')
+            && !['93008I8EHBA', '93008IHBA'].includes(p.component.partNumber)
+        ).reduce((a, b) => a + b.count, 0)
     })
 
 schema.virtual('cacheModule93Count')

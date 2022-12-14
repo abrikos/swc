@@ -80,11 +80,11 @@ export default function ({app}, inject) {
         if (configuration.lanCount100 && !configuration.riserX16Count) {
             result.errors.push(`При выборе LAN 100Gb необходим Riser x16`)
         }
-        if (configuration.gpuCount && configuration.lanCount && configuration.riserX16Count < configuration.gpuCount + configuration.lanCount) {
+        if (configuration.gpuCount && configuration.lanCount && (configuration.riserX16Count < configuration.gpuCount + configuration.lanCount)) {
             result.errors.push(`При выборе LAN и GPU необходимо ${configuration.gpuCount + configuration.lanCount} Riser x16.`)
         }
         const limit = configuration.chassis.units === 1 ? 1 : 2
-        if (configuration.cpuCount === limit && configuration.riserCount > limit) {
+        if ((configuration.cpuCount < limit) && configuration.riserCount > limit) {
             result.errors.push(`Для выбранного количество райзеров (${configuration.riserCount}) недостаточно процессоров (${configuration.cpuCount})`)
         }
         if (configuration.riserCount > configuration.chassis.units * 2) {
@@ -96,14 +96,14 @@ export default function ({app}, inject) {
         if (!configuration.riserCount && configuration.hbaCount) {
             result.errors.push(`HBA контроллер требует одного слота x8 на райзере`)
         }
+        if (configuration.riserMaxCount < configuration.riserCount) {
+            result.errors.push(`Количество выбранных райзеров (${configuration.riserCount}) больше чем возможно установить (${configuration.riserMaxCount})`)
+        }
 
 
         //PCI-E
         if (configuration.pcieCount > configuration.pcieMaxCount) {
             result.errors.push(`Недостаточно PCI-E слотов (${configuration.pcieMaxCount}) для выбранного количества PCI-E устройств: ${configuration.pcieCount}`)
-        }
-        if (configuration.riserMaxCount < configuration.riserCount) {
-            result.errors.push(`Количество выбранных райзеров (${configuration.riserCount}) больше чем возможно установить (${configuration.riserMaxCount})`)
         }
         if (configuration.lanPortsCount < configuration.transceiverCount) {
             result.errors.push(`Количество SFP модулей и DAC кабелей больше чем портов на сетевых картах`)
@@ -136,8 +136,9 @@ export default function ({app}, inject) {
         if (configuration.cable4U2Count < configuration.ssdU2Count) {
             result.errors.push(`С каждым диском U.2 NVMe (${configuration.ssdU2Count}) должен быть добавлен кабель (PN 1*SFF-8643 - 1*SFF-8643) (${configuration.cable4U2Count})`)
         }
-        if (configuration.ssdU2Count < configuration.rearBayCount * 2) {
-            result.errors.push(`На каждые 2 шт SSD U.2 NVMe (${configuration.ssdU2Count}) необходимо 1 rear bay ${configuration.rearBayCount}`)
+        console.log('zz', configuration.ssdU2Count, configuration.rearBayCount * 2)
+        if (configuration.ssdU2Count > configuration.rearBayCount * 2) {
+            result.errors.push(`На каждые 2 шт SSD U.2 NVMe (${configuration.ssdU2Count}) необходим rear bay (${configuration.rearBayCount})`)
         }
 
         //G2R
