@@ -82,7 +82,7 @@ export default function ({app}, inject) {
             result.errors.push(`Необходимо добавить ${needed} штук Riser x16.`)
         }
         const limit = configuration.chassis.units === 1 ? 1 : 2
-        if ((configuration.cpuCount < limit) && configuration.riserCount > limit) {
+        if ((configuration.cpuCount < limit) && configuration.riserCount >= limit) {
             result.errors.push(`Для выбранного количество райзеров (${configuration.riserCount}) недостаточно процессоров (${configuration.cpuCount})`)
         }
         if (configuration.riserCount > configuration.chassis.units * 2) {
