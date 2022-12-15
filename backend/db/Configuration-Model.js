@@ -261,6 +261,11 @@ schema.virtual('diskCount')
         return this.parts.filter(p => ['HDD', 'SSD 2.5'].includes(p.component.type)).reduce((a, b) => a + b.count, 0)
     })
 
+schema.virtual('powerCoefficient')
+    .get(function () {
+        return this.powerConsumption / this.power * 100
+    })
+
 schema.virtual('powerConsumption')
     .get(function () {
         return this.parts.reduce((a, b) => a + b.component.powerConsumption * b.count, 0)

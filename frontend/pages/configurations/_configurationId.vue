@@ -52,18 +52,19 @@
         <small>{{ configuration.chassis.descFull }}</small>
         <br/>
 
-        <table style="width: 100%">
+        <table style="width: 100%" class="power">
           <tr>
-            <td>Потребление</td>
-            <td>Блок питания</td>
+            <td>Потребление (W)</td>
+            <td>Блок питания (W)</td>
             <td>Коэффициент</td>
           </tr>
           <tr>
-            <td>{{configuration.powerConsumption}}</td>
-            <td>{{configuration.power}}</td>
-            <td>{{(configuration.powerConsumption / configuration.power).toFixed(2)}}</td>
+            <td>{{ configuration.powerConsumption }}</td>
+            <td>{{ configuration.power }}</td>
+            <td :class="powerColor">{{ configuration.powerCoefficient.toFixed(0) }}%</td>
           </tr>
         </table>
+        <br/>
 
         <div v-if="specs.length">
           <!--          В составе спецификаций:-->
@@ -78,12 +79,12 @@
             Добавить в спецификацию
           </v-btn>
         </div>
+        <br/>
         <v-alert border="top" color="red lighten-2" dark v-for="(error,i) of validator.errors" :key="i">
           {{ error }}
         </v-alert>
         <br/>
         <Basket :configuration="configuration" :reload="loadConfiguration"/>
-
 
 
         <!--        <img :src="`/chassis/${configuration.chassis.partNumber}.jpg`" />-->
@@ -124,6 +125,12 @@ export default {
     }
   },
   computed: {
+    powerColor() {
+      return this.configuration.powerCoefficient < 70 ? 'green'
+          :
+          this.configuration.powerCoefficient < 85 ? 'orange'
+              : 'red'
+    },
     id() {
       return this.$route.params.configurationId;
     },
@@ -210,6 +217,11 @@ export default {
 </script>
 
 <style scoped lang="sass">
+table.power
+  tr:nth-child(2)
+    td
+      border: 1px solid silver
+      padding: 0 10px
 .v-data-table
   :deep(.inBasket)
     td

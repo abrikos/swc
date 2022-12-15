@@ -97,6 +97,7 @@ module.exports = function (app) {
             const {user} = res.locals;
             const chassis = await db.chassis.findById(req.params.chassis).populate('services');
             const service = chassis.services.find(s=>s.level==='BAS' && s.period===3)
+            //Level BAS period 3 - no that services!!!
             const configuration = await db.configuration.create({
                 chassis,
                 service,

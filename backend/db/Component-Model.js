@@ -73,7 +73,7 @@ schema.virtual('lanPorts')
 schema.virtual('power')
     .get(function () {
         const match = this.params?.match(/PSU (\d)\*(\d+)W/)
-        return match && match[2];
+        return match && match[2] * 1;
     })
 
 schema.virtual('riserPorts')
