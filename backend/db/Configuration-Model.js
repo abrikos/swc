@@ -263,7 +263,7 @@ schema.virtual('diskCount')
 
 schema.virtual('powerConsumption')
     .get(function () {
-        return this.parts.reduce((a, b) => a + b.component.powerConsumption, 0)
+        return this.parts.reduce((a, b) => a + b.component.powerConsumption * b.count, 0)
     })
 
 schema.virtual('power')

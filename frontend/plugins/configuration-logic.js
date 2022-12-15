@@ -150,6 +150,9 @@ export default function ({app}, inject) {
         if (configuration.raid93Count && !configuration.cacheModule93Count) {
             result.errors.push(`93хх серия RAID совместима только с Модуль защиты кэша для RAID 93xx (PN CVM02)`)
         }
+        if (!configuration.raid93Count && configuration.cacheModule93Count) {
+            result.errors.push(`Некуда поставить модуль защиты, выберите RAID`)
+        }
         if (configuration.cacheModuleCount > configuration.raidCount) {
             result.errors.push(`Количество модулей защиты (${configuration.cacheModuleCount}) не больше количества RAID (${configuration.raidCount}) может быть`)
         }
