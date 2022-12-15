@@ -17,7 +17,7 @@ export default function ({app}, inject) {
                         return configuration.chassis.cpu === c.type && c.platforms.includes(configuration.chassis.platform)
                     case 'Power':
                         if (c.partNumber === 'PSU065R' && configuration.chassis.platform !== 'G2R') return false
-                        if (configuration.gpuCount >= 0) return c.power >= 1300
+                        if (configuration.gpuCount > 0) return c.power >= 1300
                         if (configuration.gpuCount >= 1) return c.power >= 1600
                     case 'Storage':
                         if (configuration.chassis.partNumber === 'QSRV-2524') return c.isSAS && c.isSFF

@@ -107,6 +107,8 @@ module.exports = function (app) {
             const partNumber = configuration.chassis.units === 1 ? 'x16riser1U' : '3x8riser2U'
             const component = await db.component.findOne({partNumber})
             await db.part.create({component, configuration, count: 1})
+            const componentPower = await db.component.findOne({partNumber:'PSU05R'})
+            await db.part.create({component:componentPower, configuration, count: 1})
             res.send(configuration)
         } catch (e) {
             app.locals.errorLogger(e, res)
