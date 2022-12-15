@@ -268,7 +268,7 @@ schema.virtual('powerConsumption')
 
 schema.virtual('power')
     .get(function () {
-        return this.parts.filter(p => p.component.category === 'Power').reduce((a, b) => a + b.component.power, 0)
+        return 550 + this.parts.filter(p => p.component.category === 'Power').reduce((a, b) => a + b.component.power, 0)
     })
 
 schema.virtual('powerCount')
