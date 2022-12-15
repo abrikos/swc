@@ -116,7 +116,7 @@ export default {
   created() {
     //console.log('zzzzzzzzzzzz', this.$route.name, this.$route)
     //this.$vuetify.theme.isDark = JSON.parse(localStorage.getItem('themeDark'))
-    this.$axios.$get('/build-date').then(res => this.buildDate = res.ctime)
+    this.$axios.$get('/build-date').then(res => this.buildDate = res)
   },
 
 }
