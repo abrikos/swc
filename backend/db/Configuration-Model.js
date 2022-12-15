@@ -263,6 +263,7 @@ schema.virtual('diskCount')
 
 schema.virtual('powerCoefficient')
     .get(function () {
+        if(!this.power) return 0
         return this.powerConsumption / this.power * 100
     })
 

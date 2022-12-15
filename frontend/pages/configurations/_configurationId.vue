@@ -53,6 +53,9 @@
         <br/>
 
         <table style="width: 100%" class="power">
+          <tr bgcolor="silver">
+            <th colspan="3">Расчет электрической мощности</th>
+          </tr>
           <tr>
             <td>Потребление (W)</td>
             <td>Блок питания (W)</td>
@@ -126,7 +129,7 @@ export default {
   },
   computed: {
     powerColor() {
-      return this.configuration.powerCoefficient < 70 ? 'green'
+      return this.configuration.powerCoefficient===0 ? '' :this.configuration.powerCoefficient < 70 ? 'green'
           :
           this.configuration.powerCoefficient < 85 ? 'orange'
               : 'red'
@@ -149,7 +152,6 @@ export default {
     }
   },
   beforeRouteLeave(to, from, next) {
-    console.log('zzzzzzz', this.canLeave)
     if (!this.specs.length) {
 
       if (this.canLeave) return next()
@@ -218,10 +220,12 @@ export default {
 
 <style scoped lang="sass">
 table.power
-  tr:nth-child(2)
-    td
-      border: 1px solid silver
-      padding: 0 10px
+  border: 1px solid silver
+  font-size: .7em
+  td
+    text-align: center
+    //border: 1px solid silver
+    padding: 0 10px
 .v-data-table
   :deep(.inBasket)
     td

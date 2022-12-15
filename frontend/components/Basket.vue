@@ -10,8 +10,8 @@
       <th>Категория</th>
       <th>PartNumber</th>
       <th>Количество</th>
-      <th>Цена, $</th>
-      <th>Сумма, $</th>
+      <th>Цена, руб.</th>
+      <th>Сумма, руб.</th>
       <th></th>
       </thead>
       <tbody>
