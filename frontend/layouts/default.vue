@@ -46,7 +46,7 @@
 
     </v-app-bar>
     <v-main>
-      <v-container>
+      <v-container >
         <v-breadcrumbs :items="breadcrumbs"></v-breadcrumbs>
         <nuxt/>
       </v-container>
@@ -126,6 +126,9 @@ export default {
 .v-footer
   justify-content: right
 .v-application
+  .container
+    max-width: 1200px
+
   .v-breadcrumbs
     li.v-breadcrumbs__divider
       color: gray

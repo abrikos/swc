@@ -7,7 +7,7 @@
       </v-btn>
     </h1>
     <v-row>
-      <v-col sm="7">
+      <v-col lg="8">
         <Tabs :withIcons="true" :items="tabs" :onChange="tabChanged"/>
         <ConfigurationServices :configuration="configuration" :reload="loadConfiguration"
                                v-if="tab.category==='Services'"/>
@@ -48,7 +48,7 @@
           </template>
         </v-data-table>
       </v-col>
-      <v-col sm="5">
+      <v-col lg="4">
         <small>{{ configuration.chassis.descFull }}</small>
         <br/>
 
@@ -57,8 +57,8 @@
             <th colspan="3">Расчет электрической мощности</th>
           </tr>
           <tr>
-            <td>Потребление (W)</td>
-            <td>Блок питания (W)</td>
+            <td>Потребление (Вт)</td>
+            <td>Блок питания (Вт)</td>
             <td>Коэффициент</td>
           </tr>
           <tr>
