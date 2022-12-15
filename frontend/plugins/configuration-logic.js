@@ -11,6 +11,7 @@ export default function ({app}, inject) {
             .filter(c => {
                 if (c.unitFix && (c.unitFix !== configuration.chassis.units)) return
                 if (c.unitMin && (c.unitMin > configuration.chassis.units)) return
+                if (!c.platforms.includes(configuration.chassis.platform)) return
                 switch (tab.category) {
                     case 'CPU':
                         return configuration.chassis.cpu === c.type && c.platforms.includes(configuration.chassis.platform)
@@ -147,18 +148,21 @@ export default function ({app}, inject) {
         if (configuration.isRearBayNeeded) {
             result.errors.push(`Для выбранных SSD U.2 NVMe (${configuration.nvmeCount})  необходимо ${configuration.rearBaysNeeded} Rear bay PN rbaySFFU2 (${configuration.rearBayCount})`)
         }
-        if (configuration.raid93Count && !configuration.cacheModule93Count) {
+        /*if (configuration.raid93Count && !configuration.cacheModule93Count) {
             result.errors.push(`93хх серия RAID совместима только с Модуль защиты кэша для RAID 93xx (PN CVM02)`)
-        }
+        }*/
         if (!configuration.raid93Count && configuration.cacheModule93Count) {
+            result.errors.push(`Некуда поставить модуль защиты, выберите RAID`)
+        }
+        if (!configuration.raid94Count && configuration.cacheModule94Count) {
             result.errors.push(`Некуда поставить модуль защиты, выберите RAID`)
         }
         if (configuration.cacheModuleCount > configuration.raidCount) {
             result.errors.push(`Количество модулей защиты (${configuration.cacheModuleCount}) не больше количества RAID (${configuration.raidCount}) может быть`)
         }
-        if (configuration.raid94Count && !configuration.cacheModule94Count) {
+        /*if (configuration.raid94Count && !configuration.cacheModule94Count) {
             result.errors.push(`94хх-95xx серия RAID совместима только с Модуль защиты кэша для RAID 94xx-955xx (PN CVPM05)`)
-        }
+        }*/
         if ((configuration.raid94Count + configuration.raid93Count) && configuration.raidTrimodeCount) {
             result.errors.push(`RAID контроллер Trimode 9440 Raid 8i (1,0,10,5,6,50,60) (PN 94008IR) не совместим с модулями защиты. Модули защиты к нему добавлять не нельзя`)
         }
