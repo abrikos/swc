@@ -7,7 +7,7 @@
       </v-btn>
     </h1>
     <v-row>
-      <v-col lg="8">
+      <v-col sm="7">
         <Tabs :withIcons="true" :items="tabs" :onChange="tabChanged"/>
         <ConfigurationServices :configuration="configuration" :reload="loadConfiguration"
                                v-if="tab.category==='Services'"/>
@@ -48,7 +48,7 @@
           </template>
         </v-data-table>
       </v-col>
-      <v-col lg="4">
+      <v-col sm="5">
         <small>{{ configuration.chassis.descFull }}</small>
         <br/>
 
@@ -119,8 +119,8 @@ export default {
       specs: [],
       configuration: null,
       headers: [
-        {text: 'Партномер', value: 'partNumber', width: '20%'},
-        {text: 'Описание', value: 'description', width: '50%'},
+        {text: 'Артикул', value: 'partNumber', width: '20%'},
+        {text: 'Наименование', value: 'description', width: '50%'},
         {text: 'Цена', value: 'price', width: '10%', sortable: false},
         {text: '', value: 'count', width: '20%', sortable: false}
       ],
@@ -221,7 +221,7 @@ export default {
 <style scoped lang="sass">
 table.power
   border: 1px solid silver
-  font-size: .7em
+  font-size: .9em
   td
     text-align: center
     //border: 1px solid silver

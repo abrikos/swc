@@ -8,7 +8,7 @@
     <table class="cart">
       <thead>
       <th>Категория</th>
-      <th>PartNumber</th>
+      <th>Артикул</th>
       <th>Количество</th>
       <th>Цена, руб.</th>
       <th>Сумма, руб.</th>
