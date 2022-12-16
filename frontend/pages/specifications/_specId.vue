@@ -34,8 +34,8 @@
         </td>
         <td>Итого, $: {{ spec.price.toFixed(2) }}</td>
         <td width="70">Кол-во</td>
-        <td width="70">Цена</td>
-        <td width="70">Сумма</td>
+        <td width="120" align="right">Цена</td>
+        <td width="120" align="right">Сумма</td>
       </tr>
       </thead>
       <tbody v-for="config of spec.configurations" :key="config.id">
