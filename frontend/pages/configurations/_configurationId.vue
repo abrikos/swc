@@ -52,23 +52,6 @@
         <small>{{ configuration.chassis.descFull }}</small>
         <br/>
 
-        <table style="width: 100%" class="power">
-          <tr bgcolor="silver">
-            <th colspan="3">Расчет электрической мощности</th>
-          </tr>
-          <tr>
-            <td>Потребление (Вт)</td>
-            <td>Блок питания (Вт)</td>
-            <td>Коэффициент</td>
-          </tr>
-          <tr>
-            <td>{{ configuration.powerConsumption }}</td>
-            <td>{{ configuration.power }}</td>
-            <td :class="powerColor">{{ configuration.powerCoefficient.toFixed(0) }}%</td>
-          </tr>
-        </table>
-        <br/>
-
         <div v-if="specs.length">
           <!--          В составе спецификаций:-->
           <div v-for="spec of specs" :key="spec.id">
@@ -86,6 +69,22 @@
         <v-alert border="top" color="red lighten-2" dark v-for="(error,i) of validator.errors" :key="i">
           {{ error }}
         </v-alert>
+        <br/>
+        <table style="width: 100%" class="power">
+          <tr bgcolor="silver">
+            <th colspan="3">Расчет электрической мощности</th>
+          </tr>
+          <tr>
+            <td>Потребление (Вт)</td>
+            <td>Блок питания (Вт)</td>
+            <td>Коэффициент</td>
+          </tr>
+          <tr>
+            <td>{{ configuration.powerConsumption }}</td>
+            <td>{{ configuration.power }}</td>
+            <td :class="powerColor">{{ configuration.powerCoefficient.toFixed(0) }}%</td>
+          </tr>
+        </table>
         <br/>
         <Basket :configuration="configuration" :reload="loadConfiguration"/>
 
