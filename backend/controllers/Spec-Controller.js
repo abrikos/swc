@@ -157,6 +157,12 @@ module.exports = function (app) {
             item.name = 'Копия ' + item.name
             item.isNew = true;
             await item.save()
+            for(const part of item.parts){
+                part._id = mongoose.Types.ObjectId();
+                part.configuration = item._id;
+                part.isNew = true;
+                await part.save()
+            }
             spec.configurations.push(item.id)
             await spec.save()
             res.sendStatus(200)
