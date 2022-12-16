@@ -39,7 +39,9 @@ export default {
         this.dialog = true;
         this.counter = 0;
       }
+
       const textArea = document.createElement("textarea");
+      textArea.style = {display:'none'}
       this.spec.configurations.forEach(conf => {
         textArea.value += conf.chassis.partNumber + '\t'
             + conf.count + '\t'
@@ -49,7 +51,7 @@ export default {
             + '\n';
       })
       document.body.appendChild(textArea);
-      textArea.focus();
+      //textArea.focus();
       textArea.select();
       try {
         const successful = document.execCommand('copy');
