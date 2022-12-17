@@ -163,7 +163,9 @@ schema.virtual('cpuCount')
 
 schema.virtual('pcieCount')
     .get(function () {
-        return this.parts.filter(p => p.component.category === 'PCI-E' && p.component.type !== 'LAN OCP 3.0').reduce((a, b) => a + b.count, 0)
+        return this.parts
+            .filter(p => (p.component.category === 'PCI-E' && p.component.type !== 'LAN OCP 3.0')||p.component.type === 'RAID')
+            .reduce((a, b) => a + b.count, 0)
     })
 
 schema.virtual('ocpCount')

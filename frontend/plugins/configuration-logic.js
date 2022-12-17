@@ -98,7 +98,8 @@ export default function ({app}, inject) {
             result.errors.push(`Сумма LAN 100GbE и GPU не может быть более 2х`)
         }
         const limit = configuration.chassis.units === 1 ? 1 : 2
-        if ((configuration.cpuCount < limit) && configuration.riserCount >= limit) {
+        //if ((configuration.cpuCount < limit) && configuration.riserCount >= limit) {
+        if (configuration.cpuCount < configuration.riserCount) {
             result.errors.push(`Для выбранного количество райзеров (${configuration.riserCount}) недостаточно процессоров (${configuration.cpuCount})`)
         }
         if (configuration.riserCount > configuration.chassis.units * 2) {
@@ -131,6 +132,7 @@ export default function ({app}, inject) {
 
 
         //PCI-E
+        console.log('pcie', configuration.pcieCount , configuration.pcieMaxCount)
         if (configuration.pcieCount > configuration.pcieMaxCount) {
             result.errors.push(`Недостаточно PCI-E слотов (${configuration.pcieMaxCount}) для выбранного количества PCI-E устройств: ${configuration.pcieCount}`)
         }
@@ -139,9 +141,8 @@ export default function ({app}, inject) {
         }
 
         //STORAGE
-        console.log(configuration.diskCount, configuration.chassis.disks)
         if (configuration.diskCount > configuration.chassis.disks)
-            result.errors.push(`Установлено дисков (${configuration.diskCount}) более чем позволяют возможности платформы (${configuration.chassis.disks})`)
+            result.errors.push(`Нельзя поставить дисков более (${configuration.chassis.disks}). Вы пытаетесь поставить (${configuration.diskCount})`)
         if (!configuration.fcCount && !configuration.raidCount && configuration.diskCount > 12) {
             result.errors.push(`Для платформы сколичеством дисков более 12 необходим RAID или HBA`)
         }
@@ -151,6 +152,12 @@ export default function ({app}, inject) {
         /*if (configuration.raid93Count && !configuration.cacheModule93Count) {
             result.errors.push(`93хх серия RAID совместима только с Модуль защиты кэша для RAID 93xx (PN CVM02)`)
         }*/
+        if (configuration.raid93Count !== configuration.cacheModule93Count) {
+            result.errors.push(`Количество модулей защиты (${configuration.cacheModule93Count}) не соответствует количеству рэйдов 93хх (${configuration.raid93Count})`)
+        }
+        if (configuration.raid94Count !== configuration.cacheModule94Count) {
+            result.errors.push(`Количество модулей защиты (${configuration.cacheModule94Count}) не соответствует количеству рэйдов 94хх (${configuration.raid94Count})`)
+        }
         if (!configuration.raid93Count && configuration.cacheModule93Count) {
             result.errors.push(`Некуда поставить модуль защиты, выберите RAID`)
         }
@@ -163,9 +170,9 @@ export default function ({app}, inject) {
         /*if (configuration.raid94Count && !configuration.cacheModule94Count) {
             result.errors.push(`94хх-95xx серия RAID совместима только с Модуль защиты кэша для RAID 94xx-955xx (PN CVPM05)`)
         }*/
-        if ((configuration.raid94Count + configuration.raid93Count) && configuration.raidTrimodeCount) {
-            result.errors.push(`RAID контроллер Trimode 9440 Raid 8i (1,0,10,5,6,50,60) (PN 94008IR) не совместим с модулями защиты. Модули защиты к нему добавлять не нельзя`)
-        }
+        /*if ((configuration.raid94Count + configuration.raid93Count) && configuration.raidTrimodeCount) {
+            result.errors.push(`RAID контроллер Trimode 9440 Raid 8i (1,0,10,5,6,50,60) (PN 94008IR) не совместим с модулями защиты. Модули защиты к нему добавлять нельзя`)
+        }*/
         if (configuration.ssdU2Count > configuration.rearBayU2Count * 2) {
             result.errors.push(`На каждые 2 шт SSD U.2 NVMe (${configuration.ssdU2Count}) необходим rear bay rbaySFFU2 (${configuration.rearBayCount})`)
         }
