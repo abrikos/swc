@@ -93,13 +93,16 @@ export default function ({app}, inject) {
 
 
         //RISER
-        const needed = configuration.gpuCount + configuration.lanCount100 - configuration.riserX16Count
-        if (needed > 0) {
+        const sum = configuration.gpuCount + configuration.lanCount100;
+        const needed = sum - configuration.riserX16Count
+        if (sum > 2 && needed > 0) {
             result.errors.push(`Сумма LAN 100GbE и GPU не может быть более 2х`)
         }
         const limit = configuration.chassis.units === 1 ? 1 : 2
         //if ((configuration.cpuCount < limit) && configuration.riserCount >= limit) {
-        if (configuration.cpuCount < configuration.riserCount) {
+        const oneCpu = (configuration.riserPorts.includes(1) && configuration.riserPorts.includes(3))
+        || (configuration.riserPorts.includes(2) && configuration.riserPorts.includes(4))
+        if (!oneCpu && (configuration.cpuCount < configuration.riserCount)) {
             result.errors.push(`Для выбранного количество райзеров (${configuration.riserCount}) недостаточно процессоров (${configuration.cpuCount})`)
         }
         if (configuration.riserCount > configuration.chassis.units * 2) {
@@ -152,10 +155,10 @@ export default function ({app}, inject) {
         /*if (configuration.raid93Count && !configuration.cacheModule93Count) {
             result.errors.push(`93хх серия RAID совместима только с Модуль защиты кэша для RAID 93xx (PN CVM02)`)
         }*/
-        if (configuration.raid93Count !== configuration.cacheModule93Count) {
+        if (configuration.cacheModule93Count && (configuration.raid93Count !== configuration.cacheModule93Count)) {
             result.errors.push(`Количество модулей защиты (${configuration.cacheModule93Count}) не соответствует количеству рэйдов 93хх (${configuration.raid93Count})`)
         }
-        if (configuration.raid94Count !== configuration.cacheModule94Count) {
+        if (configuration.cacheModule94Count && (configuration.raid94Count !== configuration.cacheModule94Count)) {
             result.errors.push(`Количество модулей защиты (${configuration.cacheModule94Count}) не соответствует количеству рэйдов 94хх (${configuration.raid94Count})`)
         }
         if (!configuration.raid93Count && configuration.cacheModule93Count) {

@@ -321,7 +321,12 @@ schema.virtual('cpuMaxCount')
 
 schema.virtual('riserX16Count')
     .get(function () {
-        return this.parts.filter(p => p.component.riserPorts === 16).reduce((a, b) => a + b.count, 0)
+        return this.parts.filter(p => p.component.riserPortsCount === 16).reduce((a, b) => a + b.count, 0)
+    })
+
+schema.virtual('riserPorts')
+    .get(function () {
+        return this.parts.filter(p => p.component.category==='Riser').map(p=>p.component.riserForPort)
     })
 
 schema.virtual('riserCount')

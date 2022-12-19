@@ -37,6 +37,7 @@ module.exports = function (app) {
             const {refresh_token} = req.body;
             //console.log('Auth Refresh called', req.body)
             const token = await db.token.findOne({refresh_token})
+            if(!token) throw {error: 404, message: 'token not found:'+refresh_token}
             await token.refresh()
             res.send(token.access_token)
         } catch (e) {
