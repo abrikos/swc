@@ -11,8 +11,10 @@ module.exports = function (app) {
     ]
 
     const specToXls = (spec) => {
-        const rows = [];
-        const rowHeights = [{hpx: 30}]
+        const rows = [
+            ["Артикул", "К-во", "Название", "РРЦ, Руб.", "РРЦ стоимость, Руб.", "Скидка, %", "Цена, Руб.", "Стоимость, Руб."]
+        ];
+        const rowHeights = [{hpx: 30}, {hpx: 30}]
         const confStyle = {
             font: {bold: false},
             alignment: {
@@ -44,6 +46,9 @@ module.exports = function (app) {
                 {v: conf.count, t: 'n', s: styleConfCount},
                 {v: confName.join(', '), s: confStyle},
                 {v: conf.price, t: 'n', s: confStyle},
+                {v: conf.priceTotal, t: 'n', s: confStyle},
+                {v: 0, t: 'n', s: confStyle},
+                {v: conf.price, t: 'n', s: confStyle},
                 {v: conf.priceTotal, t: 'n', s: confStyle}
             ]
             rows.push(confRow)
@@ -63,7 +68,8 @@ module.exports = function (app) {
 
         //if(!ws["!merges"]) ws["!merges"] = [];
         //ws["!merges"].push(XLSX.utils.decode_range("A1:E1"))
-        XLSX.utils.sheet_add_aoa(ws, [["PartNumber", "К-во", "Название", "Цена, $", "Стоимость, $"]], {origin: "A1"});
+        //XLSX.utils.sheet_add_aoa(ws, [["Артикул", "К-во", "Название", "РРЦ, Руб.", "РРЦ стоимость, Руб.", "Скидка, %", "Цена, Руб.", "Стоимость, Руб."]], {origin: "A2"});
+        XLSX.utils.sheet_add_aoa(ws, [["QTECH.RU", "", spec.name, "", moment().format('YYYY-MM-DD'), "", "", ""]], {origin: "A1"});
         const headStyle = {
             alignment: {
                 vertical: 'center'
@@ -80,13 +86,16 @@ module.exports = function (app) {
                 bold: true,
             },
         }
-        ws.A1.s = headStyle
-        ws.B1.s = headStyle
-        ws.C1.s = headStyle
-        ws.D1.s = headStyle
-        ws.E1.s = headStyle
+        ws.A2.s = headStyle
+        ws.B2.s = headStyle
+        ws.C2.s = headStyle
+        ws.D2.s = headStyle
+        ws.E2.s = headStyle
+        ws.F2.s = headStyle
+        ws.G2.s = headStyle
+        ws.H2.s = headStyle
         ws['!rows'] = rowHeights
-        ws['!cols'] = [{wch: 30}, {wch: 10}, {wch: 60}, {wch: 12}, {wch: 10}]
+        ws['!cols'] = [{wch: 30}, {wch: 10}, {wch: 60}, {wch: 12}, {wch: 10}, {wch: 12}, {wch: 15}, {wch: 15}]
         //console.log(ws)
         const wb = {Sheets: {'data': ws}, SheetNames: ['data']};
         const excelBuffer = XLSX.write(wb, {bookType: 'xlsx', type: 'array'});

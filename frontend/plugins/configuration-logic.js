@@ -98,13 +98,7 @@ export default function ({app}, inject) {
         if (sum > 2 && needed > 0) {
             result.errors.push(`Сумма LAN 100GbE и GPU не может быть более 2х`)
         }
-        const limit = configuration.chassis.units === 1 ? 1 : 2
-        //if ((configuration.cpuCount < limit) && configuration.riserCount >= limit) {
-        const oneCpu = (configuration.riserPorts.includes(1) && configuration.riserPorts.includes(3))
-        || (configuration.riserPorts.includes(2) && configuration.riserPorts.includes(4))
-        if (!oneCpu && (configuration.cpuCount < configuration.riserCount)) {
-            result.errors.push(`Для выбранного количество райзеров (${configuration.riserCount}) недостаточно процессоров (${configuration.cpuCount})`)
-        }
+
         if (configuration.riserCount > configuration.chassis.units * 2) {
             result.errors.push(`Райзеров нельзя установить более ${configuration.chassis.units * 2} шт`)
         }
@@ -124,6 +118,11 @@ export default function ({app}, inject) {
         }
         if (configuration.riserPort12Count > 2) {
             result.errors.push(`Количество выбранных райзеров port 1/2 (${configuration.riserPort12Count}) не может быть более 2х`)
+        }else {
+            const oneCpu = (configuration.riserPorts.includes(1) && configuration.riserPorts.includes(3))
+            if (!oneCpu && (configuration.cpuCount < configuration.riserCount)) {
+                result.errors.push(`Для выбранного количество райзеров (${configuration.riserCount}) недостаточно процессоров (${configuration.cpuCount})`)
+            }
         }
         console.log('RISER',configuration.riserPort3Count)
         if (configuration.riserPort3Count > 1) {
