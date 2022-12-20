@@ -47,6 +47,7 @@ module.exports = function (app) {
                 {
                     category: 'Storage',
                     children: [
+                        {type: 'Backplane'},
                         {type: 'RAID'},
                         {type: 'HDD'},
                         {type: 'SSD 2.5'},
@@ -72,6 +73,7 @@ module.exports = function (app) {
             ] : [{
                 category: 'Storage',
                 children: [
+                    {type: 'Backplane'},
                     {type: 'RAID'},
                     {type: 'HDD'},
                     {type: 'SSD 2.5'},
@@ -110,6 +112,8 @@ module.exports = function (app) {
             await db.part.create({component, configuration, count: 1})
             const componentPower = await db.component.findOne({partNumber:'PSU05R'})
             await db.part.create({component:componentPower, configuration, count: 1})
+            const componentBackplane = await db.component.findOne({partNumber:'bplnss'})
+            await db.part.create({component:componentBackplane, configuration, count: 1})
             res.send(configuration)
         } catch (e) {
             app.locals.errorLogger(e, res)
