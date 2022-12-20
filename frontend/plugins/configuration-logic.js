@@ -15,10 +15,10 @@ export default function ({app}, inject) {
                 switch (tab.category) {
                     case 'CPU':
                         return configuration.chassis.cpu === c.type && c.platforms.includes(configuration.chassis.platform)
-                    case 'Power':
-                        if (c.partNumber === 'PSU065R' && configuration.chassis.platform !== 'G2R') return false
-                        if (configuration.gpuCount > 0) return c.power >= 1300
-                        if (configuration.gpuCount >= 1) return c.power >= 1600
+                    //case 'Power':
+                        //if (c.partNumber === 'PSU065R' && configuration.chassis.platform !== 'G2R') return false
+                        //if (configuration.gpuCount > 0) return c.power >= 1300
+                        //if (configuration.gpuCount >= 1) return c.power >= 1600
                     case 'Storage':
                         if (configuration.chassis.partNumber === 'QSRV-2524') return c.isSAS && c.isSFF
                         if (configuration.chassis.partNumber === 'QSRV-4524') return c.isSAS && (c.isSFF || c.isLFF)
@@ -27,13 +27,15 @@ export default function ({app}, inject) {
                         if (configuration.chassis.units < c.riserUnit) return false
                 }
                 switch (tab.type) {
-                    case 'GPU':
+                    //case 'GPU':
                     //if(configuration.chassis.units === 1 && !['GFGT730', 'QUADROP620', 'TESLAT416'].includes(c.partNumber)) return false
                     case 'Rear bay':
                         if (configuration.chassis.units === 1) return
                         if (configuration.isRearBayNeeded) {
                             return c.partNumber === 'rbaySFFU2'
                         }
+                    case 'Backplane':
+                        return ['QSRV-161002', 'QSRV-1710', 'QSRV-161002A', 'QSRV-260802', 'QSRV-270802', 'QSRV-260802A'].includes(configuration.chassis.partNumber)
                 }
                 return true
             }).map(c => {
@@ -52,6 +54,9 @@ export default function ({app}, inject) {
                 if (configuration.ocpCount && c.type === 'LAN OCP 3.0') {
                     c.countDisabled = true
                 }
+                if (configuration.backplaneCount && c.type === 'Backplane') {
+                    c.countDisabled = true
+                }
                 return c
             })
     })
@@ -61,8 +66,11 @@ export default function ({app}, inject) {
             errors: [],
         };
 
-        if (!configuration.cpuCount && configuration.memCount) {
-            result.errors.push(`Необходимо выбрать CPU`)
+        if (!configuration.cpuCount ) {
+            result.errors.push(`Выберите CPU`)
+        }
+        if (!configuration.memCount ) {
+            result.errors.push(`Выберите Память`)
         }
         //MEMORY
         if (configuration.memCount > configuration.memMaxCount) {
@@ -113,7 +121,7 @@ export default function ({app}, inject) {
         if (configuration.raidCount > configuration.riserCount) {
             result.errors.push(`Не хватает слотов на райзере`)
         }
-        if (configuration.riserMaxCount < configuration.riserCount) {
+        if (configuration.riserMaxCount < configuration.riserCount && configuration.riserCount < 5) {
             result.errors.push(`Количество выбранных райзеров (${configuration.riserCount}) больше чем возможно установить (${configuration.riserMaxCount})`)
         }
         if (configuration.riserPort12Count > 2) {

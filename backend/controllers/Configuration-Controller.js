@@ -112,8 +112,10 @@ module.exports = function (app) {
             await db.part.create({component, configuration, count: 1})
             const componentPower = await db.component.findOne({partNumber:'PSU05R'})
             await db.part.create({component:componentPower, configuration, count: 1})
-            const componentBackplane = await db.component.findOne({partNumber:'bplnss'})
-            await db.part.create({component:componentBackplane, configuration, count: 1})
+            if(['QSRV-161002', 'QSRV-1710', 'QSRV-161002A', 'QSRV-260802', 'QSRV-270802', 'QSRV-260802A'].includes(chassis.partNumber)) {
+                const componentBackplane = await db.component.findOne({partNumber: 'bplnss'})
+                await db.part.create({component: componentBackplane, configuration, count: 1})
+            }
             res.send(configuration)
         } catch (e) {
             app.locals.errorLogger(e, res)

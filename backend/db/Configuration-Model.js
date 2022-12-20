@@ -164,7 +164,7 @@ schema.virtual('cpuCount')
 schema.virtual('pcieCount')
     .get(function () {
         return this.parts
-            .filter(p => (p.component.category === 'PCI-E' && p.component.type !== 'LAN OCP 3.0')||p.component.type === 'RAID')
+            .filter(p => (p.component.category === 'PCI-E' && !['LAN OCP 3.0', 'Transceiver'].includes(p.component.type))||p.component.type === 'RAID')
             .reduce((a, b) => a + b.count, 0)
     })
 
@@ -282,6 +282,11 @@ schema.virtual('power')
 schema.virtual('powerCount')
     .get(function () {
         return this.parts.filter(p => p.component.category === 'Power').reduce((a, b) => a + b.count, 0)
+    })
+
+schema.virtual('backplaneCount')
+    .get(function () {
+        return this.parts.filter(p => p.component.type === 'Backplane').reduce((a, b) => a + b.count, 0)
     })
 
 schema.virtual('pcieMaxCount')

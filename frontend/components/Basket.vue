@@ -2,7 +2,7 @@
   <v-card v-if="configuration">
     <v-card-title>
       <v-col>Корзина</v-col>
-      <v-col>${{ configuration.price.toFixed(2) }}</v-col>
+      <v-col>{{ configuration.price.toFixed(2).replace(/(\d)(?=(\d\d\d)+([^\d]|$))/g, '$1 ') }} руб.</v-col>
     </v-card-title>
 
     <table class="cart">
