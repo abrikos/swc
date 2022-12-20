@@ -10,7 +10,7 @@ module.exports = function (app) {
         {path: 'shared', select: {email: 1}}
     ]
 
-    const specToXls = (spec) => {
+    const specToXls = (spec, user) => {
         const rows = [
             ["Артикул", "К-во", "Название", "РРЦ, Руб.", "РРЦ стоимость, Руб.", "Скидка, %", "Цена, Руб.", "Стоимость, Руб."]
         ];
@@ -23,46 +23,50 @@ module.exports = function (app) {
             }
         }
         const partStyle = {font: {color: {rgb: '00999999'}}}
-        for (const conf of spec.configurations) {
-            rowHeights.push({hpx: 50})
-            const partRows = []
-            let confName = [conf.chassis.name]
-            console.log(confName)
-            for (const part of conf.partsSorted) {
-                rowHeights.push({hpx: 15})
-                confName.push(part.count+'* '+part.component.description)
-                partRows.push([
-                    {v: part.component.partNumber, s: {alignment: {horizontal: 'right'}, ...partStyle}},
-                    {v: part.count, t: 'n', s: {alignment: {horizontal: 'center'}, ...partStyle}},
-                    {v: part.component.description, s: partStyle},
-                    {v: part.component.price, t: 'n', s: partStyle},
-                    {v: part.price, t: 'n', s: partStyle}
-                ])
-            }
-            const styleConfCount = JSON.parse(JSON.stringify(confStyle))
-            styleConfCount.alignment.horizontal = 'center'
-            const confRow = [
-                {v: conf.chassis.partNumber, s: confStyle},
-                {v: conf.count, t: 'n', s: styleConfCount},
-                {v: confName.join(', '), s: confStyle},
-                {v: conf.price, t: 'n', s: confStyle},
-                {v: conf.priceTotal, t: 'n', s: confStyle},
-                {v: 0, t: 'n', s: confStyle},
-                {v: conf.price, t: 'n', s: confStyle},
-                {v: conf.priceTotal, t: 'n', s: confStyle}
-            ]
-            rows.push(confRow)
-            if (conf.service) {
-                rows.push([
-                    {v: conf.service.article},
+
+            for (const conf of spec.configurations) {
+                rowHeights.push({hpx: 50})
+                const partRows = []
+                let confName = [conf.chassis.name]
+                console.log(confName)
+                if(user.email.match('qtech.ru')) {
+                    for (const part of conf.partsSorted) {
+                        rowHeights.push({hpx: 15})
+                        confName.push(part.count + '* ' + part.component.description)
+                        partRows.push([
+                            {v: part.component.partNumber, s: {alignment: {horizontal: 'right'}, ...partStyle}},
+                            {v: part.count, t: 'n', s: {alignment: {horizontal: 'center'}, ...partStyle}},
+                            {v: part.component.description, s: partStyle},
+                            {v: part.component.price, t: 'n', s: partStyle, z:'0.00'},
+                            {v: part.price, t: 'n', s: partStyle, z:'0.00'}
+                        ])
+                    }
+                }
+                const styleConfCount = JSON.parse(JSON.stringify(confStyle))
+                styleConfCount.alignment.horizontal = 'center'
+                const confRow = [
+                    {v: conf.chassis.partNumber, s: confStyle},
                     {v: conf.count, t: 'n', s: styleConfCount},
-                    {v: conf.service.name},
-                    {v: conf.priceService, t: 'n'},
-                    {v: conf.priceService * conf.count, t: 'n'}
-                ])
+                    {v: confName.join(', '), s: confStyle},
+                    {v: conf.price, t: 'n', s: confStyle, z:'0.00'},
+                    {v: conf.priceTotal, t: 'n', s: confStyle},
+                    {v: 0, t: 'n', s: confStyle},
+                    {v: conf.price, t: 'n', s: confStyle},
+                    {v: conf.priceTotal, t: 'n', s: confStyle}
+                ]
+                rows.push(confRow)
+                if (conf.service) {
+                    rows.push([
+                        {v: conf.service.article},
+                        {v: conf.count, t: 'n', s: styleConfCount},
+                        {v: conf.service.name},
+                        {v: conf.priceService, t: 'n'},
+                        {v: conf.priceService * conf.count, t: 'n'}
+                    ])
+                }
+                rows.push(...partRows)
             }
-            rows.push(...partRows)
-        }
+
 
         const ws = XLSX.utils.json_to_sheet(rows);
 
@@ -188,7 +192,7 @@ module.exports = function (app) {
         if (!spec) res.sendStatus(404)
         res.setHeader('Content-Type', 'application/vnd.openxmlformats');
         res.setHeader("Content-Disposition", "attachment; filename=" + encodeURIComponent(spec.name) + ".xlsx");
-        res.send(specToXls(spec))
+        res.send(specToXls(spec, user))
     })
 
     app.get('/api/specs', passport.isLogged, async (req, res) => {
