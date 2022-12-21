@@ -28,7 +28,6 @@ module.exports = function (app) {
                 rowHeights.push({hpx: 50})
                 const partRows = []
                 let confName = [conf.chassis.name]
-                console.log(confName)
                 if(user.email.match('qtech.ru')) {
                     for (const part of conf.partsSorted) {
                         rowHeights.push({hpx: 15})
