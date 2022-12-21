@@ -33,6 +33,12 @@ schema.virtual('price')
         return sum
     })
 
+schema.virtual('priceHuman')
+    .get(function () {
+
+        return this.price.toFixed(2).replace(/(\d)(?=(\d\d\d)+([^\d]|$))/g, '$1 ')
+    })
+
 module.exports = mongoose.model(name, schema)
 
 
