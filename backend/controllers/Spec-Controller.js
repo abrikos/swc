@@ -24,47 +24,48 @@ module.exports = function (app) {
         }
         const partStyle = {font: {color: {rgb: '00999999'}}}
 
-            for (const conf of spec.configurations) {
-                rowHeights.push({hpx: 50})
-                const partRows = []
-                let confName = [conf.chassis.name]
-                if(user.email.match('qtech.ru')) {
-                    for (const part of conf.partsSorted) {
-                        rowHeights.push({hpx: 15})
-                        confName.push(part.count + '* ' + part.component.description)
-                        partRows.push([
-                            {v: part.component.partNumber, s: {alignment: {horizontal: 'right'}, ...partStyle}},
-                            {v: part.count, t: 'n', s: {alignment: {horizontal: 'center'}, ...partStyle}},
-                            {v: part.component.description, s: partStyle},
-                            {v: part.component.price, t: 'n', s: partStyle, z:'0.00'},
-                            {v: part.price, t: 'n', s: partStyle, z:'0.00'}
-                        ])
-                    }
-                }
-                const styleConfCount = JSON.parse(JSON.stringify(confStyle))
-                styleConfCount.alignment.horizontal = 'center'
-                const confRow = [
-                    {v: conf.chassis.partNumber, s: confStyle},
-                    {v: conf.count, t: 'n', s: styleConfCount},
-                    {v: confName.join(', '), s: confStyle},
-                    {v: conf.price, t: 'n', s: confStyle, z:'0.00'},
-                    {v: conf.priceTotal, t: 'n', s: confStyle},
-                    {v: 0, t: 'n', s: confStyle},
-                    {v: conf.price, t: 'n', s: confStyle},
-                    {v: conf.priceTotal, t: 'n', s: confStyle}
-                ]
-                rows.push(confRow)
-                if (conf.service) {
-                    rows.push([
-                        {v: conf.service.article},
-                        {v: conf.count, t: 'n', s: styleConfCount},
-                        {v: conf.service.name},
-                        {v: conf.priceService, t: 'n'},
-                        {v: conf.priceService * conf.count, t: 'n'}
+        for (const conf of spec.configurations) {
+            rowHeights.push({hpx: 50})
+            const partRows = []
+            let confName = [conf.chassis.name]
+
+            for (const part of conf.partsSorted) {
+                confName.push(part.count + '* ' + part.component.description)
+                if (user.email.match('qtech.ru') || user.email.match('tdtel.ru')) {
+                    rowHeights.push({hpx: 15})
+                    partRows.push([
+                        {v: part.component.partNumber, s: {alignment: {horizontal: 'right'}, ...partStyle}},
+                        {v: part.count, t: 'n', s: {alignment: {horizontal: 'center'}, ...partStyle}},
+                        {v: part.component.description, s: partStyle},
+                        {v: part.component.price, t: 'n', s: partStyle, z: '0.00'},
+                        {v: part.price, t: 'n', s: partStyle, z: '0.00'}
                     ])
                 }
-                rows.push(...partRows)
             }
+            const styleConfCount = JSON.parse(JSON.stringify(confStyle))
+            styleConfCount.alignment.horizontal = 'center'
+            const confRow = [
+                {v: conf.chassis.partNumber, s: confStyle},
+                {v: conf.count, t: 'n', s: styleConfCount},
+                {v: confName.join(', '), s: confStyle},
+                {v: conf.price, t: 'n', s: confStyle, z: '0.00'},
+                {v: conf.priceTotal, t: 'n', s: confStyle},
+                {v: 0, t: 'n', s: confStyle},
+                {v: conf.price, t: 'n', s: confStyle},
+                {v: conf.priceTotal, t: 'n', s: confStyle}
+            ]
+            rows.push(confRow)
+            if (conf.service) {
+                rows.push([
+                    {v: conf.service.article},
+                    {v: conf.count, t: 'n', s: styleConfCount},
+                    {v: conf.service.name},
+                    {v: conf.priceService, t: 'n'},
+                    {v: conf.priceService * conf.count, t: 'n'}
+                ])
+            }
+            rows.push(...partRows)
+        }
 
 
         const ws = XLSX.utils.json_to_sheet(rows);
@@ -169,7 +170,7 @@ module.exports = function (app) {
             item.name = 'Копия ' + item.name
             item.isNew = true;
             await item.save()
-            for(const part of item.parts){
+            for (const part of item.parts) {
                 part._id = mongoose.Types.ObjectId();
                 part.configuration = item._id;
                 part.isNew = true;
