@@ -120,7 +120,7 @@ export default {
       headers: [
         {text: 'Артикул', value: 'partNumber', width: '20%'},
         {text: 'Наименование', value: 'description', width: '50%'},
-        {text: 'Цена', value: 'price', width: '10%', sortable: false},
+        {text: 'Цена', value: 'price', width: '10%'},
         {text: '', value: 'count', width: '20%', sortable: false}
       ],
       tabs: []

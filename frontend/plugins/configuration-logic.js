@@ -19,7 +19,10 @@ export default function ({app}, inject) {
                         //if (c.partNumber === 'PSU065R' && configuration.chassis.platform !== 'G2R') return false
                         //if (configuration.gpuCount > 0) return c.power >= 1300
                         //if (configuration.gpuCount >= 1) return c.power >= 1600
+                    case 'Cable':
+
                     case 'Storage':
+                        if (configuration.chassis.partNumber === 'QSRV-224') return c.isSFF
                         if (configuration.chassis.partNumber === 'QSRV-2524') return c.isSAS && c.isSFF
                         if (configuration.chassis.partNumber === 'QSRV-4524') return c.isSAS && (c.isSFF || c.isLFF)
                         if (configuration.chassis.isSFF && c.type === 'HDD') return c.isSFF
@@ -65,171 +68,175 @@ export default function ({app}, inject) {
         const result = {
             errors: [],
         };
-
-        if (!configuration.cpuCount ) {
-            result.errors.push(`Выберите CPU`)
-        }
-        if (!configuration.memCount ) {
-            result.errors.push(`Выберите Память`)
-        }
-        //MEMORY
-        if (configuration.memCount > configuration.memMaxCount) {
-            result.errors.push(`Выбранное количество модулей памяти (${configuration.memCount}) превышает максимальное (${configuration.memMaxCount})`)
-        } else if ((configuration.cpuCount || configuration.memCount) && configuration.cpuCount < 2 && configuration.memCount > (configuration.chassis.platform === 'G3' ? 16 : 12)) {
-            result.errors.push(`Для выбранного количества модулей памяти (${configuration.memCount}) недостаточно процессоров (${configuration.cpuCount})`)
-        }
-
-        //GPU
-        if (configuration.gpuCount === 1 && configuration.power < 1300) {
-            result.errors.push(`При установке 1 GPU необходимо питание не менее 1300W. Текущее: ${configuration.power}`)
-        }
-        if (configuration.gpuCount > 1 && configuration.power < 1600) {
-            result.errors.push(`При установке 2 и более GPU необходимо питание не менее 1600W. Текущее: ${configuration.power}`)
-        }
-
-        //REAR BAY
-        //configuration.chassis.units * 2 + 1 - configuration.riserCount
-        if (configuration.rearBayCount > 4) {
-            result.errors.push(`Превышено количество rear bay: ${configuration.rearBayCount}`)
-        }
-        if (configuration.rearBaySFFCount > 2) {
-            result.errors.push(`Превышено количество SFF rear bay: ${configuration.rearBaySFFCount}`)
-        }
-        if (configuration.rearBayLFFCount > 2) {
-            result.errors.push(`Превышено количество SFF rear bay: ${configuration.rearBayLFFCount}`)
-        }
-
-
-        //RISER
-        const sum = configuration.gpuCount + configuration.lanCount100;
-        const needed = sum - configuration.riserX16Count
-        if (sum > 2 && needed > 0) {
-            result.errors.push(`Сумма LAN 100GbE и GPU не может быть более 2х`)
-        }
-
-        if (configuration.riserCount > configuration.chassis.units * 2) {
-            result.errors.push(`Райзеров нельзя установить более ${configuration.chassis.units * 2} шт`)
-        }
-        if (configuration.riserCount + configuration.rearBayCount > 4) {
-            result.errors.push(`Сумма райзеров (${configuration.riserCount}) и корзин (${configuration.rearBayCount}) не может быть более 4`)
-        }
-/*
-        if (!configuration.riserCount && configuration.hbaCount) {
-            result.errors.push(`Не хватает слотов на райзере`)
-        }
-*/
-        if (configuration.raidCount > configuration.riserCount) {
-            result.errors.push(`Не хватает слотов на райзере`)
-        }
-        if (configuration.riserMaxCount < configuration.riserCount && configuration.riserCount < 5) {
-            result.errors.push(`Количество выбранных райзеров (${configuration.riserCount}) больше чем возможно установить (${configuration.riserMaxCount})`)
-        }
-        if (configuration.riserPort12Count > 2) {
-            result.errors.push(`Количество выбранных райзеров port 1/2 (${configuration.riserPort12Count}) не может быть более 2х`)
-        }else {
-            const oneCpu = (configuration.riserPorts.includes(1) && configuration.riserPorts.includes(3))
-            if (!oneCpu && (configuration.cpuCount < configuration.riserCount)) {
-                result.errors.push(`Для выбранного количество райзеров (${configuration.riserCount}) недостаточно процессоров (${configuration.cpuCount})`)
-            }
-        }
-        console.log('RISER',configuration.riserPort3Count)
-        if (configuration.riserPort3Count > 1) {
-            result.errors.push(`Количество выбранных райзеров port 3 (${configuration.riserPort12Count}) не может быть более 1`)
-        }
-        if (configuration.riserPort4Count > 1) {
-            result.errors.push(`Количество выбранных райзеров port 4 (${configuration.riserPort12Count}) не может быть более 1`)
-        }
-
-
-        //PCI-E
-        console.log('pcie', configuration.pcieCount , configuration.pcieMaxCount)
-        if (configuration.pcieCount > configuration.pcieMaxCount) {
-            result.errors.push(`Недостаточно PCI-E слотов (${configuration.pcieMaxCount}) для выбранного количества PCI-E устройств: ${configuration.pcieCount}`)
-        }
-        if (configuration.lanPortsCount < configuration.transceiverCount) {
-            result.errors.push(`Количество SFP модулей и DAC кабелей больше чем портов на сетевых картах`)
-        }
-
-        //STORAGE
-        if (configuration.diskCount > configuration.chassis.disks)
+        if (configuration.diskCount > configuration.chassis.disks) {
             result.errors.push(`Нельзя поставить дисков более (${configuration.chassis.disks}). Вы пытаетесь поставить (${configuration.diskCount})`)
-        if (!configuration.fcCount && !configuration.raidCount && configuration.diskCount > 12) {
-            result.errors.push(`Для платформы сколичеством дисков более 12 необходим RAID или HBA`)
-        }
-        if (configuration.isRearBayNeeded) {
-            result.errors.push(`Для выбранных SSD U.2 NVMe (${configuration.nvmeCount})  необходимо ${configuration.rearBaysNeeded} Rear bay PN rbaySFFU2 (${configuration.rearBayCount})`)
-        }
-        /*if (configuration.raid93Count && !configuration.cacheModule93Count) {
-            result.errors.push(`93хх серия RAID совместима только с Модуль защиты кэша для RAID 93xx (PN CVM02)`)
-        }*/
-        if (configuration.cacheModule93Count && (configuration.raid93Count !== configuration.cacheModule93Count)) {
-            result.errors.push(`Количество модулей защиты (${configuration.cacheModule93Count}) не соответствует количеству рэйдов 93хх (${configuration.raid93Count})`)
-        }
-        if (configuration.cacheModule94Count && (configuration.raid94Count !== configuration.cacheModule94Count)) {
-            result.errors.push(`Количество модулей защиты (${configuration.cacheModule94Count}) не соответствует количеству рэйдов 94хх (${configuration.raid94Count})`)
-        }
-        if (!configuration.raid93Count && configuration.cacheModule93Count) {
-            result.errors.push(`Некуда поставить модуль защиты, выберите RAID`)
-        }
-        if (!configuration.raid94Count && configuration.cacheModule94Count) {
-            result.errors.push(`Некуда поставить модуль защиты, выберите RAID`)
-        }
-        if (configuration.cacheModuleCount > configuration.raidCount) {
-            result.errors.push(`Количество модулей защиты (${configuration.cacheModuleCount}) не больше количества RAID (${configuration.raidCount}) может быть`)
-        }
-        /*if (configuration.raid94Count && !configuration.cacheModule94Count) {
-            result.errors.push(`94хх-95xx серия RAID совместима только с Модуль защиты кэша для RAID 94xx-955xx (PN CVPM05)`)
-        }*/
-        /*if ((configuration.raid94Count + configuration.raid93Count) && configuration.raidTrimodeCount) {
-            result.errors.push(`RAID контроллер Trimode 9440 Raid 8i (1,0,10,5,6,50,60) (PN 94008IR) не совместим с модулями защиты. Модули защиты к нему добавлять нельзя`)
-        }*/
-        if (configuration.ssdU2Count > configuration.rearBayU2Count * 2) {
-            result.errors.push(`На каждые 2 шт SSD U.2 NVMe (${configuration.ssdU2Count}) необходим rear bay rbaySFFU2 (${configuration.rearBayCount})`)
         }
 
+        if(configuration.chassis.platform==='JBOD'){
 
-        //G2R
-        if (configuration.chassis.platform === 'GR2') {
-            if (configuration.cable4U2Count < configuration.ssdU2Count) {
-                result.errors.push(`С каждым диском U.2 NVMe (${configuration.ssdU2Count}) должен быть добавлен кабель (PN 1*SFF-8643 - 1*SFF-8643) (${configuration.cable4U2Count})`)
+        }else {
+            if (!configuration.cpuCount) {
+                result.errors.push(`Выберите CPU`)
             }
-            if (configuration.cable4U2Count < configuration.ssdU2Count) {
-                result.errors.push(`С каждым диском U.2 NVMe (${configuration.ssdU2Count}) должен быть добавлен кабель (PN 1*SFF-8643 - 1*SFF-8643) (${configuration.cable4U2Count})`)
+            if (!configuration.memCount) {
+                result.errors.push(`Выберите Память`)
             }
-            if (['QSRV-261202R_Active_BP_wth_4_U2', 'QSRV-262402R_active_BP_wth_4_U2']
-                .map(c => c.toLowerCase())
-                .includes(configuration.chassis.partNumber.toLowerCase())) {
-                if (configuration.ssdU2Count > 4)
-                    result.errors.push(`Превышено допустимое (4) количество SSD U.2 NVMe ${configuration.ssdU2Count}`)
-                if (!configuration.raidTrimodeCount)
-                    result.errors.push(`Необходимо подключение контроллера Trimode`)
-                if (configuration.cable8643Count < 5) {
-                    result.errors.push(`Необходимы кабели для подключения 8643 на 8643 ${5 - configuration.cable8643Count} штук`)
+            //MEMORY
+            if (configuration.memCount > configuration.memMaxCount) {
+                result.errors.push(`Выбранное количество модулей памяти (${configuration.memCount}) превышает максимальное (${configuration.memMaxCount})`)
+            } else if ((configuration.cpuCount || configuration.memCount) && configuration.cpuCount < 2 && configuration.memCount > (configuration.chassis.platform === 'G3' ? 16 : 12)) {
+                result.errors.push(`Для выбранного количества модулей памяти (${configuration.memCount}) недостаточно процессоров (${configuration.cpuCount})`)
+            }
+
+            //GPU
+            if (configuration.gpuCount === 1 && configuration.power < 1300) {
+                result.errors.push(`При установке 1 GPU необходимо питание не менее 1300W. Текущее: ${configuration.power}`)
+            }
+            if (configuration.gpuCount > 1 && configuration.power < 1600) {
+                result.errors.push(`При установке 2 и более GPU необходимо питание не менее 1600W. Текущее: ${configuration.power}`)
+            }
+
+            //REAR BAY
+            //configuration.chassis.units * 2 + 1 - configuration.riserCount
+            if (configuration.rearBayCount > 4) {
+                result.errors.push(`Превышено количество rear bay: ${configuration.rearBayCount}`)
+            }
+            if (configuration.rearBaySFFCount > 2) {
+                result.errors.push(`Превышено количество SFF rear bay: ${configuration.rearBaySFFCount}`)
+            }
+            if (configuration.rearBayLFFCount > 2) {
+                result.errors.push(`Превышено количество SFF rear bay: ${configuration.rearBayLFFCount}`)
+            }
+
+
+            //RISER
+            const sum = configuration.gpuCount + configuration.lanCount100;
+            const needed = sum - configuration.riserX16Count
+            if (sum > 2 && needed > 0) {
+                result.errors.push(`Сумма LAN 100GbE и GPU не может быть более 2х`)
+            }
+
+            if (configuration.riserCount > configuration.chassis.units * 2) {
+                result.errors.push(`Райзеров нельзя установить более ${configuration.chassis.units * 2} шт`)
+            }
+            if (configuration.riserCount + configuration.rearBayCount > 4) {
+                result.errors.push(`Сумма райзеров (${configuration.riserCount}) и корзин (${configuration.rearBayCount}) не может быть более 4`)
+            }
+            /*
+                    if (!configuration.riserCount && configuration.hbaCount) {
+                        result.errors.push(`Не хватает слотов на райзере`)
+                    }
+            */
+            if (configuration.raidCount > configuration.riserCount) {
+                result.errors.push(`Не хватает слотов на райзере`)
+            }
+            if (configuration.riserMaxCount < configuration.riserCount && configuration.riserCount < 5) {
+                result.errors.push(`Количество выбранных райзеров (${configuration.riserCount}) больше чем возможно установить (${configuration.riserMaxCount})`)
+            }
+            if (configuration.riserPort12Count > 2) {
+                result.errors.push(`Количество выбранных райзеров port 1/2 (${configuration.riserPort12Count}) не может быть более 2х`)
+            } else {
+                const oneCpu = (configuration.riserPorts.includes(1) && configuration.riserPorts.includes(3))
+                if (!oneCpu && (configuration.cpuCount < configuration.riserCount)) {
+                    result.errors.push(`Для выбранного количество райзеров (${configuration.riserCount}) недостаточно процессоров (${configuration.cpuCount})`)
                 }
             }
-            if (['QSRV-361602R_Active_BP', 'QSRV-463602R_Active_BP', 'QSRV-261202R_Active_BP', 'QSRV-262402R_active_BP']
-                .map(c => c.toLowerCase())
-                .includes(configuration.chassis.partNumber.toLowerCase())
-            ) {
-                if (!!configuration.sasCount)
-                    result.errors.push(`Необходимо подключение контроллера SAS HBA или SAS RAID`)
-                const maxCount = 'QSRV-463602R' === configuration.chassis.partnumber ? 4 : 2
-                if (configuration.cable8643Count < maxCount) {
-                    result.errors.push(`Необходимы кабели для подключения 8643 на 8643 ${maxCount - configuration.cable8643Count} штук`)
-                }
+            console.log('RISER', configuration.riserPort3Count)
+            if (configuration.riserPort3Count > 1) {
+                result.errors.push(`Количество выбранных райзеров port 3 (${configuration.riserPort12Count}) не может быть более 1`)
             }
-            if (['QSRV-261202R', 'QSRV-260802R', 'QSRV-160402R', 'QSRV-160404R', 'QSRV-160802R', 'QSRV-160804R']
-                .map(c => c.toLowerCase())
-                .includes(configuration.chassis.partNumber.toLowerCase())
-            ) {
-                if (configuration.diskCount > configuration.cableSataCount)
-                    result.errors.push(`Необходимы кабели SATA-SATA (${configuration.diskCount - configuration.cableSataCount})`)
-                if (configuration.raidCount * 4 > configuration.cable8643Count) {
-                    result.errors.push(`Необходимы кабели для подключения 8643 на 8643 ${configuration.raidCount * 4 - configuration.cable8643Count} штук`)
+            if (configuration.riserPort4Count > 1) {
+                result.errors.push(`Количество выбранных райзеров port 4 (${configuration.riserPort12Count}) не может быть более 1`)
+            }
+
+
+            //PCI-E
+            console.log('pcie', configuration.pcieCount, configuration.pcieMaxCount)
+            if (configuration.pcieCount > configuration.pcieMaxCount) {
+                result.errors.push(`Недостаточно PCI-E слотов (${configuration.pcieMaxCount}) для выбранного количества PCI-E устройств: ${configuration.pcieCount}`)
+            }
+            if (configuration.lanPortsCount < configuration.transceiverCount) {
+                result.errors.push(`Количество SFP модулей и DAC кабелей больше чем портов на сетевых картах`)
+            }
+
+            //STORAGE
+            if (!configuration.fcCount && !configuration.raidCount && configuration.diskCount > 12) {
+                result.errors.push(`Для платформы сколичеством дисков более 12 необходим RAID или HBA`)
+            }
+            if (configuration.isRearBayNeeded) {
+                result.errors.push(`Для выбранных SSD U.2 NVMe (${configuration.nvmeCount})  необходимо ${configuration.rearBaysNeeded} Rear bay PN rbaySFFU2 (${configuration.rearBayCount})`)
+            }
+            /*if (configuration.raid93Count && !configuration.cacheModule93Count) {
+                result.errors.push(`93хх серия RAID совместима только с Модуль защиты кэша для RAID 93xx (PN CVM02)`)
+            }*/
+            if (configuration.cacheModule93Count && (configuration.raid93Count !== configuration.cacheModule93Count)) {
+                result.errors.push(`Количество модулей защиты (${configuration.cacheModule93Count}) не соответствует количеству рэйдов 93хх (${configuration.raid93Count})`)
+            }
+            if (configuration.cacheModule94Count && (configuration.raid94Count !== configuration.cacheModule94Count)) {
+                result.errors.push(`Количество модулей защиты (${configuration.cacheModule94Count}) не соответствует количеству рэйдов 94хх (${configuration.raid94Count})`)
+            }
+            if (!configuration.raid93Count && configuration.cacheModule93Count) {
+                result.errors.push(`Некуда поставить модуль защиты, выберите RAID`)
+            }
+            if (!configuration.raid94Count && configuration.cacheModule94Count) {
+                result.errors.push(`Некуда поставить модуль защиты, выберите RAID`)
+            }
+            if (configuration.cacheModuleCount > configuration.raidCount) {
+                result.errors.push(`Количество модулей защиты (${configuration.cacheModuleCount}) не больше количества RAID (${configuration.raidCount}) может быть`)
+            }
+            /*if (configuration.raid94Count && !configuration.cacheModule94Count) {
+                result.errors.push(`94хх-95xx серия RAID совместима только с Модуль защиты кэша для RAID 94xx-955xx (PN CVPM05)`)
+            }*/
+            /*if ((configuration.raid94Count + configuration.raid93Count) && configuration.raidTrimodeCount) {
+                result.errors.push(`RAID контроллер Trimode 9440 Raid 8i (1,0,10,5,6,50,60) (PN 94008IR) не совместим с модулями защиты. Модули защиты к нему добавлять нельзя`)
+            }*/
+            if (configuration.ssdU2Count > configuration.rearBayU2Count * 2) {
+                result.errors.push(`На каждые 2 шт SSD U.2 NVMe (${configuration.ssdU2Count}) необходим rear bay rbaySFFU2 (${configuration.rearBayCount})`)
+            }
+
+
+            //G2R
+            if (configuration.chassis.platform === 'GR2') {
+                if (configuration.cable4U2Count < configuration.ssdU2Count) {
+                    result.errors.push(`С каждым диском U.2 NVMe (${configuration.ssdU2Count}) должен быть добавлен кабель (PN 1*SFF-8643 - 1*SFF-8643) (${configuration.cable4U2Count})`)
+                }
+                if (configuration.cable4U2Count < configuration.ssdU2Count) {
+                    result.errors.push(`С каждым диском U.2 NVMe (${configuration.ssdU2Count}) должен быть добавлен кабель (PN 1*SFF-8643 - 1*SFF-8643) (${configuration.cable4U2Count})`)
+                }
+                if (['QSRV-261202R_Active_BP_wth_4_U2', 'QSRV-262402R_active_BP_wth_4_U2']
+                    .map(c => c.toLowerCase())
+                    .includes(configuration.chassis.partNumber.toLowerCase())) {
+                    if (configuration.ssdU2Count > 4)
+                        result.errors.push(`Превышено допустимое (4) количество SSD U.2 NVMe ${configuration.ssdU2Count}`)
+                    if (!configuration.raidTrimodeCount)
+                        result.errors.push(`Необходимо подключение контроллера Trimode`)
+                    if (configuration.cable8643Count < 5) {
+                        result.errors.push(`Необходимы кабели для подключения 8643 на 8643 ${5 - configuration.cable8643Count} штук`)
+                    }
+                }
+                if (['QSRV-361602R_Active_BP', 'QSRV-463602R_Active_BP', 'QSRV-261202R_Active_BP', 'QSRV-262402R_active_BP']
+                    .map(c => c.toLowerCase())
+                    .includes(configuration.chassis.partNumber.toLowerCase())
+                ) {
+                    if (!!configuration.sasCount)
+                        result.errors.push(`Необходимо подключение контроллера SAS HBA или SAS RAID`)
+                    const maxCount = 'QSRV-463602R' === configuration.chassis.partnumber ? 4 : 2
+                    if (configuration.cable8643Count < maxCount) {
+                        result.errors.push(`Необходимы кабели для подключения 8643 на 8643 ${maxCount - configuration.cable8643Count} штук`)
+                    }
+                }
+                if (['QSRV-261202R', 'QSRV-260802R', 'QSRV-160402R', 'QSRV-160404R', 'QSRV-160802R', 'QSRV-160804R']
+                    .map(c => c.toLowerCase())
+                    .includes(configuration.chassis.partNumber.toLowerCase())
+                ) {
+                    if (configuration.diskCount > configuration.cableSataCount)
+                        result.errors.push(`Необходимы кабели SATA-SATA (${configuration.diskCount - configuration.cableSataCount})`)
+                    if (configuration.raidCount * 4 > configuration.cable8643Count) {
+                        result.errors.push(`Необходимы кабели для подключения 8643 на 8643 ${configuration.raidCount * 4 - configuration.cable8643Count} штук`)
+                    }
                 }
             }
         }
-
         return result
     })
 

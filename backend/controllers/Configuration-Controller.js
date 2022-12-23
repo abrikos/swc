@@ -73,13 +73,8 @@ module.exports = function (app) {
             ] : [{
                 category: 'Storage',
                 children: [
-                    {type: 'Backplane'},
-                    {type: 'RAID'},
                     {type: 'HDD'},
                     {type: 'SSD 2.5'},
-                    {type: 'SSD m.2'},
-                    {type: 'SSD U.2 NVMe'},
-                    {type: 'Rear bay'},
 
                 ]
             },{category: 'Cable'}]
@@ -107,9 +102,11 @@ module.exports = function (app) {
                 name: 'Конфигурация от ' + moment().format('YYYY-MM-DD HH:mm')
             })
             await configuration.populate(db.configuration.population);
-            const partNumber = configuration.chassis.units === 1 ? 'x16riser1U' : '3x8riser2U'
-            const component = await db.component.findOne({partNumber})
-            await db.part.create({component, configuration, count: 1})
+            if(chassis.platform !== 'JBOD') {
+                const partNumber = configuration.chassis.units === 1 ? 'x16riser1U' : '3x8riser2U'
+                const component = await db.component.findOne({partNumber})
+                await db.part.create({component, configuration, count: 1})
+            }
             const componentPower = await db.component.findOne({partNumber:'PSU05R'})
             await db.part.create({component:componentPower, configuration, count: 1})
             if(['QSRV-161002', 'QSRV-1710', 'QSRV-161002A', 'QSRV-260802', 'QSRV-270802', 'QSRV-260802A'].includes(chassis.partNumber)) {
