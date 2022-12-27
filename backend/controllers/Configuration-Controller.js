@@ -54,7 +54,7 @@ module.exports = function (app) {
                         {type: 'SSD m.2'},
                         {type: 'SSD U.2 NVMe'},
                         {type: 'Rear bay'},
-                        {type: 'Cable'},
+                        //{type: 'Cable'},
 
                     ]
                 },
@@ -77,7 +77,7 @@ module.exports = function (app) {
                     {type: 'SSD 2.5'},
 
                 ]
-            },{category: 'Cable'}]
+            },{category: 'Cables'}]
             const components = await db.component.find().sort({partNumber: 1})
             const specs = (await db.spec.find()).filter(s => s.configurations.includes(configurationId));
             res.send({configuration, tabs, components, specs})
@@ -86,6 +86,7 @@ module.exports = function (app) {
         }
     })
 
+    //db.component.find({category:'Cables'}).then(console.log)
     //db.configuration.findById('63843dbc56f13d27a40a17f9').populate(db.configuration.population)        .then(c=>console.log(c.chassis))
 
 
