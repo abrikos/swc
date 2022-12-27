@@ -27,10 +27,8 @@ module.exports = function (app) {
         for (const conf of spec.configurations) {
             rowHeights.push({hpx: 50})
             const partRows = []
-            let confName = [conf.chassis.name]
 
             for (const part of conf.partsSorted) {
-                confName.push(part.count + '* ' + part.component.description)
                 if (user.email.match('qtech.ru') || user.email.match('tdtel.ru')) {
                     rowHeights.push({hpx: 15})
                     partRows.push([
@@ -47,7 +45,7 @@ module.exports = function (app) {
             const confRow = [
                 {v: conf.chassis.partNumber, s: confStyle},
                 {v: conf.count, t: 'n', s: styleConfCount},
-                {v: confName.join(', '), s: confStyle},
+                {v: conf.description, s: confStyle},
                 {v: conf.price, t: 'n', s: confStyle, z: '0.00'},
                 {v: conf.priceTotal, t: 'n', s: confStyle},
                 {v: 0, t: 'n', s: confStyle},

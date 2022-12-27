@@ -45,11 +45,12 @@ export default {
       this.spec.configurations.forEach(conf => {
         textArea.value += conf.chassis.partNumber + '\t'
             + conf.count + '\t'
-            + conf.chassis.params + '\t'
+            + conf.description + '\t'
             + conf.price + '\t'
             + conf.priceTotal
             + '\n';
       })
+
       document.body.appendChild(textArea);
       //textArea.focus();
       textArea.select();

@@ -24,6 +24,7 @@ schema.virtual('date')
         return moment(this.createdAt).format('YYYY-MM-DD');
     })
 
+
 schema.virtual('price')
     .get(function () {
         let sum = 0;

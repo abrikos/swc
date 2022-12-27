@@ -25,6 +25,16 @@ schema.statics.population = [
     {path: 'service'}
 ]
 
+schema.virtual('description')
+    .get(function () {
+        const confName = [this.chassis.name]
+        for (const part of this.partsSorted) {
+            confName.push(part.count + '* ' + part.component.description)
+        }
+        const ret = confName.join(', ');
+        return ret
+    })
+
 schema.virtual('partsSorted')
     .get(function () {
 
