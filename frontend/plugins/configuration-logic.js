@@ -95,10 +95,13 @@ export default function ({app}, inject) {
 
             //GPU
             if (configuration.gpuCount === 1 && configuration.power < 1300) {
-                result.errors.push(`При установке 1 GPU необходимо питание не менее 1300W. Текущее: ${configuration.power}`)
+                //result.errors.push(`При установке 1 GPU необходимо питание не менее 1300W. Текущее: ${configuration.power}`)
+            }
+            if (configuration.gpuCount > 0 && !configuration.riserX16Count) {
+                result.errors.push(`Не хватает X16 слота на райзере`)
             }
             if (configuration.gpuCount > 1 && configuration.power < 1600) {
-                result.errors.push(`При установке 2 и более GPU необходимо питание не менее 1600W. Текущее: ${configuration.power}`)
+                //result.errors.push(`При установке 2 и более GPU необходимо питание не менее 1600W. Текущее: ${configuration.power}`)
             }
 
             //REAR BAY
