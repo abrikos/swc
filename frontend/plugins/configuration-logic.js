@@ -5,7 +5,6 @@ export default function ({app}, inject) {
             components.filter(c => c.type === tab.type)
             :
             components.filter(c => c.category === tab.category)
-        console.log(JSON.stringify(tab))
         return componentsByType
             .filter(c => !c.deleted)
             .filter(c => {
@@ -133,7 +132,8 @@ export default function ({app}, inject) {
                         result.errors.push(`Не хватает слотов на райзере`)
                     }
             */
-            if (configuration.raidCount > configuration.riserCount) {
+            console.log('zzzzz', configuration.raidCount , configuration.riserPortsAvailable)
+            if (configuration.raidCount > configuration.riserPortsAvailable) {
                 result.errors.push(`Не хватает слотов на райзере`)
             }
             if (configuration.riserMaxCount < configuration.riserCount && configuration.riserCount < 5) {
@@ -147,7 +147,6 @@ export default function ({app}, inject) {
                     result.errors.push(`Для выбранного количество райзеров (${configuration.riserCount}) недостаточно процессоров (${configuration.cpuCount})`)
                 }
             }
-            console.log('RISER', configuration.riserPort3Count)
             if (configuration.riserPort3Count > 1) {
                 result.errors.push(`Количество выбранных райзеров port 3 (${configuration.riserPort12Count}) не может быть более 1`)
             }
@@ -157,7 +156,6 @@ export default function ({app}, inject) {
 
 
             //PCI-E
-            console.log('pcie', configuration.pcieCount, configuration.pcieMaxCount)
             if (configuration.pcieCount > configuration.pcieMaxCount) {
                 result.errors.push(`Недостаточно PCI-E слотов (${configuration.pcieMaxCount}) для выбранного количества PCI-E устройств: ${configuration.pcieCount}`)
             }

@@ -76,10 +76,15 @@ schema.virtual('power')
         return match && match[2] * 1;
     })
 
-schema.virtual('riserPortsCount')
+schema.virtual('riserIsX16')
     .get(function () {
         const match = this.params?.match('x16')
-        return this.category === 'Riser' ? match ? 16 : 8 : 0;
+        return this.category === 'Riser' && match;
+    })
+schema.virtual('riserPortsOnBoard')
+    .get(function () {
+        const match = this.partNumber.match(/^(\d)x/)
+        return this.category === 'Riser' &&( match ? match[1] : 1);
     })
 
 schema.virtual('riserForPort')

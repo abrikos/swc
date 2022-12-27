@@ -199,7 +199,7 @@ schema.virtual('lanCount')
 
 schema.virtual('lanPortsCount')
     .get(function () {
-        return this.parts.filter(p => p.component.type === 'LAN').reduce((a, b) => a + b.component.lanPorts, 0)
+        return this.parts.filter(p => p.component.type === 'LAN' || p.component.type === 'LAN OCP 3.0').reduce((a, b) => a + b.component.lanPorts, 0)
     })
 
 schema.virtual('lanCount100')
@@ -308,6 +308,8 @@ schema.virtual('pcieMaxCount')
         return this.parts.filter(p => p.component.category === 'Riser').reduce((a, b) => a + b.component.riserSlots * b.count, 0)
     })
 
+
+
 schema.virtual('riserPort12Count')
     .get(function () {
         return this.parts.filter(p => p.component.category === 'Riser' && p.component.description.match('port 1/2')).reduce((a, b) => a + b.count, 0)
@@ -340,7 +342,12 @@ schema.virtual('cpuMaxCount')
 
 schema.virtual('riserX16Count')
     .get(function () {
-        return this.parts.filter(p => p.component.riserPortsCount === 16).reduce((a, b) => a + b.count, 0)
+        return this.parts.filter(p => p.component.riserIsX16).reduce((a, b) => a + b.count, 0)
+    })
+
+schema.virtual('riserPortsAvailable')
+    .get(function () {
+        return this.parts.filter(p => p.component.category==='Riser').reduce((a, b) => a + b.component.riserPortsOnBoard * 1, 0)
     })
 
 schema.virtual('riserPorts')
