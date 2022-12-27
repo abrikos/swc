@@ -22,7 +22,6 @@ export default function ({app}, inject) {
                     case 'Cable':
 
                     case 'Storage':
-                        if (configuration.chassis.partNumber === 'QSRV-224') return c.isSFF
                         if (configuration.chassis.partNumber === 'QSRV-2524') return c.isSAS && c.isSFF
                         if (configuration.chassis.partNumber === 'QSRV-4524') return c.isSAS && (c.isSFF || c.isLFF)
                         if (configuration.chassis.isSFF && c.type === 'HDD') return c.isSFF
@@ -32,6 +31,13 @@ export default function ({app}, inject) {
                 switch (tab.type) {
                     //case 'GPU':
                     //if(configuration.chassis.units === 1 && !['GFGT730', 'QUADROP620', 'TESLAT416'].includes(c.partNumber)) return false
+                    case 'HDD':
+                        console.log(configuration.chassis.partNumber, c.description, c.isSFF)
+                        if (configuration.chassis.partNumber === 'QSRV-224') {
+                            return c.isSFF
+                        }else{
+                            return true
+                        }
                     case 'Rear bay':
                         if (configuration.chassis.units === 1) return
                         if (configuration.isRearBayNeeded) {
