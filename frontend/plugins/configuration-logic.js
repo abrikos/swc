@@ -76,6 +76,9 @@ export default function ({app}, inject) {
         if (configuration.diskCount > configuration.chassis.disks) {
             result.errors.push(`Нельзя поставить дисков более (${configuration.chassis.disks}). Вы пытаетесь поставить (${configuration.diskCount})`)
         }
+        if(configuration.powerConsumption > configuration.power){
+            result.errors.push(`Недостаточно мощности PSU`)
+        }
 
         if(configuration.chassis.platform==='JBOD'){
 
