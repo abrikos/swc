@@ -88,7 +88,7 @@ export default function ({app}, inject) {
             //configuration.rearBaySFFCount
             result.errors.push(`Количество SATA дисков (${configuration.sataDiskCount}) превышает возможности шасси (${configuration.chassis.disks})`)
         }
-        if (configuration.diskLFFCount > configuration.chassis.disks + configuration.rearBayLFFCount) {
+        if (configuration.diskLFFCount > configuration.chassis.disks + configuration.rearBayLFFCount * 2) {
             //configuration.rearBaySFFCount
             result.errors.push(`Для дополнительного количества LFF дисков (${configuration.diskLFFCount - configuration.chassis.disks}) недостаточное количество LFF корзин (${configuration.rearBayLFFCount})`)
         }
