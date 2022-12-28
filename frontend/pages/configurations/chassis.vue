@@ -17,7 +17,7 @@ export default {
       {category: 'G3', title:'Intel Gen3'},
       {category: 'G2R', title:'Intel реестр'},
       {category: 'AMD'},
-      {category: 'JBOD'},
+      {category: 'JBOD', title:'Дисковые полки (JBOD)'},
     ]
     return {
       tab: tabs[0],

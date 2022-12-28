@@ -146,6 +146,9 @@ export default function ({app}, inject) {
             if (configuration.riserMaxCount < configuration.riserCount && configuration.riserCount < 5) {
                 result.errors.push(`Количество выбранных райзеров (${configuration.riserCount}) больше чем возможно установить (${configuration.riserMaxCount})`)
             }
+
+
+
             if (configuration.riserPort12Count > 2) {
                 result.errors.push(`Количество выбранных райзеров port 1/2 (${configuration.riserPort12Count}) не может быть более 2х`)
             } else {
@@ -154,6 +157,22 @@ export default function ({app}, inject) {
                     result.errors.push(`Для выбранного количество райзеров (${configuration.riserCount}) недостаточно процессоров (${configuration.cpuCount})`)
                 }
             }
+
+            if (configuration.cpuCount ===1 ) {
+                if(configuration.riserPort12Count > 1){
+                    result.errors.push(`Для выбранного количество райзеров port 1/2 (${configuration.riserPort12Count}) недостаточно процессоров (${configuration.cpuCount})`)
+                }
+            }
+            if(configuration.riserPort3Count > 1){
+                result.errors.push(`Райзеров port 3 (${configuration.riserPort3Count}) возможно установить только 1шт`)
+            }
+            if(configuration.riserPort4Count > 1){
+                result.errors.push(`Райзеров port 4 (${configuration.riserPort3Count}) возможно установить только 1шт`)
+            }
+
+
+
+
             if (configuration.riserPort3Count > 1) {
                 result.errors.push(`Количество выбранных райзеров port 3 (${configuration.riserPort12Count}) не может быть более 1`)
             }
