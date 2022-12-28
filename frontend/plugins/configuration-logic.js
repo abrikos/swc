@@ -163,21 +163,15 @@ export default function ({app}, inject) {
                     result.errors.push(`Для выбранного количество райзеров port 1/2 (${configuration.riserPort12Count}) недостаточно процессоров (${configuration.cpuCount})`)
                 }
             }
-            if(configuration.riserPort3Count > 1){
-                result.errors.push(`Райзеров port 3 (${configuration.riserPort3Count}) возможно установить только 1шт`)
-            }
-            if(configuration.riserPort4Count > 1){
-                result.errors.push(`Райзеров port 4 (${configuration.riserPort3Count}) возможно установить только 1шт`)
-            }
-
-
-
 
             if (configuration.riserPort3Count > 1) {
-                result.errors.push(`Количество выбранных райзеров port 3 (${configuration.riserPort12Count}) не может быть более 1`)
+                result.errors.push(`Количество выбранных райзеров port 3 (${configuration.riserPort3Count}) не может быть более 1`)
             }
             if (configuration.riserPort4Count > 1) {
-                result.errors.push(`Количество выбранных райзеров port 4 (${configuration.riserPort12Count}) не может быть более 1`)
+                result.errors.push(`Количество выбранных райзеров port 4 (${configuration.riserPort4Count}) не может быть более 1`)
+            }
+            if (configuration.riserPort12Count + configuration.rearBayLFFCount > 2) {
+                result.errors.push(`Сумма райзеров порта 1/2 и задних корзин LFF не может превышать 2`)
             }
 
 
