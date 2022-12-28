@@ -31,7 +31,6 @@ export default function ({app}, inject) {
                     //case 'GPU':
                     //if(configuration.chassis.units === 1 && !['GFGT730', 'QUADROP620', 'TESLAT416'].includes(c.partNumber)) return false
                     case 'HDD':
-                        console.log(configuration.chassis.partNumber, c.description, c.isSFF)
                         if (configuration.chassis.partNumber === 'QSRV-224') {
                             return c.isSFF
                         }else{
@@ -79,7 +78,10 @@ export default function ({app}, inject) {
             //configuration.rearBaySFFCount
             result.errors.push(`Нельзя поставить дисков более (${disksAvail}). Вы пытаетесь поставить (${configuration.diskCount})`)
         }
-        if (configuration.sasRearBayCount *2 < configuration.sasDiskCount > configuration.chassis.disks ? configuration.sasDiskCount - configuration.chassis.disks : configuration.sasDiskCount ) {
+
+        console.log(configuration.sasRearBayCount *2 < ((configuration.sasDiskCount > configuration.chassis.disks) ? configuration.sasDiskCount - configuration.chassis.disks : configuration.sasDiskCount))
+
+        if (configuration.sasRearBayCount *2 < ((configuration.sasDiskCount > configuration.chassis.disks) ? configuration.sasDiskCount - configuration.chassis.disks : configuration.sasDiskCount )) {
             //configuration.rearBaySFFCount
             result.errors.push(`Количество SAS дисков превышает возможности SAS корзин`)
         }
