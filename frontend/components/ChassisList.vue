@@ -23,7 +23,8 @@ export default {
   },
   computed: {
     chassis() {
-      return this.items.filter(c => c.platform === this.platform)
+      console.log('zzzzz', this.platform)
+      return this.items.filter(c => c.platform === this.platform.category)
     }
   },
   methods:{

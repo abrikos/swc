@@ -1,7 +1,7 @@
 <template>
   <div>
     <Tabs :items="tabs" :onChange="tabChanged"/>
-    <ChassisList :platform="tab.category" :onClick="createConfiguration"/>
+    <ChassisList :platform="tab" :onClick="createConfiguration"/>
   </div>
 </template>
 
@@ -12,15 +12,16 @@ export default {
   name: "configurator-start",
   components: {ChassisList},
   data() {
+    const tabs = [
+      {category: 'G2', title:'Intel Gen2'},
+      {category: 'G3', title:'Intel Gen3'},
+      {category: 'G2R', title:'Intel реестр'},
+      {category: 'AMD'},
+      {category: 'JBOD'},
+    ]
     return {
-      tab: {category: 'G2'},
-      tabs: [
-        {category: 'G2'},
-        {category: 'G3'},
-        {category: 'G2R'},
-        {category: 'AMD'},
-        {category: 'JBOD'},
-      ],
+      tab: tabs[0],
+      tabs,
       items: [],
 
     }

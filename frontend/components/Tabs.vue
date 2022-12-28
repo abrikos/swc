@@ -11,7 +11,7 @@
              @mouseover="isHovering = item.category"
              @mouseout="isHovering = false">
           <img :src="`/icons/${item.category}_icon.png`" v-if="withIcons"/>
-          {{ item.category }}
+          {{ item.title || item.category }}
         </div>
       </div>
       <div class="sub-tab">
