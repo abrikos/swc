@@ -80,6 +80,10 @@ export default {
     border-radius: 12px 12px 0 0
 
   .tab
+    display: flex
+    justify-content: center
+    align-items: center
+    flex-direction: column
     width: 120px
     text-align: center
     padding: 10px

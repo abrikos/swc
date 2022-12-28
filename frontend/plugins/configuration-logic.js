@@ -151,12 +151,12 @@ export default function ({app}, inject) {
 
             if (configuration.riserPort12Count > 2) {
                 result.errors.push(`Количество выбранных райзеров port 1/2 (${configuration.riserPort12Count}) не может быть более 2х`)
-            } else {
+            }/* else {
                 const oneCpu = (configuration.riserPorts.includes(1) && configuration.riserPorts.includes(3))
                 if (!oneCpu && (configuration.cpuCount < configuration.riserCount)) {
                     result.errors.push(`Для выбранного количество райзеров (${configuration.riserCount}) недостаточно процессоров (${configuration.cpuCount})`)
                 }
-            }
+            }*/
 
             if (configuration.cpuCount ===1 ) {
                 if(configuration.riserPort12Count > 1){
