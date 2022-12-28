@@ -345,6 +345,11 @@ schema.virtual('riserX16Count')
         return this.parts.filter(p => p.component.riserIsX16).reduce((a, b) => a + b.count, 0)
     })
 
+schema.virtual('lan100GBCount')
+    .get(function () {
+        return this.parts.filter(p => p.component.type==='LAN' && p.component.description.match('100Gb')).reduce((a, b) => a + b.count, 0)
+    })
+
 schema.virtual('riserPortsAvailable')
     .get(function () {
         return this.parts.filter(p => p.component.category==='Riser').reduce((a, b) => a + b.component.riserPortsOnBoard * 1, 0)

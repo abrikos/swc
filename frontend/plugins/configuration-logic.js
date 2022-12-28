@@ -100,7 +100,8 @@ export default function ({app}, inject) {
             if (configuration.gpuCount === 1 && configuration.power < 1300) {
                 //result.errors.push(`При установке 1 GPU необходимо питание не менее 1300W. Текущее: ${configuration.power}`)
             }
-            if (configuration.gpuCount > 0 && !configuration.riserX16Count) {
+            console.log('zz22',configuration.lan100GBCount, configuration.gpuCount, configuration.riserX16Count)
+            if (configuration.lan100GBCount + configuration.gpuCount > configuration.riserX16Count) {
                 result.errors.push(`Не хватает X16 слота на райзере`)
             }
             if (configuration.gpuCount > 1 && configuration.power < 1600) {
