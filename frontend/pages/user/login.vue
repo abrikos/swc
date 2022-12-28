@@ -7,7 +7,7 @@
         <v-text-field
             outlined
             v-model="login.email"
-            label="$t('Email')"
+            :label="$t('Email')"
             :rules="rules"
         />
         <v-text-field
