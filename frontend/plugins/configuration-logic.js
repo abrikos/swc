@@ -171,10 +171,10 @@ export default function ({app}, inject) {
                 result.errors.push(`Количество выбранных райзеров port 4 (${configuration.riserPort4Count}) не может быть более 1`)
             }
             if (configuration.riserPort12Count + configuration.rearBayLFFCount > 2) {
-                result.errors.push(`Сумма райзеров порта 1/2 и задних корзин LFF не может превышать 2`)
+                result.errors.push(`Сумма райзеров порта 1/2 (${configuration.riserPort12Count}) и задних корзин LFF (${configuration.rearBayLFFCount}) не может превышать 2`)
             }
             if (configuration.riserPort3Count + configuration.riserPort4Count + configuration.rearBaySFFCount > 2) {
-                result.errors.push(`Сумма райзеров портов 3/4 и задних корзин SFF не может превышать 2`)
+                result.errors.push(`Сумма райзеров портов 3(${configuration.riserPort3Count})/4(${configuration.riserPort4Count}) и задних корзин SFF (${configuration.rearBaySFFCount}) не может превышать 2`)
             }
 
 
@@ -304,7 +304,7 @@ export default function ({app}, inject) {
                 return Array.from(Array(5).keys());
             case 'HDD':
             case 'SSD 2.5':
-                return Array.from(Array(configuration.chassis.disks + 1).keys());
+                return Array.from(Array(configuration.chassis.disks + 1 + configuration.rearBaySFFCount * 2 + configuration.rearBayLFFCount * 2).keys());
         }
         return [0, 1, 2, 3, 4, 5]
     })
