@@ -39,9 +39,11 @@ export default function ({app}, inject) {
                         }
                     case 'Rear bay':
                         if (configuration.chassis.units === 1) return
+                        console.log('fffffff', configuration.isRearBayNeeded)
                         if (configuration.isRearBayNeeded) {
                             return c.partNumber === 'rbaySFFU2'
                         }
+                        return true;
                     case 'Backplane':
                         return ['QSRV-161002', 'QSRV-1710', 'QSRV-161002A', 'QSRV-260802', 'QSRV-270802', 'QSRV-260802A'].includes(configuration.chassis.partNumber)
                 }
@@ -88,7 +90,7 @@ export default function ({app}, inject) {
         }
         if (configuration.diskLFFCount > configuration.chassis.disks + configuration.rearBayLFFCount) {
             //configuration.rearBaySFFCount
-            result.errors.push(`Для выбранного количества LFF дисков (${configuration.diskLFFCount}) недостаточное количество LFF корзин (${configuration.rearBayLFFCount})`)
+            result.errors.push(`Для дополнительного количества LFF дисков (${configuration.diskLFFCount - configuration.chassis.disks}) недостаточное количество LFF корзин (${configuration.rearBayLFFCount})`)
         }
 
         if(configuration.powerConsumption > configuration.power){
