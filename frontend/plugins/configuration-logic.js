@@ -39,7 +39,6 @@ export default function ({app}, inject) {
                         }
                     case 'Rear bay':
                         if (configuration.chassis.units === 1) return
-                        console.log('fffffff', configuration.isRearBayNeeded)
                         if (configuration.isRearBayNeeded) {
                             return c.partNumber === 'rbaySFFU2'
                         }
@@ -80,7 +79,7 @@ export default function ({app}, inject) {
             //configuration.rearBaySFFCount
             result.errors.push(`Нельзя поставить дисков более (${disksAvail}). Вы пытаетесь поставить (${configuration.diskCount})`)
         }
-        if (configuration.sasRearBayCount *2 < configuration.sasDiskCount - configuration.chassis.disks) {
+        if (configuration.sasRearBayCount *2 < configuration.sasDiskCount > configuration.chassis.disks ? configuration.sasDiskCount - configuration.chassis.disks : configuration.sasDiskCount ) {
             //configuration.rearBaySFFCount
             result.errors.push(`Количество SAS дисков превышает возможности SAS корзин`)
         }
@@ -117,7 +116,6 @@ export default function ({app}, inject) {
             if (configuration.gpuCount === 1 && configuration.power < 1300) {
                 //result.errors.push(`При установке 1 GPU необходимо питание не менее 1300W. Текущее: ${configuration.power}`)
             }
-            console.log('zz22',configuration.lan100GBCount, configuration.gpuCount, configuration.riserX16Count)
             if (configuration.lan100GBCount + configuration.gpuCount > configuration.riserX16Count) {
                 result.errors.push(`Не хватает X16 слота на райзере`)
             }
@@ -156,7 +154,6 @@ export default function ({app}, inject) {
                         result.errors.push(`Не хватает слотов на райзере`)
                     }
             */
-            console.log('zzzzz', configuration.raidCount , configuration.riserPortsAvailable)
             if (configuration.raidCount > configuration.riserPortsAvailable) {
                 result.errors.push(`Не хватает слотов на райзере`)
             }

@@ -271,12 +271,12 @@ schema.virtual('rearBayCount')
 
 schema.virtual('rearBaySFFCount')
     .get(function () {
-        return this.parts.filter(p => p.component.type === 'Rear bay' && p.component.partNumber.match('SFF')).reduce((a, b) => a + b.count, 0)
+        return this.parts.filter(p => p.component.type === 'Rear bay' && !p.component.description.match('NVMe') && p.component.partNumber.match('SFF')).reduce((a, b) => a + b.count, 0)
     })
 
 schema.virtual('rearBayLFFCount')
     .get(function () {
-        return this.parts.filter(p => p.component.type === 'Rear bay' && p.component.partNumber.match('LFF')).reduce((a, b) => a + b.count, 0)
+        return this.parts.filter(p => p.component.type === 'Rear bay' && !p.component.description.match('NVMe') && p.component.partNumber.match('LFF')).reduce((a, b) => a + b.count, 0)
     })
 
 schema.virtual('diskLFFCount')
