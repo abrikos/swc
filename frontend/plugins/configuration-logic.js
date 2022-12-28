@@ -173,6 +173,9 @@ export default function ({app}, inject) {
             if (configuration.riserPort12Count + configuration.rearBayLFFCount > 2) {
                 result.errors.push(`Сумма райзеров порта 1/2 и задних корзин LFF не может превышать 2`)
             }
+            if (configuration.riserPort3Count + configuration.riserPort4Count + configuration.rearBaySFFCount > 2) {
+                result.errors.push(`Сумма райзеров портов 3/4 и задних корзин SFF не может превышать 2`)
+            }
 
 
             //PCI-E
