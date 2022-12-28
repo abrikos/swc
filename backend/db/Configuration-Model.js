@@ -119,6 +119,10 @@ schema.virtual('sasDiskCount')
     .get(function () {
         return this.parts.filter(p => p.component.isDiskSAS).reduce((a, b) => a + b.count, 0)
     })
+schema.virtual('sataDiskCount')
+    .get(function () {
+        return this.parts.filter(p => p.component.isDiskSATA).reduce((a, b) => a + b.count, 0)
+    })
 schema.virtual('sasRearBayCount')
     .get(function () {
         return this.parts.filter(p => p.component.isRearBaySAS).reduce((a, b) => a + b.count, 0)

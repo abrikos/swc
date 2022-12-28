@@ -48,6 +48,11 @@ schema.virtual('isDiskSAS')
         return ['HDD', 'SSD 2.5'].includes(this.type) && !!this.params?.match('SAS')
     })
 
+schema.virtual('isDiskSATA')
+    .get(function () {
+        return ['HDD', 'SSD 2.5'].includes(this.type) && !!this.params?.match('SATA')
+    })
+
 schema.virtual('isRearBaySAS')
     .get(function () {
         return ['Rear bay'].includes(this.type) && !!this.params?.match('SAS')

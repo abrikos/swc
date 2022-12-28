@@ -82,6 +82,11 @@ export default function ({app}, inject) {
             //configuration.rearBaySFFCount
             result.errors.push(`Количество SAS дисков превышает возможности SAS корзин`)
         }
+        if (configuration.sataDiskCount > configuration.chassis.disks) {
+            //configuration.rearBaySFFCount
+            result.errors.push(`Количество SATA дисков превышает возможности шасси`)
+        }
+
         if(configuration.powerConsumption > configuration.power){
             result.errors.push(`Недостаточно мощности PSU`)
         }
