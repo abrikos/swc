@@ -86,6 +86,10 @@ export default function ({app}, inject) {
             //configuration.rearBaySFFCount
             result.errors.push(`Количество SATA дисков (${configuration.sataDiskCount}) превышает возможности шасси (${configuration.chassis.disks})`)
         }
+        if (configuration.diskLFFCount > configuration.chassis.disks + configuration.rearBayLFFCount) {
+            //configuration.rearBaySFFCount
+            result.errors.push(`Для выбранного количества LFF дисков (${configuration.diskLFFCount}) недостаточное количество LFF корзин (${configuration.rearBayLFFCount})`)
+        }
 
         if(configuration.powerConsumption > configuration.power){
             result.errors.push(`Недостаточно мощности PSU`)

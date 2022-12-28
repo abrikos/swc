@@ -279,6 +279,12 @@ schema.virtual('rearBayLFFCount')
         return this.parts.filter(p => p.component.type === 'Rear bay' && p.component.partNumber.match('LFF')).reduce((a, b) => a + b.count, 0)
     })
 
+schema.virtual('diskLFFCount')
+    .get(function () {
+        return this.parts.filter(p => p.component.type === 'HDD' && p.component.isLFF).reduce((a, b) => a + b.count, 0)
+    })
+
+
 schema.virtual('rearBayU2Count')
     .get(function () {
         return this.parts.filter(p => p.component.partNumber === 'rbaySFFU2').reduce((a, b) => a + b.count, 0)
