@@ -21,8 +21,8 @@ export default function ({app}, inject) {
                     case 'Cable':
 
                     case 'Storage':
-                        if (configuration.chassis.partNumber === 'QSRV-2524') return c.isSAS && c.isSFF
-                        if (configuration.chassis.partNumber === 'QSRV-4524') return c.isSAS && (c.isSFF || c.isLFF)
+                        if (configuration.chassis.partNumber === 'QSRV-2524') return c.isDiskSAS && c.isSFF
+                        if (configuration.chassis.partNumber === 'QSRV-4524') return c.isDiskSAS && (c.isSFF || c.isLFF)
                         if (configuration.chassis.isSFF && c.type === 'HDD') return c.isSFF
                     case 'Riser':
                         if (configuration.chassis.units < c.riserUnit) return false
@@ -73,8 +73,14 @@ export default function ({app}, inject) {
         const result = {
             errors: [],
         };
-        if (configuration.diskCount > configuration.chassis.disks) {
-            result.errors.push(`Нельзя поставить дисков более (${configuration.chassis.disks}). Вы пытаетесь поставить (${configuration.diskCount})`)
+        const disksAvail = configuration.chassis.disks + configuration.rearBaySFFCount * 2 + configuration.rearBayLFFCount *2
+        if (configuration.diskCount > disksAvail) {
+            //configuration.rearBaySFFCount
+            result.errors.push(`Нельзя поставить дисков более (${disksAvail}). Вы пытаетесь поставить (${configuration.diskCount})`)
+        }
+        if (configuration.sasRearBayCount *2 < configuration.sasDiskCount - configuration.chassis.disks) {
+            //configuration.rearBaySFFCount
+            result.errors.push(`Количество SAS дисков превышает возможности SAS корзин`)
         }
         if(configuration.powerConsumption > configuration.power){
             result.errors.push(`Недостаточно мощности PSU`)
@@ -245,7 +251,7 @@ export default function ({app}, inject) {
                     .map(c => c.toLowerCase())
                     .includes(configuration.chassis.partNumber.toLowerCase())
                 ) {
-                    if (!!configuration.sasCount)
+                    if (!!configuration.sasRaidCount)
                         result.errors.push(`Необходимо подключение контроллера SAS HBA или SAS RAID`)
                     const maxCount = 'QSRV-463602R' === configuration.chassis.partnumber ? 4 : 2
                     if (configuration.cable8643Count < maxCount) {

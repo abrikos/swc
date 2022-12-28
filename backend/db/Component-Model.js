@@ -43,9 +43,14 @@ schema.virtual('isSFF')
         return !!this.params?.match('SFF')
     })
 
-schema.virtual('isSAS')
+schema.virtual('isDiskSAS')
     .get(function () {
-        return !!this.params?.match('SAS')
+        return ['HDD', 'SSD 2.5'].includes(this.type) && !!this.params?.match('SAS')
+    })
+
+schema.virtual('isRearBaySAS')
+    .get(function () {
+        return ['Rear bay'].includes(this.type) && !!this.params?.match('SAS')
     })
 
 schema.virtual('isLFF')

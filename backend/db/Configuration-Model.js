@@ -111,9 +111,17 @@ schema.virtual('raidTrimode16iCount')
         return this.parts.filter(p => p.component.type==='RAID' && p.component.partNumber.match('16I')).reduce((a, b) => a + b.count, 0)
     })
 
-schema.virtual('sasCount')
+schema.virtual('sasRaidCount')
     .get(function () {
         return this.parts.filter(p => p.component.type==='RAID' && p.component.description.match('SAS')).reduce((a, b) => a + b.count, 0)
+    })
+schema.virtual('sasDiskCount')
+    .get(function () {
+        return this.parts.filter(p => p.component.isDiskSAS).reduce((a, b) => a + b.count, 0)
+    })
+schema.virtual('sasRearBayCount')
+    .get(function () {
+        return this.parts.filter(p => p.component.isRearBaySAS).reduce((a, b) => a + b.count, 0)
     })
 
 schema.virtual('cable8643Count')
