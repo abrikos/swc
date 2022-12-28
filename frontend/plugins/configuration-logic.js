@@ -84,7 +84,7 @@ export default function ({app}, inject) {
         }
         if (configuration.sataDiskCount > configuration.chassis.disks) {
             //configuration.rearBaySFFCount
-            result.errors.push(`Количество SATA дисков превышает возможности шасси`)
+            result.errors.push(`Количество SATA дисков (${configuration.sataDiskCount}) превышает возможности шасси (${configuration.chassis.disks})`)
         }
 
         if(configuration.powerConsumption > configuration.power){

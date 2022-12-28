@@ -36,7 +36,7 @@
         </v-menu>
 
         <v-btn to="/cabinet/settings" v-if="user">{{ user.email }}</v-btn>
-        <v-btn to="/user/signup" v-if="!user" id>Регистрация</v-btn>
+        <v-btn xto="/user/signup" v-if="!user" id>Регистрация</v-btn>
         <v-btn to="/user/login" v-if="!user" id>Вход</v-btn>
         <v-btn @click="logout" v-if="user" id>Выход</v-btn>
         <!--        <v-btn icon @click="switchTheme">

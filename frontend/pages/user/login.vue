@@ -1,26 +1,27 @@
 <template>
   <v-container>
     <v-card>
-      <v-card-title>{{ $t('Login') }}</v-card-title>
+      <span class="red--text">Контролируемый доступ. В режиме тестирования</span>
+      <v-card-title>Вход</v-card-title>
       <v-card-text>
         <v-text-field
             outlined
             v-model="login.email"
-            :label="$t('Email')"
+            label="$t('Email')"
             :rules="rules"
         />
         <v-text-field
             outlined
             type="password"
             v-model="login.password"
-            :label="$t('Password')"
+            label="Пароль"
             :rules="rules"
         />
       </v-card-text>
       <v-card-actions>
         <v-btn @click="submit" class="my-4">{{ $t('Send') }}</v-btn>
         <v-spacer/>
-        <v-btn to="'/user/reset-password'" class="my-4">{{ $t('Reset password') }}</v-btn>
+        <v-btn xto="'/user/reset-password'" class="my-4">{{ $t('Reset password') }}</v-btn>
       </v-card-actions>
     </v-card>
   </v-container>
@@ -68,6 +69,9 @@ export default {
 </script>
 
 <style scoped lang="sass">
+.v-card
+  width: 400px
+  margin: auto
 u
   cursor: pointer
 </style>
