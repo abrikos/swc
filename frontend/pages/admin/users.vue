@@ -1,5 +1,12 @@
 <template>
   <div>
+    <v-row>
+      <v-col><v-text-field v-model="email" placeholder="email"/></v-col>
+      <v-col><v-text-field v-model="password" placeholder="пароль"/></v-col>
+      <v-col><v-btn @click="createUser">Создать юзера</v-btn> </v-col>
+    </v-row>
+
+
     <v-data-table
         :headers="headers"
         :items="users"
@@ -14,6 +21,7 @@
         {{ item.component.description }}
       </template>
       <template v-slot:item.controls="{item}">
+        <v-btn @click="chPassword(item)" small>Сменить пароль</v-btn>
         <v-btn class="mx-2" small :color="item.isAdmin ? 'red' : 'silver' " @click="switchRole(item)">
           {{ item.isAdmin ? 'Revoke admin' : 'Make admin' }}
         </v-btn>
@@ -29,7 +37,7 @@
           <td>
             <v-text-field
                 hide-details
-                label="Фильтр описания"
+                label="Фильтр e-mail"
                 outlined flat dense class="table-filter"
                 v-model="filter"
             />
@@ -45,6 +53,8 @@ export default {
   name: "users",
   data() {
     return {
+      email:'',
+      password:'',
       filter:'',
       usersFound: [],
       headers: [
@@ -64,6 +74,15 @@ export default {
     this.reloadList()
   },
   methods: {
+    async chPassword(user){
+      const password = window.prompt('Новый пароль для ' + user.email)
+      await this.$axios.$post(`/admin/user/${user.id}/change-password`, { password} )
+    },
+    async createUser(){
+      await this.$axios.$post('/admin/user/create', {email:this.email, password: this.password} )
+      this.email = this.password = ''
+      await this.reloadList()
+    },
     async reloadList() {
       this.usersFound = await this.$axios.$get('/admin/users')
 

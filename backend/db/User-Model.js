@@ -53,7 +53,7 @@ schema.virtual('date')
 
 schema.virtual('loggedDate')
     .get(function () {
-        if(!this.logged) return moment(this.updatedAt).format('YYYY-MM-DD HH:mm');
+        if(!this.logged) return '';
         return moment.unix(this.logged).format('YYYY-MM-DD HH:mm');
     })
 

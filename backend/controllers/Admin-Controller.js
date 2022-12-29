@@ -42,7 +42,7 @@ module.exports = function (app) {
 
 
     app.get('/api/admin/users', passport.isAdmin, async (req, res) => {
-        const users = await db.user.find().sort({logged: -1})
+        const users = await db.user.find().sort({logged: -1, createdAt: -1})
         res.send(users)
     })
 
@@ -80,7 +80,6 @@ module.exports = function (app) {
         fs.readdir('/home/abrikos/Downloads/choosen', {}, (e, list) => {
             res.send(list)
         })
-
     })
 
 
@@ -108,6 +107,28 @@ module.exports = function (app) {
         }
     })
 
+    app.post('/api/admin/user/create', async (req, res) => {
+        try {
+            const {email, password} = req.body
+            console.log(email, password)
+            const user = await db.user.create({email, password})
+            res.sendStatus(200);
+        } catch (e) {
+            app.locals.errorLogger(e, res)
+        }
+    })
+
+    app.post('/api/admin/user/:id/change-password', async (req, res) => {
+        try {
+            const {password} = req.body
+            const user = await db.user.findById(req.params.id)
+            user.password = password
+            await user.save()
+            res.sendStatus(200);
+        } catch (e) {
+            app.locals.errorLogger(e, res)
+        }
+    })
     //db.chassis.find().then(c=>console.log(c.map(cc=>cc.form)))
     //db.component.find({partNumber: '4 SATA - 1*SFF-8643'}).then(console.log)
     //db.chassis.find().then(console.log)
