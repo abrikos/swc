@@ -42,6 +42,32 @@
                 v-model="filter"
             />
           </td>
+          <td></td>
+          <td></td>
+          <td>
+            <v-radio-group
+                dense
+                v-model="userFilter"
+                row
+            >
+              <v-radio
+                  label="Все"
+                  value="all"
+              />
+              <v-radio
+                  label="Заблокированные"
+                  value="blocked"
+              />
+              <v-radio
+                  label="Не заблокированные"
+                  value="valid"
+              />
+              <v-radio
+                  label="Админы"
+                  value="admin"
+              />
+            </v-radio-group>
+          </td>
         </tr>
       </template>
     </v-data-table>
@@ -56,18 +82,21 @@ export default {
       email:'',
       password:'',
       filter:'',
+      userFilter:'all',
       usersFound: [],
       headers: [
         {text: 'e-mail', value: 'email'},
         {text: 'Зарегистрирован', value: 'date'},
-        {text: 'Вход', value: 'loggedDate'},
+        {text: 'Последний вход', value: 'loggedDate'},
         {text: '', value: 'controls'},
       ]
     }
   },
   computed:{
     users(){
-      return this.usersFound.filter(u=>u.email ? u.email.match(this.filter) : true)
+      return this.usersFound
+          .filter(u=>u.email ? u.email.match(this.filter) : true)
+          .filter(u=>this.userFilter ==='all' ? true : this.userFilter==='admin' ? u.isAdmin : this.userFilter==='blocked' ? u.blocked : !u.blocked )
     }
   },
   created() {
@@ -76,6 +105,7 @@ export default {
   methods: {
     async chPassword(user){
       const password = window.prompt('Новый пароль для ' + user.email)
+      if(!password) return
       await this.$axios.$post(`/admin/user/${user.id}/change-password`, { password} )
     },
     async createUser(){

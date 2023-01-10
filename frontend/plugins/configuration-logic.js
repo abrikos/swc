@@ -313,6 +313,8 @@ export default function ({app}, inject) {
             //return [0, 1, 2]
             case 'LAN OCP 3.0':
                 return [0, 1]
+            case 'Backplane':
+                return [0, 1]
             case 'SSD U.2 NVMe':
                 const trimode8Adds = configuration.raidTrimode8iCount * 2
                 const trimode16Adds = configuration.raidTrimode16iCount * 4

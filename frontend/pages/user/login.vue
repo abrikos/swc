@@ -21,7 +21,7 @@
       <v-card-actions>
         <v-btn @click="submit" class="my-4">Вход</v-btn>
         <v-spacer/>
-        <v-btn xto="'/user/reset-password'" class="my-4">Сбросить пароль</v-btn>
+        <v-btn to="/user/reset-password" class="my-4">Сбросить пароль</v-btn>
       </v-card-actions>
     </v-card>
   </v-container>
