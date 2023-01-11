@@ -319,7 +319,7 @@ export default function ({app}, inject) {
                 const trimode8Adds = configuration.raidTrimode8iCount * 2
                 const trimode16Adds = configuration.raidTrimode16iCount * 4
                 //return Array.from(Array(5 + trimode8Adds + trimode16Adds).keys());
-                return Array.from(Array(5).keys());
+                return Array.from(Array(5 + configuration.additionalNvmeDisks).keys());
             case 'HDD':
             case 'SSD 2.5':
                 return Array.from(Array(configuration.chassis.disks + 1 + configuration.rearBaySFFCount * 2 + configuration.rearBayLFFCount * 2).keys());

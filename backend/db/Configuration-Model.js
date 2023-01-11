@@ -101,6 +101,13 @@ schema.virtual('raidTrimodeCount')
         return this.parts.filter(p => p.component.partNumber==='94008IR').reduce((a, b) => a + b.count, 0)
     })
 
+schema.virtual('additionalNvmeDisks')
+    .get(function () {
+        const backplaneCanAddDisks =  this.parts.find(p =>['bplnab2u', 'bplnab2u'].includes( p.component.partNumber))
+        if(!backplaneCanAddDisks) return 0;
+        return this.chassis.units === 1 ? 10 : 8;
+    })
+
 schema.virtual('raidTrimode8iCount')
     .get(function () {
         return this.parts.filter(p => p.component.type==='RAID' && p.component.partNumber.match('8I')).reduce((a, b) => a + b.count, 0)
